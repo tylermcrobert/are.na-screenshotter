@@ -14,7 +14,14 @@ export async function POST({ request }) {
 			);
 		}
 
-		console.log(image);
+		if (!image.startsWith('data:image/')) {
+			return json(
+				{ success: false, error: 'Invalid image format' },
+				{ status: 400 }
+			);
+		}
+
+		console.log('image', image);
 
 		return json({ success: true }, { status: 201 });
 	} catch (error) {

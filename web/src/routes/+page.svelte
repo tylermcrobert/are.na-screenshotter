@@ -14,7 +14,7 @@
 
 				const res = await fetch('/api/upload', {
 					method: 'POST',
-					body: JSON.stringify({ foo: 'bar' })
+					body: JSON.stringify({ image: 'bar' })
 				});
 
 				const data = await res.json();

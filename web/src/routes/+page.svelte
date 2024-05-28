@@ -1,5 +1,19 @@
 <form method="POST">
-	<input type="file" id="source" name="source" />
+	<button
+		type="submit"
+		onclick={async (e) => {
+			e.preventDefault();
 
-	<button type="submit">submit</button>
+			const res = await fetch('/api/upload', {
+				method: 'POST',
+				body: JSON.stringify({ foo: 'bar' })
+			});
+
+			const data = await res.json();
+
+			console.log(data);
+		}}
+	>
+		Submit
+	</button>
 </form>

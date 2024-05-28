@@ -5,8 +5,13 @@ document.addEventListener("DOMContentLoaded", function () {
   captureButton.addEventListener("click", function () {
     chrome.tabs.captureVisibleTab(function (screenshotDataUrl) {
       const screenshotImage = new Image();
+
       screenshotImage.src = screenshotDataUrl;
-      screenshotContainer.appendChild(screenshotImage);
+
+      const imgTag = screenshotContainer.appendChild(screenshotImage);
+
+      imgTag.style.display = "block";
+      imgTag.style.width = "100%";
     });
   });
 });

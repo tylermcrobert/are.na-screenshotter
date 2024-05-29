@@ -1,13 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { getDataFromBase64, uploadGCSFile } from '$lib';
+import { snippetsBucket } from '$lib/gcs.js';
 import { json } from '@sveltejs/kit';
+import { v4 } from 'uuid';
+
+/**
+ * Handles the POST request for uploading an image.
+ *
+ * @param {Object} request - The request object.
+ * @returns {Promise<Object>} - A promise that resolves to the response object.
+ */
 
 export async function POST({ request }) {
 	try {
 		const { image } = await request.json();
-
-		// Check if an image was provided
 
 		if (!image) {
 			return json(
@@ -24,26 +29,46 @@ export async function POST({ request }) {
 		}
 
 		// Get the buffer and filename from the base64 image
-		const { buffer, filename } = getDataFromBase64(image);
+		const filename = getFilename(image);
+		const buffer = getBuffer(image);
 
 		// Upload the image to Google Cloud Storage
-		const { publicUrl } = await uploadGCSFile(buffer, {
-			filename: filename
-		});
+		const gcsFile = snippetsBucket.file(filename);
+		await gcsFile.save(buffer);
 
-		// Return the public URL of the uploaded image
-		const apiResponse = {
+		const response = {
 			success: true,
-			data: { publicUrl }
+			data: {
+				publicUrl: gcsFile.publicUrl()
+			}
 		};
 
-		return json(apiResponse, { status: 200 });
+		return json(response, { status: 200 });
 	} catch (error) {
-		console.log(error);
-
+		console.error(error);
 		return json(
 			{ success: false, error: (error as any).message },
 			{ status: 500 }
 		);
 	}
+}
+
+const BASE_64_REGEX = /^data:([A-Za-z-+/]+);base64,/;
+
+function getFilename(base64String: string) {
+	const mimeType = base64String.match(BASE_64_REGEX)?.[1];
+
+	if (!mimeType) {
+		throw new Error('Invalid base64 string');
+	}
+
+	const extension = mimeType.split('/')[1];
+
+	return `${v4()}.${extension}`;
+}
+
+function getBuffer(base64String: string) {
+	const base64Data = base64String.replace(BASE_64_REGEX, '');
+	const buffer = Buffer.from(base64Data, 'base64');
+	return buffer;
 }

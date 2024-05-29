@@ -14,13 +14,27 @@ function IndexPopup() {
   const [error, setError] = useState<string | null>(null)
   const [blockId, setBlockId] = useState<number | null>(null)
 
+  /**
+   * Captures a screenshot
+   */
   async function captureScreenshot() {
     setLoading(true)
+
     const screenshot = await chrome.tabs.captureVisibleTab()
+
+    if (!screenshot) {
+      setLoading(false)
+      setError("Failed to capture screenshot.")
+      return
+    }
+
     setBase64Image(screenshot)
     setLoading(false)
   }
 
+  /**
+   * Actions on mount
+   */
   useEffect(() => {
     captureScreenshot()
 
@@ -32,6 +46,9 @@ function IndexPopup() {
     })
   }, [])
 
+  /**
+   * Posts the screenshot to Are.na
+   */
   async function postToArena() {
     setLoading(true)
     try {

@@ -1,33 +1,45 @@
 <script lang="ts">
+	import { IMAGE_BASE_64 } from './../lib/constants';
 	let loading = $state(false);
+	let error = $state<string | undefined>(undefined);
 </script>
 
-<form method="POST">
+<form>
 	<fieldset>
 		<h1>Screenshot</h1>
 		<button
 			type="submit"
 			disabled={loading}
-			onclick={async (e) => {
+			onclick={async () => {
 				loading = true;
-				e.preventDefault();
+				error = undefined;
 
 				const res = await fetch('/api/upload', {
 					method: 'POST',
-					body: JSON.stringify({ image: 'bar' })
+					body: JSON.stringify({ image: IMAGE_BASE_64 })
 				});
 
-				const data = await res.json();
-				loading = false;
+				const body = await res.json();
 
-				console.log(data);
+				if (!res.ok) {
+					error = body.error ? body.error : 'An unknown error occurred.';
+				}
+
+				loading = false;
 			}}
 		>
 			Take Screenshot
 		</button>
-		{#if loading}
-			<div>loading...</div>
-		{/if}
+
+		<div>
+			{#if loading}
+				<div>loading...</div>
+			{/if}
+
+			{#if error}
+				<div>Error: {error}</div>
+			{/if}
+		</div>
 	</fieldset>
 </form>
 

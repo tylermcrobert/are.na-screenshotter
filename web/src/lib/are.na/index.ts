@@ -4,6 +4,10 @@ export async function postItem() {
 	const TEST_POST = 'https://api.are.na/v2/channels/tests-twjgqznfouc/blocks';
 
 	try {
+		if (!ARENA_PERSONAL_ACCESS_TOKEN) {
+			throw new Error('No Are.na personal access token provided.');
+		}
+
 		const response = await fetch(TEST_POST, {
 			method: 'POST',
 			body: JSON.stringify({
@@ -17,6 +21,12 @@ export async function postItem() {
 		});
 
 		const data = await response.json();
+
+		if (!response.ok) {
+			throw new Error(
+				`Failed to post item to are.na: (${data.code}) ${data.message}: ${data.description}`
+			);
+		}
 
 		return data;
 	} catch (e) {

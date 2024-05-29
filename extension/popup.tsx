@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import "./style.css"
 
 const FPO_CHANNEL_ID = "tests-twjgqznfouc"
-const UPLOAD_URL = "https://are-na-screenshotter.vercel.app/api/upload"
+const UPLOAD_URL = "http://localhost:5173/api/upload"
 const ARENA_API_URL = "http://localhost:5173/api/arena"
 
 function IndexPopup() {

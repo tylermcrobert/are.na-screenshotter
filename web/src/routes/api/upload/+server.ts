@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { base64toGCS } from '$lib';
+import { uploadBase64Image } from '$lib';
 import { json } from '@sveltejs/kit';
 
 /**
@@ -36,7 +36,7 @@ export async function POST({ request }) {
 		 * Return the public URL of the uploaded image
 		 */
 
-		const upload = await base64toGCS(image);
+		const upload = await uploadBase64Image(image);
 
 		const response = {
 			success: true,

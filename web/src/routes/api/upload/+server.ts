@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { generateFilename, getDataFromBase64, uploadGCSFile } from '$lib';
 import { json } from '@sveltejs/kit';
 
 export async function POST({ request }) {
@@ -21,10 +23,26 @@ export async function POST({ request }) {
 			);
 		}
 
-		console.log('image', image);
+		const { buffer, fileType } = getDataFromBase64(image);
 
-		return json({ success: true }, { status: 201 });
+		const randomFilename = generateFilename(fileType);
+
+		const { id, publicUrl } = await uploadGCSFile(buffer, {
+			filename: randomFilename
+		});
+
+		const response = {
+			success: true,
+			data: {
+				id,
+				publicUrl
+			}
+		};
+
+		return json(response, { status: 200 });
 	} catch (error) {
+		console.log(error);
+
 		return json(
 			{ success: false, error: (error as any).message },
 			{ status: 500 }

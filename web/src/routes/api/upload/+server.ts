@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { generateFilename, getDataFromBase64, uploadGCSFile } from '$lib';
+import { getDataFromBase64, uploadGCSFile } from '$lib';
 import { json } from '@sveltejs/kit';
 
 export async function POST({ request }) {
-	console.log('POST /api/upload');
-
 	try {
 		const { image } = await request.json();
+
+		// Check if an image was provided
 
 		if (!image) {
 			return json(
@@ -23,23 +23,21 @@ export async function POST({ request }) {
 			);
 		}
 
-		const { buffer, fileType } = getDataFromBase64(image);
+		// Get the buffer and filename from the base64 image
+		const { buffer, filename } = getDataFromBase64(image);
 
-		const randomFilename = generateFilename(fileType);
-
-		const { id, publicUrl } = await uploadGCSFile(buffer, {
-			filename: randomFilename
+		// Upload the image to Google Cloud Storage
+		const { publicUrl } = await uploadGCSFile(buffer, {
+			filename: filename
 		});
 
-		const response = {
+		// Return the public URL of the uploaded image
+		const apiResponse = {
 			success: true,
-			data: {
-				id,
-				publicUrl
-			}
+			data: { publicUrl }
 		};
 
-		return json(response, { status: 200 });
+		return json(apiResponse, { status: 200 });
 	} catch (error) {
 		console.log(error);
 

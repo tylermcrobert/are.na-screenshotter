@@ -2,9 +2,12 @@ import { useEffect, useState } from "react"
 
 import "./style.css"
 
+import { log } from "console"
+
 function IndexPopup() {
   const [loading, setLoading] = useState(false)
   const [base64Image, setBase64Image] = useState<string | null>(null)
+  // const [publicUrl, setPublicUrl] = useState<string | null>(null)
 
   async function screenshot() {
     setLoading(true)
@@ -19,6 +22,25 @@ function IndexPopup() {
     screenshot()
   }, [])
 
+  async function postToArena() {
+    const publicUrl = await fetch(
+      "https://are-na-screenshotter.vercel.app/api/upload",
+      {
+        method: "POST",
+        body: JSON.stringify({ image: base64Image })
+      }
+    )
+      .then((res) => res.json())
+      .then((json) => json.data.publicUrl)
+
+    fetch("http://localhost:5173/api/arena", {
+      method: "POST"
+    })
+      .then((res) => res.json())
+      .then((json) => {
+        console.log(json)
+      })
+  }
   return (
     <div className="flex flex-col gap-2 p-2 w-60">
       {base64Image && (
@@ -28,7 +50,7 @@ function IndexPopup() {
       )}
 
       <button
-        onClick={screenshot}
+        onClick={postToArena}
         disabled={loading}
         className="border-gray-200 p-2 border w-full font-bold text-center">
         Take screenshot

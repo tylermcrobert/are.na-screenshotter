@@ -37,15 +37,19 @@ function IndexPopup() {
 
   async function postToArena() {
     setLoading(true)
-    // const publicUrl = await fetch(
-    //   "https://are-na-screenshotter.vercel.app/api/upload",
-    //   {
-    //     method: "POST",
-    //     body: JSON.stringify({ image: base64Image })
-    //   }
-    // )
-    //   .then((res) => res.json())
-    //   .then((json) => json.data.publicUrl)
+    const publicUrl = await fetch(
+      "https://are-na-screenshotter.vercel.app/api/upload",
+      {
+        method: "POST",
+        body: JSON.stringify({ image: base64Image })
+      }
+    )
+      .then((res) => res.json())
+      .then((json) => json.data.publicUrl)
+      .catch(() => {
+        setLoading(false)
+        setError("There was an error uploading your asset.")
+      })
 
     await fetch("http://localhost:5173/api/arena", {
       method: "POST",
@@ -56,15 +60,21 @@ function IndexPopup() {
         title: originTitle,
         description: originUrl
       })
-    }).then(async (res) => {
-      setLoading(false)
-
-      if (!res.ok) {
-        setError("There was an error posting to arena")
-      } else {
-        setError(null)
-      }
     })
+      .then(async (res) => {
+        setLoading(false)
+
+        if (!res.ok) {
+          setError("There was an error posting to arena")
+        } else {
+          setError(null)
+        }
+      })
+      .catch((e) => {
+        console.log(e)
+        setLoading(false)
+        setError("There was an error posting to arena")
+      })
   }
   return (
     <div className="flex flex-col gap-2 p-2 w-60">

@@ -2,32 +2,30 @@
 	import { IMAGE_BASE_64 } from './../lib/constants';
 	let loading = $state(false);
 	let error = $state<string | undefined>(undefined);
+
+	async function upload() {
+		loading = true;
+		error = undefined;
+
+		const res = await fetch('/api/upload', {
+			method: 'POST',
+			body: JSON.stringify({ image: IMAGE_BASE_64 })
+		});
+
+		const body = await res.json();
+
+		if (!res.ok) {
+			error = body.error ? body.error : 'An unknown error occurred.';
+		}
+
+		loading = false;
+	}
 </script>
 
 <form>
 	<fieldset>
 		<h1>Screenshot</h1>
-		<button
-			type="submit"
-			disabled={loading}
-			onclick={async () => {
-				loading = true;
-				error = undefined;
-
-				const res = await fetch('/api/upload', {
-					method: 'POST',
-					body: JSON.stringify({ image: IMAGE_BASE_64 })
-				});
-
-				const body = await res.json();
-
-				if (!res.ok) {
-					error = body.error ? body.error : 'An unknown error occurred.';
-				}
-
-				loading = false;
-			}}
-		>
+		<button type="submit" disabled={loading} onclick={upload}>
 			Take Screenshot
 		</button>
 

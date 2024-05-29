@@ -22,12 +22,15 @@
 	}
 </script>
 
-<form>
+<form
+	onsubmit={(e) => {
+		e.preventDefault();
+		upload();
+	}}
+>
 	<fieldset>
 		<h1>Screenshot</h1>
-		<button type="submit" disabled={loading} onclick={upload}>
-			Take Screenshot
-		</button>
+		<button type="submit" disabled={loading}>Take Screenshot</button>
 
 		<div>
 			{#if loading}

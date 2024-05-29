@@ -1,5 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { ARENA_PERSONAL_ACCESS_TOKEN } from '$env/static/private';
+class ArenaError extends Error {
+	constructor(message?: string) {
+		super(message);
+		this.name = 'ArenaError';
+	}
+}
 
 /**
  * Posts an item to an Are.na channel.
@@ -9,44 +13,49 @@ import { ARENA_PERSONAL_ACCESS_TOKEN } from '$env/static/private';
  * @throws Error if no Are.na channel ID is provided, no source is provided, no personal access token is provided, or if there is a failure in posting the item to Are.na.
  */
 
-export async function postItem(channelId: string, source: string) {
+export async function postItem(
+	channelId: string,
+	source: string,
+	token: string
+) {
 	if (!channelId) {
-		throw new Error('No Are.na channel ID provided.');
+		throw new ArenaError('No Are.na channel ID provided.');
 	}
 
 	if (!source) {
-		throw new Error('No Are.na source provided.');
+		throw new ArenaError('No Are.na source provided.');
 	}
 
-	const TEST_POST = `https://api.are.na/v2/channels/${channelId}/blocks`;
+	if (!token) {
+		throw new ArenaError('No Are.na personal access token provided.');
+	}
+
+	const ARENA_API_URL = `https://api.are.na/v2/channels/${channelId}/blocks`;
 
 	try {
-		if (!ARENA_PERSONAL_ACCESS_TOKEN) {
-			throw new Error('No Are.na personal access token provided.');
-		}
-
-		const response = await fetch(TEST_POST, {
+		const response = await fetch(ARENA_API_URL, {
 			method: 'POST',
-			body: JSON.stringify({
-				source: source
-			}),
+			body: JSON.stringify({ source }),
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${ARENA_PERSONAL_ACCESS_TOKEN}`
+				Authorization: `Bearer ${token}`
 			}
 		});
 
 		const data = await response.json();
 
 		if (!response.ok) {
-			throw new Error(
+			throw new ArenaError(
 				`Failed to post item to are.na: (${data.code}) ${data.message}: ${data.description}`
 			);
 		}
 
 		return data;
 	} catch (e) {
-		const message = (e as any).message || 'Unknown error';
-		throw new Error(`Failed to post item to are.na: ${message}`);
+		if (e instanceof ArenaError) {
+			throw e;
+		} else {
+			throw new ArenaError('Unknown error');
+		}
 	}
 }

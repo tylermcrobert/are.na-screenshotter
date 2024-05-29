@@ -111,6 +111,12 @@ function IndexPopup() {
     }
   }
 
+  function clear() {
+    setBlockId(null)
+    setBase64Image(null)
+    captureScreenshot()
+  }
+
   return (
     <div className="flex flex-col gap-2 p-2 w-60">
       {base64Image && (
@@ -119,23 +125,29 @@ function IndexPopup() {
         </div>
       )}
 
-      <button
-        onClick={postToArena}
-        disabled={loading}
-        className="border-gray-200 p-2 border w-full font-bold text-center">
-        {!loading ? "Upload to Are.na" : "Loading..."}
-      </button>
-
-      {blockId && (
+      {!blockId ? (
+        <button
+          onClick={postToArena}
+          disabled={loading}
+          className="border-gray-200 p-2 border w-full font-bold text-center">
+          {!loading ? "Upload to Are.na" : "Loading..."}
+        </button>
+      ) : (
         <div className="border-green-200 bg-green-100 p-2 border text-center text-green-500">
-          Block Posted!{" "}
-          <a
-            href={`https://are.na/channel/${FPO_CHANNEL_ID}`}
-            className="underline"
-            target="_blank">
-            View channel
-          </a>
-          .
+          <div className="mb-1 font-bold">Uploaded to Are.na!</div>
+          <div>
+            <a
+              href={`https://are.na/channel/${FPO_CHANNEL_ID}`}
+              className="underline"
+              target="_blank">
+              View channel
+            </a>{" "}
+            or{" "}
+            <button className="underline" onClick={clear}>
+              take another
+            </button>
+            .
+          </div>
         </div>
       )}
 

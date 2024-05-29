@@ -15,12 +15,16 @@ class ArenaError extends Error {
 
 export async function postItem({
 	channelId,
+	source,
 	token,
-	source
+	title,
+	description
 }: {
 	channelId: string;
 	source: string;
 	token: string;
+	title: string;
+	description: string;
 }) {
 	if (!channelId) {
 		throw new ArenaError('No Are.na channel ID provided.');
@@ -39,7 +43,11 @@ export async function postItem({
 	try {
 		const response = await fetch(ARENA_API_URL, {
 			method: 'POST',
-			body: JSON.stringify({ source }),
+			body: JSON.stringify({
+				source,
+				title,
+				description
+			}),
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${token}`

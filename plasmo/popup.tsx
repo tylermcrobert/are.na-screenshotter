@@ -7,7 +7,8 @@ import { log } from "console"
 function IndexPopup() {
   const [loading, setLoading] = useState(false)
   const [base64Image, setBase64Image] = useState<string | null>(null)
-  // const [publicUrl, setPublicUrl] = useState<string | null>(null)
+  const [title, setTitle] = useState<string | null>(null)
+  const [url, setUrl] = useState<string | null>(null)
 
   async function screenshot() {
     setLoading(true)
@@ -22,19 +23,39 @@ function IndexPopup() {
     screenshot()
   }, [])
 
-  async function postToArena() {
-    const publicUrl = await fetch(
-      "https://are-na-screenshotter.vercel.app/api/upload",
-      {
-        method: "POST",
-        body: JSON.stringify({ image: base64Image })
+  useEffect(() => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]) {
+        setTitle(tabs[0].title)
+        setUrl(tabs[0].url)
       }
-    )
-      .then((res) => res.json())
-      .then((json) => json.data.publicUrl)
+    })
+  }, [])
+
+  useEffect(() => {
+    screenshot()
+  }, [])
+
+  async function postToArena() {
+    // const publicUrl = await fetch(
+    //   "https://are-na-screenshotter.vercel.app/api/upload",
+    //   {
+    //     method: "POST",
+    //     body: JSON.stringify({ image: base64Image })
+    //   }
+    // )
+    //   .then((res) => res.json())
+    //   .then((json) => json.data.publicUrl)
 
     fetch("http://localhost:5173/api/arena", {
-      method: "POST"
+      method: "POST",
+      body: JSON.stringify({
+        channelId: "tests-twjgqznfouc",
+        source:
+          "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIyODM0MTIyMy9vcmlnaW5hbF84MTI0Y2Q1OGQxYTZmMjgzN2U2MTQ1ZTE4YmQ4MzU1Yy5wbmciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjI0MDAsImhlaWdodCI6MjQwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo2NX0sImpwZWciOnsicXVhbGl0eSI6NjV9LCJyb3RhdGUiOm51bGx9fQ==",
+        title: title,
+        description: url
+      })
     })
       .then((res) => res.json())
       .then((json) => {

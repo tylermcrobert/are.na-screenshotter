@@ -16,9 +16,11 @@ document.addEventListener("DOMContentLoaded", function () {
       fetch(API_ENDPOINT_LOCAL, {
         method: "POST",
         body: JSON.stringify({ image: screenshotDataUrl }),
-      }).then((response) => {
-        console.log(response);
-      });
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data.data.publicUrl);
+        });
 
       imgTag.style.display = "block";
       imgTag.style.width = "100%";

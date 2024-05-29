@@ -2,12 +2,15 @@ import { useEffect, useState } from "react"
 
 import "./style.css"
 
+const CHANNEL_ID = "tests-twjgqznfouc"
+
 function IndexPopup() {
   const [loading, setLoading] = useState(true)
   const [base64Image, setBase64Image] = useState<string | null>(null)
   const [originTitle, setOriginTitle] = useState<string | null>(null)
   const [originUrl, setOriginUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [blockId, setBlockId] = useState<number | null>(null)
 
   async function screenshot() {
     setLoading(true)
@@ -54,22 +57,24 @@ function IndexPopup() {
     await fetch("http://localhost:5173/api/arena", {
       method: "POST",
       body: JSON.stringify({
-        channelId: "tests-twjgqznfouc",
-        source:
-          "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIyODM0MTIyMy9vcmlnaW5hbF84MTI0Y2Q1OGQxYTZmMjgzN2U2MTQ1ZTE4YmQ4MzU1Yy5wbmciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjI0MDAsImhlaWdodCI6MjQwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo2NX0sImpwZWciOnsicXVhbGl0eSI6NjV9LCJyb3RhdGUiOm51bGx9fQ==",
+        channelId: CHANNEL_ID,
+        source: publicUrl,
         title: originTitle,
         description: originUrl
       })
     })
       .then(async (res) => {
-        setLoading(false)
+        const json = await res.json()
 
         if (!res.ok) {
+          console.error(json)
           setError("There was an error posting to arena")
-        } else {
-          setError(null)
         }
+
+        setBlockId(json.data.id)
+        setLoading(false)
       })
+
       .catch((e) => {
         console.log(e)
         setLoading(false)
@@ -90,6 +95,19 @@ function IndexPopup() {
         className="border-gray-200 p-2 border w-full font-bold text-center">
         {!loading ? "Take screenshot" : "Loading..."}
       </button>
+
+      {blockId && (
+        <div className="border-green-200 bg-green-100 p-2 border text-center text-green-500">
+          Block Posted!{" "}
+          <a
+            href={`https://are.na/channel/${CHANNEL_ID}`}
+            className="underline"
+            target="_blank">
+            View channel
+          </a>
+          .
+        </div>
+      )}
 
       {error && <div className="text-center text-red-500">{error}</div>}
     </div>

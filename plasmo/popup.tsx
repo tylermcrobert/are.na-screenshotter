@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react"
 
+import "./style.css"
+
 function IndexPopup() {
   const [loading, setLoading] = useState(false)
   const [base64Image, setBase64Image] = useState<string | null>(null)

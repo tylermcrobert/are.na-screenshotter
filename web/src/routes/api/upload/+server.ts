@@ -14,6 +14,10 @@ export async function POST({ request }) {
 	try {
 		const { image } = await request.json();
 
+		/**
+		 * Check if the image is provided and is a base64 string.
+		 */
+
 		if (!image) {
 			return json(
 				{ success: false, error: 'No image provided' },
@@ -28,13 +32,21 @@ export async function POST({ request }) {
 			);
 		}
 
-		// Get the buffer and filename from the base64 image
+		/**
+		 * Get the buffer and filename from the base64 image string.
+		 */
 		const filename = getFilename(image);
 		const buffer = getBuffer(image);
 
-		// Upload the image to Google Cloud Storage
+		/**
+		 * Upload the image to Google Cloud Storage
+		 */
 		const gcsFile = snippetsBucket.file(filename);
 		await gcsFile.save(buffer);
+
+		/**
+		 * Return the public URL of the uploaded image
+		 */
 
 		const response = {
 			success: true,

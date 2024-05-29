@@ -1,24 +1,44 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 function IndexPopup() {
-  const [data, setData] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [base64Image, setBase64Image] = useState<string | null>(null)
+
+  async function screenshot() {
+    setLoading(true)
+
+    const screenshot = await chrome.tabs.captureVisibleTab()
+    setBase64Image(screenshot)
+
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    screenshot()
+  }, [])
 
   return (
     <div
       style={{
-        padding: 16
+        padding: 0
       }}>
-      <h2>
-        Welcome to your{" "}
-        <a href="https://www.plasmo.com" target="_blank">
-          Plasmo
-        </a>{" "}
-        Extension!
-      </h2>
-      <input onChange={(e) => setData(e.target.value)} value={data} />
-      <a href="https://docs.plasmo.com" target="_blank">
-        View Docs
-      </a>
+      {loading ? <div>Loading...</div> : null}
+
+      {base64Image && (
+        <div
+          style={{
+            width: "200px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "black",
+            padding: 8
+          }}>
+          <img src={base64Image} style={{ width: "100%" }} />
+        </div>
+      )}
+
+      <button onClick={screenshot}>Take screenshot</button>
     </div>
   )
 }

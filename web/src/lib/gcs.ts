@@ -19,12 +19,15 @@ export async function uploadGCSFile(
 	{ filename }: { filename: string }
 ) {
 	const bucket = storage.bucket(GCS_BUCKET_NAME);
-
 	const gcsFile = bucket.file(filename);
 	await gcsFile.save(buffer);
 
-	if (!gcsFile || !gcsFile.id || !gcsFile.publicUrl()) {
+	if (!gcsFile || !gcsFile.id) {
 		throw new Error('There was an error uploading file');
+	}
+
+	if (!gcsFile.publicUrl()) {
+		throw new Error('Could not get public URL for file.');
 	}
 
 	return {

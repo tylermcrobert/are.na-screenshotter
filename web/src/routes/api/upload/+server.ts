@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { snippetsBucket } from '$lib/gcs.js';
+
+import { base64toGCS } from '$lib';
 import { json } from '@sveltejs/kit';
-import { v4 } from 'uuid';
 
 /**
  * Handles the POST request for uploading an image.
@@ -33,25 +33,15 @@ export async function POST({ request }) {
 		}
 
 		/**
-		 * Get the buffer and filename from the base64 image string.
-		 */
-		const buffer = createBuffer(image);
-		const filename = getFilename(image);
-
-		/**
-		 * Upload the image to Google Cloud Storage
-		 */
-		const gcsFile = snippetsBucket.file(filename);
-		await gcsFile.save(buffer);
-
-		/**
 		 * Return the public URL of the uploaded image
 		 */
+
+		const upload = await base64toGCS(image);
 
 		const response = {
 			success: true,
 			data: {
-				publicUrl: gcsFile.publicUrl()
+				publicUrl: upload.publicUrl()
 			}
 		};
 
@@ -63,30 +53,4 @@ export async function POST({ request }) {
 			{ status: 500 }
 		);
 	}
-}
-
-const BASE_64_REGEX = /^data:([A-Za-z-+/]+);base64,/;
-
-/**
- * Converts a base64 string to a buffer.
- */
-function createBuffer(base64String: string) {
-	const base64Data = base64String.replace(BASE_64_REGEX, '');
-	const buffer = Buffer.from(base64Data, 'base64');
-	return buffer;
-}
-
-/**
- * Generates a unique filename for a given base64 string.
- */
-function getFilename(base64String: string) {
-	const mimeType = base64String.match(BASE_64_REGEX)?.[1];
-
-	if (!mimeType) {
-		throw new Error('Invalid base64 string');
-	}
-
-	const extension = mimeType.split('/')[1];
-
-	return `${v4()}.${extension}`;
 }

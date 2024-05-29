@@ -35,8 +35,8 @@ export async function POST({ request }) {
 		/**
 		 * Get the buffer and filename from the base64 image string.
 		 */
+		const buffer = createBuffer(image);
 		const filename = getFilename(image);
-		const buffer = getBuffer(image);
 
 		/**
 		 * Upload the image to Google Cloud Storage
@@ -67,6 +67,18 @@ export async function POST({ request }) {
 
 const BASE_64_REGEX = /^data:([A-Za-z-+/]+);base64,/;
 
+/**
+ * Converts a base64 string to a buffer.
+ */
+function createBuffer(base64String: string) {
+	const base64Data = base64String.replace(BASE_64_REGEX, '');
+	const buffer = Buffer.from(base64Data, 'base64');
+	return buffer;
+}
+
+/**
+ * Generates a unique filename for a given base64 string.
+ */
 function getFilename(base64String: string) {
 	const mimeType = base64String.match(BASE_64_REGEX)?.[1];
 
@@ -77,10 +89,4 @@ function getFilename(base64String: string) {
 	const extension = mimeType.split('/')[1];
 
 	return `${v4()}.${extension}`;
-}
-
-function getBuffer(base64String: string) {
-	const base64Data = base64String.replace(BASE_64_REGEX, '');
-	const buffer = Buffer.from(base64Data, 'base64');
-	return buffer;
 }

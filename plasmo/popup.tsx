@@ -61,6 +61,8 @@ function IndexPopup() {
 
       if (!res.ok) {
         setError("There was an error posting to arena")
+      } else {
+        setError(null)
       }
     })
   }

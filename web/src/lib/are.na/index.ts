@@ -13,11 +13,15 @@ class ArenaError extends Error {
  * @throws Error if no Are.na channel ID is provided, no source is provided, no personal access token is provided, or if there is a failure in posting the item to Are.na.
  */
 
-export async function postItem(
-	channelId: string,
-	source: string,
-	token: string
-) {
+export async function postItem({
+	channelId,
+	token,
+	source
+}: {
+	channelId: string;
+	source: string;
+	token: string;
+}) {
 	if (!channelId) {
 		throw new ArenaError('No Are.na channel ID provided.');
 	}

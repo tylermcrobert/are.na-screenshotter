@@ -1,7 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ARENA_PERSONAL_ACCESS_TOKEN } from '$env/static/private';
 
-export async function postItem() {
-	const TEST_POST = 'https://api.are.na/v2/channels/tests-twjgqznfouc/blocks';
+export async function postItem(channelId: string, source: string) {
+	if (!channelId) {
+		throw new Error('No Are.na channel ID provided.');
+	}
+
+	if (!source) {
+		throw new Error('No Are.na source provided.');
+	}
+
+	const TEST_POST = `https://api.are.na/v2/channels/${channelId}/blocks`;
 
 	try {
 		if (!ARENA_PERSONAL_ACCESS_TOKEN) {
@@ -11,8 +20,7 @@ export async function postItem() {
 		const response = await fetch(TEST_POST, {
 			method: 'POST',
 			body: JSON.stringify({
-				source:
-					'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSL2nnM2tOVMLht00mgSaYOOKpJGxY_9UA5MQ&s'
+				source: source
 			}),
 			headers: {
 				'Content-Type': 'application/json',
@@ -30,7 +38,7 @@ export async function postItem() {
 
 		return data;
 	} catch (e) {
-		console.log(e);
-		throw new Error('Failed to post item to are.na');
+		const message = (e as any).message || 'Unknown error';
+		throw new Error(`Failed to post item to are.na: ${message}`);
 	}
 }

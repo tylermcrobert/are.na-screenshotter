@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"
 
 import "./style.css"
 
+import { AUTH_URL } from "~constants"
+
 const FPO_CHANNEL_ID = "tests-twjgqznfouc"
 const UPLOAD_URL = "http://localhost:5173/api/upload"
 const ARENA_API_URL = "http://localhost:5173/api/arena"
@@ -119,6 +121,12 @@ function IndexPopup() {
 
   return (
     <div className="flex flex-col gap-2 p-2 w-60">
+      <a
+        href={AUTH_URL.toString()}
+        target="_blank"
+        className="text-center underline">
+        Authorize Are.na
+      </a>
       {base64Image && (
         <div className="flex justify-center items-center border-gray-300 bg-gray-200 border aspect-square">
           <img src={base64Image} className="w-full" />

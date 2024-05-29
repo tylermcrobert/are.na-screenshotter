@@ -16,6 +16,7 @@
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"@types/eslint": "^8.56.0",
+		"@types/uuid": "^9.0.8",
 		"@typescript-eslint/eslint-plugin": "^7.0.0",
 		"@typescript-eslint/parser": "^7.0.0",
 		"eslint": "^8.56.0",
@@ -29,5 +30,9 @@
 		"typescript": "^5.0.0",
 		"vite": "^5.0.3"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"@google-cloud/storage": "^7.11.1",
+		"uuid": "^9.0.1"
+	}
 }

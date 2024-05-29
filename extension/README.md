@@ -1,43 +1,33 @@
-# Screenshot Extension manifest v3
+This is a [Plasmo extension](https://docs.plasmo.com/) project bootstrapped with [`plasmo init`](https://www.npmjs.com/package/plasmo).
 
-This is a repository for Tab Capture, a Chrome extension that allows you to capture screenshots of web pages and display them within the extension popup.
+## Getting Started
 
-## Description
+First, run the development server:
 
-The Project Name Chrome extension leverages the power of Chrome's extension capabilities to provide a simple way to capture screenshots of web pages and view them directly in the extension's popup. The extension utilizes the `chrome.tabs.captureVisibleTab` API to capture the visible area of the active tab and displays the captured screenshot .
+```bash
+pnpm dev
+# or
+npm run dev
+```
 
-## Features
+Open your browser and load the appropriate development build. For example, if you are developing for the chrome browser, using manifest v3, use: `build/chrome-mv3-dev`.
 
-- Capture screenshots of web pages with a single click
-- Display the captured screenshots within the extension popup
-- Easy-to-use interface
+You can start editing the popup by modifying `popup.tsx`. It should auto-update as you make changes. To add an options page, simply add a `options.tsx` file to the root of the project, with a react component default exported. Likewise to add a content page, add a `content.ts` file to the root of the project, importing some module and do some logic, then reload the extension on your browser.
 
-## Installation
+For further guidance, [visit our Documentation](https://docs.plasmo.com/)
 
-1. Clone or download the repository.
-2. Open the Chrome browser and go to `chrome://extensions`.
-3. Enable "Developer mode" in the top right corner.
-4. Click on "Load unpacked" and select the folder containing the extension files.
-5. The Project Name extension will be added to your Chrome browser.
+## Making production build
 
-## Usage
+Run the following:
 
-1. Click on the Project Name extension icon in the Chrome toolbar.
-2. Click the "Capture Screenshot" button to capture a screenshot of the active tab.
-3. The captured screenshot will be displayed within the extension popup.
-4. Enjoy browsing and capturing screenshots effortlessly!
+```bash
+pnpm build
+# or
+npm run build
+```
 
-## Feedback and Contributions
+This should create a production bundle for your extension, ready to be zipped and published to the stores.
 
-Any feedback or contributions are highly appreciated! If you have any suggestions, bug reports, or feature requests, please open an issue on this repository.
+## Submit to the webstores
 
-## About the Author
-
-This project is developed by [CodedBrainy](https://www.codedbrainy.com), a platform dedicated to providing valuable information and resources on coding, web development, and technology.
-
-Visit [CodedBrainy.com](https://www.codedbrainy.com) to explore more informative articles, tutorials, and resources related to web development and programming.
-Visit [link](https://www.codedbrainy.com/chrome-extension-development-tutorial-capture-tab/) to read the blog
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
+The easiest way to deploy your Plasmo extension is to use the built-in [bpp](https://bpp.browser.market) GitHub action. Prior to using this action however, make sure to build your extension and upload the first version to the store to establish the basic credentials. Then, simply follow [this setup instruction](https://docs.plasmo.com/framework/workflows/submit) and you should be on your way for automated submission!

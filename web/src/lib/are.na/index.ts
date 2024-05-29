@@ -21,6 +21,6 @@ export async function postItem() {
 		return data;
 	} catch (e) {
 		console.log(e);
-		throw new Error('Failed to post item');
+		throw new Error('Failed to post item to are.na');
 	}
 }

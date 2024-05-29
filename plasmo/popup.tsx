@@ -20,27 +20,19 @@ function IndexPopup() {
   }, [])
 
   return (
-    <div
-      style={{
-        padding: 0
-      }}>
-      {loading ? <div>Loading...</div> : null}
-
+    <div className="flex flex-col gap-2 p-2 w-60">
       {base64Image && (
-        <div
-          style={{
-            width: "200px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "black",
-            padding: 8
-          }}>
-          <img src={base64Image} style={{ width: "100%" }} />
+        <div className="flex justify-center items-center border-gray-300 bg-gray-200 border aspect-square">
+          <img src={base64Image} className="w-full" />
         </div>
       )}
 
-      <button onClick={screenshot}>Take screenshot</button>
+      <button
+        onClick={screenshot}
+        disabled={loading}
+        className="border-gray-200 p-2 border w-full font-bold text-center">
+        Take screenshot
+      </button>
     </div>
   )
 }

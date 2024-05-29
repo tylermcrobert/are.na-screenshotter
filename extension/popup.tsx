@@ -123,7 +123,7 @@ function IndexPopup() {
         onClick={postToArena}
         disabled={loading}
         className="border-gray-200 p-2 border w-full font-bold text-center">
-        {!loading ? "Take screenshot" : "Loading..."}
+        {!loading ? "Upload to Are.na" : "Loading..."}
       </button>
 
       {blockId && (

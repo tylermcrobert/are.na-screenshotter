@@ -22,6 +22,7 @@ export async function GET({ request, url }) {
 		const response = {
 			success: true,
 			data: {
+				forwardedFor: request.headers.get('x-forwarded-for'),
 				referrer: request.headers.get('referrer'),
 				referrerPolicy: request.headers.get('referrerPolicy'),
 				screenshotPublicUrl,

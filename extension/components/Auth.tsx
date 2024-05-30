@@ -1,14 +1,32 @@
-import { AUTH_URL } from "~constants"
+type AuthProps = {
+  onAuth: (auth: string) => void
+}
 
-export default function Auth() {
+export default function Auth({ onAuth }: AuthProps) {
+  function launchOAuthFlow() {
+    const manifest = chrome.runtime.getManifest()
+    const redirectUri = chrome.identity.getRedirectURL()
+
+    const oAuthUrl = `http://dev.are.na/oauth/authorize?client_id=${manifest.oauth2.client_id}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code`
+
+    chrome.identity.launchWebAuthFlow(
+      { interactive: true, url: oAuthUrl },
+      (redirectedUrl) => {
+        const url = new URL(redirectedUrl)
+        const code = url.searchParams.get("code")
+
+        chrome.storage.local.set({ auth: code }, () => {
+          onAuth(code)
+        })
+      }
+    )
+  }
+
   return (
     <div className="flex flex-col justify-center items-center gap-2 p-2 w-full min-h-40">
-      <a
-        href={AUTH_URL.toString()}
-        target="_blank"
-        className="text-center underline">
-        Authorize Are.na
-      </a>
+      <button onClick={launchOAuthFlow} className="underline">
+        Authorize Are.na Screenshotter
+      </button>
     </div>
   )
 }

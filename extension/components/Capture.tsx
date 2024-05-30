@@ -14,6 +14,8 @@ export default function Capture() {
   const [error, setError] = useState<string | null>(null)
   const [isSuccess, setSuccess] = useState(false)
 
+  const hostName = originUrl ? new URL(originUrl).hostname.toString() : null
+
   /**
    * Captures a screenshot
    */
@@ -36,6 +38,9 @@ export default function Capture() {
     })
   }, [])
 
+  /**
+   * Clears the current state
+   */
   function clear() {
     setSuccess(null)
     setBase64Image(null)
@@ -49,24 +54,21 @@ export default function Capture() {
           <img src={base64Image} className="w-16" />
           <div>
             <div className="font-bold">{originTitle}</div>
-            <div className="text-gray-4">
-              {" "}
-              {originUrl ? new URL(originUrl).hostname.toString() : null}
-            </div>
+            <div className="text-gray-4">{hostName}</div>
           </div>
         </div>
 
         <div className="flex gap-2">
-          <button className="w-full btn" onClick={clear}>
-            Take another &rarr;
-          </button>
-
           <a
             href={`https://are.na/channel/${FPO_CHANNEL_ID}`}
             className="w-full btn"
             target="_blank">
             View channel
           </a>
+
+          <button className="w-full btn" onClick={clear}>
+            Take another &rarr;
+          </button>
         </div>
       </div>
     )
@@ -75,7 +77,7 @@ export default function Capture() {
   return (
     <div className="flex flex-col my-2">
       <ImageDisplay image={base64Image} />
-      <CaptureMeta url={originUrl} title={originTitle} />
+      <CaptureMeta hostName={hostName} title={originTitle} />
       <Channels onError={(err) => setError(err)} />
       <ButtonRow
         image={base64Image}

@@ -19,7 +19,7 @@ export default function ButtonRow({
   onSuccess,
   captureScreenshot
 }: ButtonRowProps) {
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
 
   /**
    * Posts the screenshot to Are.na
@@ -62,11 +62,11 @@ export default function ButtonRow({
 
   return (
     <div className="flex gap-2 py-2">
-      <button className="w-full btn" onClick={postToArena}>
-        {!loading ? <>Connect &rarr;</> : "Loading..."}
-      </button>
       <button className="w-full btn" onClick={captureScreenshot}>
         Retake
+      </button>
+      <button className="w-full btn" onClick={postToArena}>
+        {!loading ? <>Connect &rarr;</> : "Loading..."}
       </button>
     </div>
   )

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 
 import { ARENA_API_URL } from "~constants"
 
+import CaptureMeta from "./CaptureMeta"
 import Channels from "./Channels"
 import ImageDisplay from "./ImageDisplay"
 
@@ -118,14 +119,7 @@ export default function Capture() {
   return (
     <div className="flex flex-col my-2">
       <ImageDisplay image={base64Image} />
-
-      <div className="border-gray-2 border-y py-5 text-center">
-        <div className="font-bold">{originTitle}</div>
-        <div className="text-gray-4">
-          {originUrl ? new URL(originUrl).hostname.toString() : null}
-        </div>
-      </div>
-
+      <CaptureMeta url={originUrl} title={originTitle} />
       <Channels onError={(err) => setError(err)} />
 
       <div className="flex gap-2 py-2">

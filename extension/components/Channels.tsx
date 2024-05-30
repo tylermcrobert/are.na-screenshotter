@@ -63,7 +63,7 @@ export default function Channels({
   }, [])
 
   return (
-    <div className="relative flex flex-col border-b border-b-gray-2 divide-y divide-gray-2 h-[120px]">
+    <div className="relative flex flex-col border-b border-b-gray-2 divide-y divide-gray-1 h-[120px]">
       {loading && (
         <div className="absolute inset-0 flex justify-center items-center bg-white">
           Loading...
@@ -73,15 +73,18 @@ export default function Channels({
       {channels.length
         ? channels.map((item) => (
             <label
-              className="flex flex-1 items-center hover:bg-gray-1 cursor-pointer"
+              className="flex flex-1 items-center gap-2 hover:bg-gray-1 cursor-pointer"
               key={item.id}>
               <input
+                hidden
                 type="radio"
-                className=""
+                className="peer"
                 onChange={() => setCurrentChannel(item.id)}
                 checked={currentChannelId === item.id}
               />
-              {item.title}
+
+              <div className="border-gray-3 peer-checked:border-gray-7 peer-checked:bg-gray-7 border w-2.5 h-2.5"></div>
+              <div className="flex-1 text-gray-5">{item.title}</div>
             </label>
           ))
         : null}

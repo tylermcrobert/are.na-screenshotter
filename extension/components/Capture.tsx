@@ -74,7 +74,7 @@ export default function Capture() {
   }
 
   return (
-    <div className="flex flex-col my-2">
+    <div className="flex flex-col">
       <ImageDisplay image={base64Image} />
       <CaptureMeta hostName={hostName} title={originTitle} />
       <Channels

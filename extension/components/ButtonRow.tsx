@@ -63,7 +63,7 @@ export default function ButtonRow({
   }
 
   return (
-    <div className="flex gap-2 py-2">
+    <div className="flex gap-2 my-3">
       <button className="w-full btn" onClick={captureScreenshot}>
         Retake
       </button>

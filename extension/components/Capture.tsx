@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react"
 
-const FPO_CHANNEL_ID = "tests-twjgqznfouc"
+const FPO_CHANNEL_ID = "screenshotter-test"
 const ARENA_API_URL = "http://localhost:5173/api/are.na"
+
 export default function Capture() {
   const [loading, setLoading] = useState(true)
   const [base64Image, setBase64Image] = useState<string | null>(null)

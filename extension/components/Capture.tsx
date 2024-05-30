@@ -95,42 +95,57 @@ export default function Capture() {
     captureScreenshot()
   }
 
+  if (blockId) {
+    return (
+      <div className="py-2 min-h-60">
+        <div className="flex items-center gap-2">
+          <img src={base64Image} className="w-16" />
+          <div>
+            <div className="font-bold">{originTitle}</div>
+            <div className="text-gray-4">
+              {" "}
+              {originUrl ? new URL(originUrl).hostname.toString() : null}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex gap-2">
+          <button className="w-full btn" onClick={clear}>
+            Take another &rarr;
+          </button>
+
+          <a
+            href={`https://are.na/channel/${FPO_CHANNEL_ID}`}
+            className="w-full btn"
+            target="_blank">
+            View channel
+          </a>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex justify-center items-center border-gray-3 bg-gray-1 border aspect-square">
+    <div className="flex flex-col">
+      <div className="flex justify-center items-center h-[300px]">
         {base64Image && <img src={base64Image} className="w-full" />}
       </div>
 
-      {!blockId ? (
-        <div className="flex flex-col items-center gap-1">
-          <button
-            onClick={postToArena}
-            disabled={loading}
-            className="border-gray-3 p-2 border w-full font-bold text-center">
-            {!loading ? <>Upload to Are.na &rarr;</> : "Loading..."}
-          </button>
-          <button className="text-gray-4 underline" onClick={captureScreenshot}>
-            Retake
-          </button>
+      <div className="border-gray-2 border-y py-3 text-center">
+        <div className="font-bold">{originTitle}</div>
+        <div className="text-gray-4">
+          {originUrl ? new URL(originUrl).hostname.toString() : null}
         </div>
-      ) : (
-        <div className="border-green-200 bg-green-100 p-2 border text-center text-green-500">
-          <div className="mb-1 font-bold">Uploaded to Are.na!</div>
-          <div>
-            <a
-              href={`https://are.na/channel/${FPO_CHANNEL_ID}`}
-              className="underline"
-              target="_blank">
-              View channel
-            </a>{" "}
-            or{" "}
-            <button className="underline" onClick={clear}>
-              take another
-            </button>
-            .
-          </div>
-        </div>
-      )}
+      </div>
+
+      <div className="flex gap-2 py-2">
+        <button className="w-full btn" onClick={postToArena}>
+          {!loading ? <>Connect &rarr;</> : "Loading..."}
+        </button>
+        <button className="w-full btn" onClick={captureScreenshot}>
+          Retake
+        </button>
+      </div>
 
       {error && <div className="text-center text-red-500">{error}</div>}
     </div>

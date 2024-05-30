@@ -15,7 +15,7 @@ function IndexPopup() {
   }, [])
 
   return (
-    <div className="p-2 w-60">
+    <div className="px-2 w-[270px]">
       {authCode ? <Capture /> : <Auth onAuth={setAuthCode} />}
     </div>
   )

@@ -3,14 +3,19 @@
 @tailwind utilities;
 
 @layer base {
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
   body {
     font-family: Arial, Helvetica, sans-serif;
-    color: #333;
+    @apply text-gray-6 leading-tight text-[12.5px];
   }
 }
 
 @layer components {
   .btn {
-    @apply inline-block bg-gray-1 px-3 py-1 font-bold rounded-[3px] text-gray-6;
+    @apply inline-block bg-gray-1 px-3 py-2 font-bold rounded-[3px] text-gray-6 text-center;
   }
 }

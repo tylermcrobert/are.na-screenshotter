@@ -70,6 +70,6 @@ export async function getUserChannels({
 	userId: string;
 	token: string;
 }) {
-	const url = `${ARENA_API_BASE_URL}/users/${userId}/channels`;
+	const url = `${ARENA_API_BASE_URL}/users/${userId}/channels?per=5`;
 	return fetchApi(url, 'GET', token);
 }

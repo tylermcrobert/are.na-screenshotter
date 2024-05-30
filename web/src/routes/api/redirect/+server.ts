@@ -3,36 +3,43 @@
 import { json } from '@sveltejs/kit';
 import { ZodError, z } from 'zod';
 
-export async function GET({ request, url }) {
+export async function GET({ url }) {
 	try {
 		const data = z
 			.object({
 				redirect: z.string({ message: 'redirect paramater is required.' }),
-				assetId: z.string({ message: 'assetId paramater is required.' })
+				asset: z.string({ message: 'asset paramater is required.' }),
+				timestamp: z.coerce.number({
+					message: 'timestamp paramater is required.'
+				})
 			})
 			.parse(Object.fromEntries(url.searchParams));
 
-		const screenshotPublicUrl = `https://storage.googleapis.com/are-na-screenshots/${data.assetId}`;
+		// if timestamp is older than one minute, return 404
+		const timestamp = data.timestamp;
+		const currentTime = new Date().getTime();
+		const oneMinute = 1 * 60 * 1000;
+		const isOneMinuteOld = currentTime - timestamp > oneMinute;
 
-		const response = {
-			success: true,
-			data: {
-				forwardedFor: request.headers.get('x-forwarded-for'),
-				referrer: request.headers.get('referrer'),
-				referrerPolicy: request.headers.get('referrerPolicy'),
-				screenshotPublicUrl,
-				redirect: data.redirect
-			}
-		};
+		if (isOneMinuteOld) {
+			return new Response(null, {
+				status: 302,
+				headers: {
+					Location: data.redirect
+				}
+			});
+		}
 
-		return new Response(null, {
-			status: 302, // Found/Temporary Redirect
+		const response = await fetch(data.asset);
+		const imageData = await response.arrayBuffer();
+		const contentType = response.headers.get('content-type') || '';
+
+		return new Response(imageData, {
 			headers: {
-				Location: 'https://example.com'
+				'Content-Type': contentType,
+				'Cache-Control': 'max-age=31536000' // 1 year
 			}
 		});
-
-		return json(response, { status: 200 });
 	} catch (error) {
 		if (error instanceof ZodError) {
 			return json(

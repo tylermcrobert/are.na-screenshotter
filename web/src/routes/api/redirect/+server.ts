@@ -15,11 +15,11 @@ export async function GET({ url }) {
 			})
 			.parse(Object.fromEntries(url.searchParams));
 
-		// if timestamp is older than one minute, return 404
 		const timestamp = data.timestamp;
 		const currentTime = new Date().getTime();
-		const oneMinute = 1 * 60 * 1000;
-		const isOneMinuteOld = currentTime - timestamp > oneMinute;
+		// const oneMinute = 1 * 60 * 1000;
+		const tenSeconds = 10 * 1000;
+		const isOneMinuteOld = currentTime - timestamp > tenSeconds;
 
 		if (isOneMinuteOld) {
 			return new Response(null, {

@@ -40,7 +40,6 @@ function getFilename(base64String: string) {
 /**
  * Setup the Google Cloud Storage client.
  */
-
 const storage = new Storage({
 	projectId: GCS_PROJECT_ID,
 	credentials: {
@@ -49,22 +48,20 @@ const storage = new Storage({
 	}
 });
 
-export const snippetsBucket = storage.bucket(GCS_BUCKET_NAME);
-
 /**
- * Upload an image to Google Cloud Storage.
- * @param image
+ * Upload a file to Google Cloud Storage.
  */
 export async function uploadToGcs(filename: string, buffer: Buffer) {
-	/**
-	 * Upload the image to Google Cloud Storage
-	 */
+	const snippetsBucket = storage.bucket(GCS_BUCKET_NAME);
 	const gcsFile = snippetsBucket.file(filename);
 	await gcsFile.save(buffer);
 
 	return gcsFile;
 }
 
+/**
+ * Upload a base64 image to Google Cloud Storage.
+ */
 export function uploadBase64Image(base64String: string) {
 	const buffer = createBuffer(base64String);
 	const filename = getFilename(base64String);

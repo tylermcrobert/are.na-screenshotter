@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { ARENA_PERSONAL_ACCESS_TOKEN } from '$env/static/private';
-import { postItem } from '$lib';
+import { postItem, uploadBase64Image } from '$lib';
 import { json } from '@sveltejs/kit';
 import z from 'zod';
 
@@ -10,15 +10,17 @@ export async function POST({ request }) {
 		const body = z
 			.object({
 				channelId: z.string(),
-				source: z.string(),
+				screenshot: z.string(),
 				description: z.string(),
 				title: z.string()
 			})
 			.parse(await request.json());
 
+		const gcsFile = await uploadBase64Image(body.screenshot);
+
 		const arenaResponse = await postItem({
 			channelId: body.channelId,
-			source: body.source,
+			source: gcsFile.publicUrl(),
 			title: body.title,
 			description: body.description,
 			token: ARENA_PERSONAL_ACCESS_TOKEN

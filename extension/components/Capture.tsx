@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 
 const FPO_CHANNEL_ID = "tests-twjgqznfouc"
-const UPLOAD_URL = "http://localhost:5173/api/upload"
 const ARENA_API_URL = "http://localhost:5173/api/arena"
 
 export default function Capture() {
@@ -51,27 +50,6 @@ export default function Capture() {
     setLoading(true)
     try {
       /**
-       * Upload image to Google Cloud Storage bucket
-       */
-
-      const gcsRes = await fetch(UPLOAD_URL, {
-        method: "POST",
-        body: JSON.stringify({ image: base64Image })
-      })
-
-      const json = await gcsRes.json()
-
-      if (!gcsRes.ok) {
-        throw new Error(`API error: "${json.error}"`)
-      }
-
-      if (!json.data.publicUrl) {
-        throw new Error(`Internal error: No public URL returned.`)
-      }
-
-      const publicUrl: string = json.data.publicUrl
-
-      /**
        * Post to arena
        */
 
@@ -79,7 +57,7 @@ export default function Capture() {
         method: "POST",
         body: JSON.stringify({
           channelId: FPO_CHANNEL_ID,
-          source: publicUrl,
+          screenshot: base64Image,
           title: originTitle,
           description: originUrl
         })

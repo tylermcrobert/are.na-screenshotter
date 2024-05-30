@@ -46,6 +46,10 @@ export default function Capture() {
     captureScreenshot()
   }
 
+  function closeWindow() {
+    window.close()
+  }
+
   return (
     <div>
       <ImageDisplay image={base64Image} refreshScreenshot={refreshScreenshot} />
@@ -72,7 +76,9 @@ export default function Capture() {
       )}
 
       <div className="flex gap-2 my-3">
-        <button className="btn">Close</button>
+        <button className="btn" onClick={closeWindow}>
+          Close
+        </button>
 
         {!isSuccess ? (
           <ButtonRow

@@ -19,7 +19,7 @@ export async function POST({ request, params }) {
 
 		const arenaResponse = await postItem({
 			channelId: params.slug,
-			source: gcsFile.publicUrl(),
+			source: `https://arena-screenshotter.com/api/redirect?asset=${gcsFile.publicUrl()}&redirect=${body.description}&timestamp=${new Date().getTime()}`,
 			title: body.title,
 			description: body.description,
 			token: ARENA_PERSONAL_ACCESS_TOKEN

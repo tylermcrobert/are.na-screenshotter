@@ -46,41 +46,31 @@ export default function Capture() {
     captureScreenshot()
   }
 
-  if (isSuccess) {
-    return (
-      <div className="flex flex-col py-2 h-60">
-        <div className="flex flex-col justify-center items-center gap-2 h-full text-center">
-          <img src={base64Image} className="w-16" />
-          <div>
-            <div className="font-bold text-[15px]">Posted to Lorem Ipsum.</div>
-            <div className="text-gray-4">{hostName}</div>
+  return (
+    <div>
+      <ImageDisplay image={base64Image} refreshScreenshot={refreshScreenshot} />
+
+      {isSuccess ? (
+        <div className="my-10 text-center">
+          <div className="mb-2 font-bold text-[15px]">
+            Posted to Lorem Ipsum.
+          </div>
+          <div className="text-gray-4">
+            <div>{originTitle}</div>
+            <div>{hostName}</div>
           </div>
         </div>
+      ) : (
+        <>
+          <CaptureMeta hostName={hostName} title={originTitle} />
+          <Channels
+            onError={(err) => setError(err)}
+            currentChannelId={currentChannelId}
+            setCurrentChannel={setCurrentChannelId}
+          />
+        </>
+      )}
 
-        <div className="flex gap-2">
-          <button className="btn" onClick={refreshScreenshot}>
-            Close
-          </button>
-          <a
-            href={`https://are.na/channel/${currentChannelId}`}
-            className="w-full btn"
-            target="_blank">
-            View channel &rarr;
-          </a>
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <div className="flex flex-col">
-      <ImageDisplay image={base64Image} refreshScreenshot={refreshScreenshot} />
-      <CaptureMeta hostName={hostName} title={originTitle} />
-      <Channels
-        onError={(err) => setError(err)}
-        currentChannelId={currentChannelId}
-        setCurrentChannel={setCurrentChannelId}
-      />
       <ButtonRow
         image={base64Image}
         originUrl={originUrl}
@@ -90,6 +80,13 @@ export default function Capture() {
         captureScreenshot={captureScreenshot}
         channelId={currentChannelId}
       />
+
+      {/* <a
+        href={`https://are.na/channel/${currentChannelId}`}
+        className="w-full btn"
+        target="_blank">
+        View channel &rarr;
+      </a> */}
 
       {error && <div className="text-center text-red-500">{error}</div>}
     </div>

@@ -5,6 +5,7 @@ import { ZodError, z } from 'zod';
 
 export async function GET({ request, url }) {
 	const isBot = !!request.headers.get('x-forwarded-for');
+	console.log('forwarded for', request.headers.get('x-forwarded-for'));
 
 	try {
 		const data = z

@@ -5,13 +5,39 @@ class ArenaError extends Error {
 	}
 }
 
-/**
- * Posts an item to an Are.na channel.
- * @param channelId - The ID of the Are.na channel.
- * @param source - The source of the item to be posted.
- * @returns A Promise that resolves to the response data from Are.na API.
- * @throws Error if no Are.na channel ID is provided, no source is provided, no personal access token is provided, or if there is a failure in posting the item to Are.na.
- */
+async function fetchApi(
+	url: string,
+	method: string,
+	token: string,
+	body?: object
+) {
+	try {
+		const response = await fetch(url, {
+			method,
+			body: JSON.stringify(body),
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`
+			}
+		});
+
+		const data = await response.json();
+
+		if (!response.ok) {
+			throw new ArenaError(
+				`API request failed: (${data.code}) ${data.message}: ${data.description}`
+			);
+		}
+
+		return data;
+	} catch (e) {
+		if (e instanceof ArenaError) {
+			throw e;
+		} else {
+			throw new ArenaError('Unknown error');
+		}
+	}
+}
 
 export async function postItem({
 	channelId,
@@ -40,36 +66,11 @@ export async function postItem({
 
 	const ARENA_API_URL = `https://api.are.na/v2/channels/${channelId}/blocks`;
 
-	try {
-		const response = await fetch(ARENA_API_URL, {
-			method: 'POST',
-			body: JSON.stringify({
-				source,
-				title,
-				description
-			}),
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${token}`
-			}
-		});
-
-		const data = await response.json();
-
-		if (!response.ok) {
-			throw new ArenaError(
-				`Failed to post item to are.na: (${data.code}) ${data.message}: ${data.description}`
-			);
-		}
-
-		return data;
-	} catch (e) {
-		if (e instanceof ArenaError) {
-			throw e;
-		} else {
-			throw new ArenaError('Unknown error');
-		}
-	}
+	return fetchApi(ARENA_API_URL, 'POST', token, {
+		source,
+		title,
+		description
+	});
 }
 
 export async function getUserChannels({
@@ -80,30 +81,5 @@ export async function getUserChannels({
 	token: string;
 }) {
 	const ARENA_API_URL = `https://api.are.na/v2/users/${userId}/channels`;
-
-	try {
-		const response = await fetch(ARENA_API_URL, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${token}`
-			}
-		});
-
-		const data = await response.json();
-
-		if (!response.ok) {
-			throw new ArenaError(
-				`Failed to get user channels: (${data.code}) ${data.message}: ${data.description}`
-			);
-		}
-
-		return data;
-	} catch (e) {
-		if (e instanceof ArenaError) {
-			throw e;
-		} else {
-			throw new ArenaError('Unknown error');
-		}
-	}
+	return fetchApi(ARENA_API_URL, 'GET', token);
 }

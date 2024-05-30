@@ -52,7 +52,7 @@ export default function Capture() {
 
       {isSuccess ? (
         <div className="my-10 text-center">
-          <div className="mb-2 font-bold text-[15px]">
+          <div className="mb-1 font-bold text-[15px]">
             Posted to Lorem Ipsum.
           </div>
           <div className="text-gray-4">
@@ -71,22 +71,27 @@ export default function Capture() {
         </>
       )}
 
-      <ButtonRow
-        image={base64Image}
-        originUrl={originUrl}
-        originTitle={originTitle}
-        onError={(err) => setError(err)}
-        onSuccess={() => setSuccess(true)}
-        captureScreenshot={captureScreenshot}
-        channelId={currentChannelId}
-      />
+      <div className="flex gap-2 my-3">
+        <button className="btn">Close</button>
 
-      {/* <a
-        href={`https://are.na/channel/${currentChannelId}`}
-        className="w-full btn"
-        target="_blank">
-        View channel &rarr;
-      </a> */}
+        {!isSuccess ? (
+          <ButtonRow
+            image={base64Image}
+            originUrl={originUrl}
+            originTitle={originTitle}
+            onError={(err) => setError(err)}
+            onSuccess={() => setSuccess(true)}
+            channelId={currentChannelId}
+          />
+        ) : (
+          <a
+            href={`https://are.na/channel/${currentChannelId}`}
+            className="w-full btn"
+            target="_blank">
+            View channel &rarr;
+          </a>
+        )}
+      </div>
 
       {error && <div className="text-center text-red-500">{error}</div>}
     </div>

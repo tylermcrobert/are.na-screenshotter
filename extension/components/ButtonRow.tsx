@@ -9,7 +9,6 @@ type ButtonRowProps = {
   channelId: string
   onError: (error: string) => void
   onSuccess: () => void
-  captureScreenshot: () => void
 }
 
 export default function ButtonRow({
@@ -18,8 +17,7 @@ export default function ButtonRow({
   originTitle,
   channelId,
   onError,
-  onSuccess,
-  captureScreenshot
+  onSuccess
 }: ButtonRowProps) {
   const [loading, setLoading] = useState(false)
 
@@ -63,11 +61,8 @@ export default function ButtonRow({
   }
 
   return (
-    <div className="flex gap-2 my-3">
-      <button className="btn">Close</button>
-      <button className="w-full btn" onClick={postToArena}>
-        {!loading ? <>Connect &rarr;</> : "Loading..."}
-      </button>
-    </div>
+    <button className="w-full btn" onClick={postToArena}>
+      {!loading ? <>Connect &rarr;</> : "Loading..."}
+    </button>
   )
 }

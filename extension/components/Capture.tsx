@@ -1,69 +1,25 @@
 import { useEffect, useState } from "react"
 
-import { ARENA_API_URL } from "~constants"
+import { FPO_CHANNEL_ID } from "~constants"
 
+import ButtonRow from "./ButtonRow"
 import CaptureMeta from "./CaptureMeta"
 import Channels from "./Channels"
 import ImageDisplay from "./ImageDisplay"
 
-const FPO_CHANNEL_ID = "screenshotter-test"
-
 export default function Capture() {
-  const [loading, setLoading] = useState(true)
   const [base64Image, setBase64Image] = useState<string | null>(null)
   const [originTitle, setOriginTitle] = useState<string | null>(null)
   const [originUrl, setOriginUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [blockId, setBlockId] = useState<number | null>(null)
+  const [isSuccess, setSuccess] = useState(false)
 
   /**
    * Captures a screenshot
    */
   async function captureScreenshot() {
-    setLoading(true)
-
     const screenshot = await chrome.tabs.captureVisibleTab()
-
     setBase64Image(screenshot)
-    setLoading(false)
-  }
-
-  /**
-   * Posts the screenshot to Are.na
-   */
-  async function postToArena() {
-    setLoading(true)
-
-    try {
-      const url = `${ARENA_API_URL}/channels/${FPO_CHANNEL_ID}`
-
-      const arenaResponse = await fetch(url, {
-        method: "POST",
-        body: JSON.stringify({
-          screenshot: base64Image,
-          title: originTitle,
-          description: originUrl
-        })
-      })
-
-      const arenaJson = await arenaResponse.json()
-
-      if (!arenaResponse.ok) {
-        const errorMessage = arenaJson
-          ? `API Error: "${arenaJson.error}"`
-          : "An unexpected error occurred posting to Are.na."
-
-        throw new Error(errorMessage)
-      }
-
-      setBlockId(arenaJson.data.id)
-      setLoading(false)
-      setError(null)
-    } catch (e) {
-      console.log(e)
-      setLoading(false)
-      setError(e.message ? e.message : "An unexpected error occurred.")
-    }
   }
 
   /**
@@ -81,12 +37,12 @@ export default function Capture() {
   }, [])
 
   function clear() {
-    setBlockId(null)
+    setSuccess(null)
     setBase64Image(null)
     captureScreenshot()
   }
 
-  if (blockId) {
+  if (isSuccess) {
     return (
       <div className="py-2 min-h-60">
         <div className="flex items-center gap-2">
@@ -121,15 +77,14 @@ export default function Capture() {
       <ImageDisplay image={base64Image} />
       <CaptureMeta url={originUrl} title={originTitle} />
       <Channels onError={(err) => setError(err)} />
-
-      <div className="flex gap-2 py-2">
-        <button className="w-full btn" onClick={postToArena}>
-          {!loading ? <>Connect &rarr;</> : "Loading..."}
-        </button>
-        <button className="w-full btn" onClick={captureScreenshot}>
-          Retake
-        </button>
-      </div>
+      <ButtonRow
+        image={base64Image}
+        originUrl={originUrl}
+        originTitle={originTitle}
+        onError={(err) => setError(err)}
+        onSuccess={() => setSuccess(true)}
+        captureScreenshot={captureScreenshot}
+      />
 
       {error && <div className="text-center text-red-500">{error}</div>}
     </div>

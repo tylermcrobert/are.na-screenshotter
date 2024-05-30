@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react"
 
+import { ARENA_API_URL } from "~constants"
+
+import Channels from "./Channels"
+
 const FPO_CHANNEL_ID = "screenshotter-test"
-const ARENA_API_URL = "http://localhost:5173/api/are.na"
 
 export default function Capture() {
   const [loading, setLoading] = useState(true)
@@ -10,7 +13,6 @@ export default function Capture() {
   const [originUrl, setOriginUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [blockId, setBlockId] = useState<number | null>(null)
-  const [channels, setChannels] = useState<{ title: string }[] | null>(null)
 
   /**
    * Captures a screenshot
@@ -22,45 +24,6 @@ export default function Capture() {
 
     setBase64Image(screenshot)
     setLoading(false)
-  }
-
-  /**
-   * Gets the user's channels
-   */
-  async function getChannels() {
-    setLoading(true)
-    try {
-      /**
-       * Post to arena
-       */
-
-      const arenaResponse = await fetch(
-        `${ARENA_API_URL}/users/tyler-mcrobert/channels`,
-        { method: "GET" }
-      )
-
-      const arenaJson = await arenaResponse.json()
-
-      /**
-       * Throw error
-       */
-      if (!arenaResponse.ok) {
-        const errorMessage = arenaJson.error
-          ? `API Error: "${arenaJson.error}"`
-          : "An unexpected error occurred posting to Are.na."
-
-        throw new Error(errorMessage)
-      }
-
-      setChannels(arenaJson.data.channels)
-    } catch (e) {
-      /**
-       * Catch error
-       */
-      console.log(e)
-      setLoading(false)
-      setError(e.message ? e.message : "An unexpected error occurred.")
-    }
   }
 
   /**
@@ -106,7 +69,6 @@ export default function Capture() {
    */
   useEffect(() => {
     captureScreenshot()
-    getChannels()
 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs[0]) {
@@ -165,13 +127,7 @@ export default function Capture() {
         </div>
       </div>
 
-      {channels && (
-        <div>
-          {channels.map((item) => (
-            <div className="p-1 border-b">{item.title}</div>
-          ))}
-        </div>
-      )}
+      <Channels onError={(err) => setError(err)} />
 
       <div className="flex gap-2 py-2">
         <button className="w-full btn" onClick={postToArena}>

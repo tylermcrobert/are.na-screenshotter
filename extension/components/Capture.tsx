@@ -10,6 +10,7 @@ export default function Capture() {
   const [originUrl, setOriginUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [blockId, setBlockId] = useState<number | null>(null)
+  const [channels, setChannels] = useState<{ title: string }[] | null>(null)
 
   /**
    * Captures a screenshot
@@ -29,25 +30,41 @@ export default function Capture() {
     setLoading(false)
   }
 
-  /**
-   * Actions on mount
-   */
-  useEffect(() => {
-    captureScreenshot()
+  async function getChannels() {
+    setLoading(true)
+    try {
+      /**
+       * Post to arena
+       */
 
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (tabs[0]) {
-        setOriginTitle(tabs[0].title)
-        setOriginUrl(tabs[0].url)
+      const arenaResponse = await fetch(
+        `${ARENA_API_URL}/users/tyler-mcrobert/channels`,
+        { method: "GET" }
+      )
+
+      const arenaJson = await arenaResponse.json()
+
+      if (!arenaResponse.ok) {
+        throw new Error(
+          arenaJson.error
+            ? `API Error: "${arenaJson.error}"`
+            : "An unexpected error occurred posting to Are.na."
+        )
       }
-    })
-  }, [])
 
+      setChannels(arenaJson.data.channels)
+    } catch (e) {
+      console.log(e)
+      setLoading(false)
+      setError(e.message ? e.message : "An unexpected error occurred.")
+    }
+  }
   /**
    * Posts the screenshot to Are.na
    */
   async function postToArena() {
     setLoading(true)
+
     try {
       /**
        * Post to arena
@@ -89,6 +106,21 @@ export default function Capture() {
     }
   }
 
+  /**
+   * Actions on mount
+   */
+  useEffect(() => {
+    captureScreenshot()
+    getChannels()
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]) {
+        setOriginTitle(tabs[0].title)
+        setOriginUrl(tabs[0].url)
+      }
+    })
+  }, [])
+
   function clear() {
     setBlockId(null)
     setBase64Image(null)
@@ -126,17 +158,25 @@ export default function Capture() {
   }
 
   return (
-    <div className="flex flex-col">
-      <div className="flex justify-center items-center h-[300px]">
+    <div className="flex flex-col my-2">
+      <div className="flex justify-center items-center bg-black p-3 aspect-square">
         {base64Image && <img src={base64Image} className="w-full" />}
       </div>
 
-      <div className="border-gray-2 border-y py-3 text-center">
+      <div className="border-gray-2 border-y py-5 text-center">
         <div className="font-bold">{originTitle}</div>
         <div className="text-gray-4">
           {originUrl ? new URL(originUrl).hostname.toString() : null}
         </div>
       </div>
+
+      {channels && (
+        <div>
+          {channels.map((item) => (
+            <div className="p-1 border-b">{item.title}</div>
+          ))}
+        </div>
+      )}
 
       <div className="flex gap-2 py-2">
         <button className="w-full btn" onClick={postToArena}>

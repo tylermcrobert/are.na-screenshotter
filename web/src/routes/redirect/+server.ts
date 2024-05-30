@@ -3,8 +3,8 @@
 import { json } from '@sveltejs/kit';
 import { ZodError, z } from 'zod';
 
-export async function GET({ url, request }) {
-	console.log(request);
+export async function GET({ request, url }) {
+	const isBot = !!request.headers.get('x-forwarded-for');
 
 	try {
 		const data = z
@@ -19,6 +19,7 @@ export async function GET({ url, request }) {
 		const response = {
 			success: true,
 			data: {
+				isBot,
 				screenshotPublicUrl,
 				redirect: data.redirect
 			}
@@ -29,7 +30,7 @@ export async function GET({ url, request }) {
 		if (error instanceof ZodError) {
 			return json(
 				{ success: false, error: `${error.errors[0].message}` },
-				{ status: 500 }
+				{ status: 400 }
 			);
 		}
 

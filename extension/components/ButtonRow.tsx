@@ -1,11 +1,12 @@
 import { useState } from "react"
 
-import { ARENA_API_URL, FPO_CHANNEL_ID } from "~constants"
+import { ARENA_API_URL } from "~constants"
 
 type ButtonRowProps = {
   image: string
   originUrl: string
   originTitle: string
+  channelId: string
   onError: (error: string) => void
   onSuccess: () => void
   captureScreenshot: () => void
@@ -15,6 +16,7 @@ export default function ButtonRow({
   image,
   originUrl,
   originTitle,
+  channelId,
   onError,
   onSuccess,
   captureScreenshot
@@ -28,7 +30,7 @@ export default function ButtonRow({
     setLoading(true)
 
     try {
-      const url = `${ARENA_API_URL}/channels/${FPO_CHANNEL_ID}`
+      const url = `${ARENA_API_URL}/channels/${channelId}`
 
       const arenaResponse = await fetch(url, {
         method: "POST",

@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react"
 
-import { FPO_CHANNEL_ID } from "~constants"
-
 import ButtonRow from "./ButtonRow"
 import CaptureMeta from "./CaptureMeta"
 import Channels from "./Channels"
@@ -13,6 +11,7 @@ export default function Capture() {
   const [originUrl, setOriginUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isSuccess, setSuccess] = useState(false)
+  const [currentChannelId, setCurrentChannelId] = useState<string | null>(null)
 
   const hostName = originUrl ? new URL(originUrl).hostname.toString() : null
 
@@ -60,7 +59,7 @@ export default function Capture() {
 
         <div className="flex gap-2">
           <a
-            href={`https://are.na/channel/${FPO_CHANNEL_ID}`}
+            href={`https://are.na/channel/${currentChannelId}`}
             className="w-full btn"
             target="_blank">
             View channel
@@ -78,7 +77,11 @@ export default function Capture() {
     <div className="flex flex-col my-2">
       <ImageDisplay image={base64Image} />
       <CaptureMeta hostName={hostName} title={originTitle} />
-      <Channels onError={(err) => setError(err)} />
+      <Channels
+        onError={(err) => setError(err)}
+        currentChannelId={currentChannelId}
+        setCurrentChannel={setCurrentChannelId}
+      />
       <ButtonRow
         image={base64Image}
         originUrl={originUrl}
@@ -86,6 +89,7 @@ export default function Capture() {
         onError={(err) => setError(err)}
         onSuccess={() => setSuccess(true)}
         captureScreenshot={captureScreenshot}
+        channelId={currentChannelId}
       />
 
       {error && <div className="text-center text-red-500">{error}</div>}

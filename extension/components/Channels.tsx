@@ -3,11 +3,17 @@ import { useEffect, useState } from "react"
 import { ARENA_API_URL } from "../constants"
 
 type ChannelsProps = {
+  currentChannelId: string
   onError: (error: string) => void
+  setCurrentChannel: (channelId: string) => void
 }
 
-export default function Channels({ onError }: ChannelsProps) {
-  const [channels, setChannels] = useState<{ title: string }[]>([])
+export default function Channels({
+  onError,
+  setCurrentChannel,
+  currentChannelId
+}: ChannelsProps) {
+  const [channels, setChannels] = useState<{ title: string; id: string }[]>([])
   const [loading, setLoading] = useState(false)
 
   /**
@@ -15,6 +21,7 @@ export default function Channels({ onError }: ChannelsProps) {
    */
   async function getChannels() {
     setLoading(true)
+
     try {
       /**
        * Post to arena
@@ -27,8 +34,6 @@ export default function Channels({ onError }: ChannelsProps) {
 
       const arenaJson = await arenaResponse.json()
 
-      console.log(arenaJson)
-
       /**
        * Throw error
        */
@@ -40,7 +45,9 @@ export default function Channels({ onError }: ChannelsProps) {
         throw new Error(errorMessage)
       }
 
+      setLoading(false)
       setChannels(arenaJson.data.channels)
+      setCurrentChannel(arenaJson.data.channels[0].id)
     } catch (e) {
       /**
        * Catch error
@@ -53,17 +60,26 @@ export default function Channels({ onError }: ChannelsProps) {
 
   useEffect(() => {
     getChannels()
-  })
-
-  if (!channels.length) {
-    return null
-  }
+  }, [])
 
   return (
     <div>
-      {channels.map((item) => (
-        <div className="p-1 border-b">{item.title}</div>
-      ))}
+      {loading ? "Loading..." : null}
+
+      {channels.length &&
+        channels.map((item) => (
+          <div>
+            <label className="block border-gray-2 py-1 border-b cursor-pointer">
+              <input
+                type="radio"
+                className=""
+                onChange={() => setCurrentChannel(item.id)}
+                checked={currentChannelId === item.id}
+              />
+              {item.title}
+            </label>
+          </div>
+        ))}
     </div>
   )
 }

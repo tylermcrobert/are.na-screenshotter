@@ -5,11 +5,12 @@ import { postItem, uploadBase64Image } from '$lib';
 import { json } from '@sveltejs/kit';
 import z from 'zod';
 
-export async function POST({ request }) {
+export async function POST({ request, params }) {
+	console.log('asdfasfasf');
+
 	try {
 		const body = z
 			.object({
-				channelId: z.string(),
 				screenshot: z.string(),
 				description: z.string(),
 				title: z.string()
@@ -19,7 +20,7 @@ export async function POST({ request }) {
 		const gcsFile = await uploadBase64Image(body.screenshot);
 
 		const arenaResponse = await postItem({
-			channelId: body.channelId,
+			channelId: params.slug,
 			source: gcsFile.publicUrl(),
 			title: body.title,
 			description: body.description,

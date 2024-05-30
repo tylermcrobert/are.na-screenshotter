@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react"
 
 const FPO_CHANNEL_ID = "tests-twjgqznfouc"
-const ARENA_API_URL = "http://localhost:5173/api/arena"
-
+const ARENA_API_URL = "http://localhost:5173/api/are.na"
 export default function Capture() {
   const [loading, setLoading] = useState(true)
   const [base64Image, setBase64Image] = useState<string | null>(null)
@@ -53,15 +52,17 @@ export default function Capture() {
        * Post to arena
        */
 
-      const arenaResponse = await fetch(ARENA_API_URL, {
-        method: "POST",
-        body: JSON.stringify({
-          channelId: FPO_CHANNEL_ID,
-          screenshot: base64Image,
-          title: originTitle,
-          description: originUrl
-        })
-      })
+      const arenaResponse = await fetch(
+        `${ARENA_API_URL}/channels/${FPO_CHANNEL_ID}`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            screenshot: base64Image,
+            title: originTitle,
+            description: originUrl
+          })
+        }
+      )
 
       const arenaJson = await arenaResponse.json()
 

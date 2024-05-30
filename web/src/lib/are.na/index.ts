@@ -54,18 +54,6 @@ export async function postItem({
 	title: string;
 	description: string;
 }) {
-	if (!channelId) {
-		throw new ArenaError('No Are.na channel ID provided.');
-	}
-
-	if (!source) {
-		throw new ArenaError('No Are.na source provided.');
-	}
-
-	if (!token) {
-		throw new ArenaError('No Are.na personal access token provided.');
-	}
-
 	const url = `${ARENA_API_BASE_URL}/channels/${channelId}/blocks`;
 
 	return fetchApi(url, 'POST', token, {

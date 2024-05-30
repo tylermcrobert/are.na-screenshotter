@@ -63,13 +63,18 @@ export default function Channels({
   }, [])
 
   return (
-    <div>
-      {loading ? "Loading..." : null}
+    <div className="relative flex flex-col border-b border-b-gray-2 divide-y divide-gray-2 h-[120px]">
+      {loading && (
+        <div className="absolute inset-0 flex justify-center items-center bg-white">
+          Loading...
+        </div>
+      )}
 
-      {channels.length &&
-        channels.map((item) => (
-          <div>
-            <label className="block border-gray-2 py-1 border-b cursor-pointer">
+      {channels.length
+        ? channels.map((item) => (
+            <label
+              className="flex flex-1 items-center hover:bg-gray-1 cursor-pointer"
+              key={item.id}>
               <input
                 type="radio"
                 className=""
@@ -78,8 +83,8 @@ export default function Channels({
               />
               {item.title}
             </label>
-          </div>
-        ))}
+          ))
+        : null}
     </div>
   )
 }

@@ -40,7 +40,7 @@ export default function Capture() {
   /**
    * Clears the current state
    */
-  function clear() {
+  function refreshScreenshot() {
     setSuccess(null)
     setBase64Image(null)
     captureScreenshot()
@@ -65,7 +65,7 @@ export default function Capture() {
             View channel
           </a>
 
-          <button className="w-full btn" onClick={clear}>
+          <button className="w-full btn" onClick={refreshScreenshot}>
             Take another &rarr;
           </button>
         </div>
@@ -75,7 +75,7 @@ export default function Capture() {
 
   return (
     <div className="flex flex-col">
-      <ImageDisplay image={base64Image} />
+      <ImageDisplay image={base64Image} refreshScreenshot={refreshScreenshot} />
       <CaptureMeta hostName={hostName} title={originTitle} />
       <Channels
         onError={(err) => setError(err)}

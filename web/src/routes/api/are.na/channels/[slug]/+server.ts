@@ -6,8 +6,6 @@ import { json } from '@sveltejs/kit';
 import z from 'zod';
 
 export async function POST({ request, params }) {
-	console.log('asdfasfasf');
-
 	try {
 		const body = z
 			.object({

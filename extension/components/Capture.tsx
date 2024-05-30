@@ -117,7 +117,7 @@ export default function Capture() {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex justify-center items-center border-gray-300 bg-gray-200 border aspect-square">
+      <div className="flex justify-center items-center border-gray-3 bg-gray-1 border aspect-square">
         {base64Image && <img src={base64Image} className="w-full" />}
       </div>
 
@@ -125,8 +125,8 @@ export default function Capture() {
         <button
           onClick={postToArena}
           disabled={loading}
-          className="border-gray-200 p-2 border w-full font-bold text-center">
-          {!loading ? "Upload to Are.na" : "Loading..."}
+          className="border-gray-3 p-2 border w-full font-bold text-center">
+          {!loading ? <>Upload to Are.na &rarr;</> : "Loading..."}
         </button>
       ) : (
         <div className="border-green-200 bg-green-100 p-2 border text-center text-green-500">

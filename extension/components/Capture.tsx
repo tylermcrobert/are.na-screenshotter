@@ -48,26 +48,25 @@ export default function Capture() {
 
   if (isSuccess) {
     return (
-      <div className="py-2 min-h-60">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col py-2 h-60">
+        <div className="flex flex-col justify-center items-center gap-2 h-full text-center">
           <img src={base64Image} className="w-16" />
           <div>
-            <div className="font-bold">{originTitle}</div>
+            <div className="font-bold text-[15px]">Posted to Lorem Ipsum.</div>
             <div className="text-gray-4">{hostName}</div>
           </div>
         </div>
 
         <div className="flex gap-2">
+          <button className="btn" onClick={refreshScreenshot}>
+            Close
+          </button>
           <a
             href={`https://are.na/channel/${currentChannelId}`}
             className="w-full btn"
             target="_blank">
-            View channel
+            View channel &rarr;
           </a>
-
-          <button className="w-full btn" onClick={refreshScreenshot}>
-            Take another &rarr;
-          </button>
         </div>
       </div>
     )

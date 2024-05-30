@@ -64,9 +64,7 @@ export default function ButtonRow({
 
   return (
     <div className="flex gap-2 my-3">
-      <button className="w-full btn" onClick={captureScreenshot}>
-        Retake
-      </button>
+      <button className="btn">Close</button>
       <button className="w-full btn" onClick={postToArena}>
         {!loading ? <>Connect &rarr;</> : "Loading..."}
       </button>

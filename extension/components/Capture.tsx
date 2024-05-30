@@ -117,11 +117,9 @@ export default function Capture() {
 
   return (
     <div className="flex flex-col gap-2">
-      {base64Image && (
-        <div className="flex justify-center items-center border-gray-300 bg-gray-200 border aspect-square">
-          <img src={base64Image} className="w-full" />
-        </div>
-      )}
+      <div className="flex justify-center items-center border-gray-300 bg-gray-200 border aspect-square">
+        {base64Image && <img src={base64Image} className="w-full" />}
+      </div>
 
       {!blockId ? (
         <button

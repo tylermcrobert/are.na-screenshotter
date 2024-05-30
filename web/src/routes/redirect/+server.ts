@@ -4,8 +4,10 @@ import { json } from '@sveltejs/kit';
 import { ZodError, z } from 'zod';
 
 export async function GET({ request, url }) {
-	const isBot = !!request.headers.get('x-forwarded-for');
-	console.log('forwarded for', request.headers.get('x-forwarded-for'));
+	console.log(request, request.headers);
+
+	// const isBot = !!request.headers.get('x-forwarded-for');
+	// console.log('forwarded for', request.headers.get('x-forwarded-for'));
 
 	try {
 		const data = z
@@ -22,7 +24,6 @@ export async function GET({ request, url }) {
 			data: {
 				referrer: request.headers.get('referrer'),
 				referrerPolicy: request.headers.get('referrerPolicy'),
-				isBot,
 				screenshotPublicUrl,
 				redirect: data.redirect
 			}

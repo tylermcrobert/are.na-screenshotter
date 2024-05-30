@@ -3,7 +3,9 @@
 import { json } from '@sveltejs/kit';
 import { ZodError, z } from 'zod';
 
-export async function GET({ url }) {
+export async function GET({ url, request }) {
+	console.log(request.headers);
+
 	try {
 		const data = z
 			.object({

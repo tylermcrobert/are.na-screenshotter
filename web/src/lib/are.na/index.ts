@@ -12,7 +12,7 @@ async function fetchApi(
 	method: 'GET' | 'POST',
 	token: string,
 	body?: object
-): Promise<unknown> {
+): Promise<object> {
 	try {
 		const response = await fetch(url, {
 			method,

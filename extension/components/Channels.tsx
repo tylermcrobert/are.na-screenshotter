@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 
 import { ARENA_API_URL } from "../constants"
+import Spinner from "./Spinner"
 
 type ChannelsProps = {
   currentChannelId: string
@@ -66,7 +67,7 @@ export default function Channels({
     <div className="relative flex flex-col border-b border-b-gray-2 divide-y divide-gray-1 h-[120px]">
       {loading && (
         <div className="absolute inset-0 flex justify-center items-center bg-white">
-          Loading...
+          <Spinner />
         </div>
       )}
 

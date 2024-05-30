@@ -24,8 +24,8 @@ export default function Auth({ onAuth }: AuthProps) {
 
   return (
     <div className="flex flex-col justify-center items-center gap-2 p-2 w-full min-h-40">
-      <button onClick={launchOAuthFlow} className="underline">
-        Authorize Are.na Screenshotter
+      <button onClick={launchOAuthFlow} className="btn">
+        Log in with Are.na →
       </button>
     </div>
   )

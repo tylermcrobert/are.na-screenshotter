@@ -4,11 +4,6 @@ import { json } from '@sveltejs/kit';
 import { ZodError, z } from 'zod';
 
 export async function GET({ request, url }) {
-	console.log(request, request.headers);
-
-	// const isBot = !!request.headers.get('x-forwarded-for');
-	// console.log('forwarded for', request.headers.get('x-forwarded-for'));
-
 	try {
 		const data = z
 			.object({
@@ -29,6 +24,13 @@ export async function GET({ request, url }) {
 				redirect: data.redirect
 			}
 		};
+
+		return new Response(null, {
+			status: 302, // Found/Temporary Redirect
+			headers: {
+				Location: 'https://example.com'
+			}
+		});
 
 		return json(response, { status: 200 });
 	} catch (error) {

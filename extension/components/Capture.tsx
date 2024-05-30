@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { ARENA_API_URL } from "~constants"
 
 import Channels from "./Channels"
+import ImageDisplay from "./ImageDisplay"
 
 const FPO_CHANNEL_ID = "screenshotter-test"
 
@@ -116,9 +117,7 @@ export default function Capture() {
 
   return (
     <div className="flex flex-col my-2">
-      <div className="flex justify-center items-center bg-black p-3 aspect-square">
-        {base64Image && <img src={base64Image} className="w-full" />}
-      </div>
+      <ImageDisplay image={base64Image} />
 
       <div className="border-gray-2 border-y py-5 text-center">
         <div className="font-bold">{originTitle}</div>

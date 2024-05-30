@@ -17,9 +17,8 @@ export async function GET({ url }) {
 
 		const timestamp = data.timestamp;
 		const currentTime = new Date().getTime();
-		// const oneMinute = 1 * 60 * 1000;
-		const tenSeconds = 10 * 1000;
-		const isOneMinuteOld = currentTime - timestamp > tenSeconds;
+		const oneSecond = 1 * 1000;
+		const isOneMinuteOld = currentTime - timestamp > oneSecond;
 
 		if (isOneMinuteOld) {
 			return new Response(null, {

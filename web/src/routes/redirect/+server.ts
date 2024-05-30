@@ -20,6 +20,8 @@ export async function GET({ request, url }) {
 		const response = {
 			success: true,
 			data: {
+				referrer: request.headers.get('referrer'),
+				referrerPolicy: request.headers.get('referrerPolicy'),
 				isBot,
 				screenshotPublicUrl,
 				redirect: data.redirect

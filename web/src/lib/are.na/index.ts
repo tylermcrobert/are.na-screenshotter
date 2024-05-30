@@ -71,3 +71,39 @@ export async function postItem({
 		}
 	}
 }
+
+export async function getUserChannels({
+	userId,
+	token
+}: {
+	userId: string;
+	token: string;
+}) {
+	const ARENA_API_URL = `https://api.are.na/v2/users/${userId}/channels`;
+
+	try {
+		const response = await fetch(ARENA_API_URL, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`
+			}
+		});
+
+		const data = await response.json();
+
+		if (!response.ok) {
+			throw new ArenaError(
+				`Failed to get user channels: (${data.code}) ${data.message}: ${data.description}`
+			);
+		}
+
+		return data;
+	} catch (e) {
+		if (e instanceof ArenaError) {
+			throw e;
+		} else {
+			throw new ArenaError('Unknown error');
+		}
+	}
+}

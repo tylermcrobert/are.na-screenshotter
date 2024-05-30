@@ -1,3 +1,5 @@
+const ARENA_API_BASE_URL = 'https://api.are.na/v2';
+
 class ArenaError extends Error {
 	constructor(message?: string) {
 		super(message);
@@ -7,10 +9,10 @@ class ArenaError extends Error {
 
 async function fetchApi(
 	url: string,
-	method: string,
+	method: 'GET' | 'POST',
 	token: string,
 	body?: object
-) {
+): Promise<unknown> {
 	try {
 		const response = await fetch(url, {
 			method,
@@ -64,9 +66,9 @@ export async function postItem({
 		throw new ArenaError('No Are.na personal access token provided.');
 	}
 
-	const ARENA_API_URL = `https://api.are.na/v2/channels/${channelId}/blocks`;
+	const url = `${ARENA_API_BASE_URL}/channels/${channelId}/blocks`;
 
-	return fetchApi(ARENA_API_URL, 'POST', token, {
+	return fetchApi(url, 'POST', token, {
 		source,
 		title,
 		description
@@ -80,6 +82,6 @@ export async function getUserChannels({
 	userId: string;
 	token: string;
 }) {
-	const ARENA_API_URL = `https://api.are.na/v2/users/${userId}/channels`;
-	return fetchApi(ARENA_API_URL, 'GET', token);
+	const url = `${ARENA_API_BASE_URL}/users/${userId}/channels`;
+	return fetchApi(url, 'GET', token);
 }

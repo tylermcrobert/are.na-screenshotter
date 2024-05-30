@@ -20,16 +20,13 @@ export default function Capture() {
 
     const screenshot = await chrome.tabs.captureVisibleTab()
 
-    if (!screenshot) {
-      setLoading(false)
-      setError("Failed to capture screenshot.")
-      return
-    }
-
     setBase64Image(screenshot)
     setLoading(false)
   }
 
+  /**
+   * Gets the user's channels
+   */
   async function getChannels() {
     setLoading(true)
     try {
@@ -44,21 +41,28 @@ export default function Capture() {
 
       const arenaJson = await arenaResponse.json()
 
+      /**
+       * Throw error
+       */
       if (!arenaResponse.ok) {
-        throw new Error(
-          arenaJson.error
-            ? `API Error: "${arenaJson.error}"`
-            : "An unexpected error occurred posting to Are.na."
-        )
+        const errorMessage = arenaJson.error
+          ? `API Error: "${arenaJson.error}"`
+          : "An unexpected error occurred posting to Are.na."
+
+        throw new Error(errorMessage)
       }
 
       setChannels(arenaJson.data.channels)
     } catch (e) {
+      /**
+       * Catch error
+       */
       console.log(e)
       setLoading(false)
       setError(e.message ? e.message : "An unexpected error occurred.")
     }
   }
+
   /**
    * Posts the screenshot to Are.na
    */
@@ -66,35 +70,26 @@ export default function Capture() {
     setLoading(true)
 
     try {
-      /**
-       * Post to arena
-       */
+      const url = `${ARENA_API_URL}/channels/${FPO_CHANNEL_ID}`
 
-      const arenaResponse = await fetch(
-        `${ARENA_API_URL}/channels/${FPO_CHANNEL_ID}`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            screenshot: base64Image,
-            title: originTitle,
-            description: originUrl
-          })
-        }
-      )
+      const arenaResponse = await fetch(url, {
+        method: "POST",
+        body: JSON.stringify({
+          screenshot: base64Image,
+          title: originTitle,
+          description: originUrl
+        })
+      })
 
       const arenaJson = await arenaResponse.json()
 
       if (!arenaResponse.ok) {
-        throw new Error(
-          arenaJson.error
-            ? `API Error: "${arenaJson.error}"`
-            : "An unexpected error occurred posting to Are.na."
-        )
-      }
+        const errorMessage = arenaJson
+          ? `API Error: "${arenaJson.error}"`
+          : "An unexpected error occurred posting to Are.na."
 
-      /**
-       * Handle resulting state
-       */
+        throw new Error(errorMessage)
+      }
 
       setBlockId(arenaJson.data.id)
       setLoading(false)

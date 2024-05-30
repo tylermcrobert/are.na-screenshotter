@@ -122,12 +122,17 @@ export default function Capture() {
       </div>
 
       {!blockId ? (
-        <button
-          onClick={postToArena}
-          disabled={loading}
-          className="border-gray-3 p-2 border w-full font-bold text-center">
-          {!loading ? <>Upload to Are.na &rarr;</> : "Loading..."}
-        </button>
+        <div className="flex flex-col items-center gap-1">
+          <button
+            onClick={postToArena}
+            disabled={loading}
+            className="border-gray-3 p-2 border w-full font-bold text-center">
+            {!loading ? <>Upload to Are.na &rarr;</> : "Loading..."}
+          </button>
+          <button className="text-gray-4 underline" onClick={captureScreenshot}>
+            Retake
+          </button>
+        </div>
       ) : (
         <div className="border-green-200 bg-green-100 p-2 border text-center text-green-500">
           <div className="mb-1 font-bold">Uploaded to Are.na!</div>

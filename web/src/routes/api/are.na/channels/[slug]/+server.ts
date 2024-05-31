@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { ARENA_PERSONAL_ACCESS_TOKEN } from '$env/static/private';
-import { uploadBase64Image } from '$lib';
+import { uploadBase64Image } from '$lib/upload';
 import { ArenaScreenshotter } from '$lib/ArenaScreenshotter.js';
 import { json } from '@sveltejs/kit';
 import z, { ZodError } from 'zod';

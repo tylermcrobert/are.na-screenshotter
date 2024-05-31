@@ -73,3 +73,14 @@ export async function getUserChannels({
 	const url = `${ARENA_API_BASE_URL}/users/${userId}/channels?per=5`;
 	return fetchApi(url, 'GET', token);
 }
+
+export async function searchChannels({
+	q,
+	token
+}: {
+	q: string;
+	token: string;
+}) {
+	const url = `${ARENA_API_BASE_URL}/search/channels?q=${q}`;
+	return fetchApi(url, 'GET', token);
+}

@@ -6,10 +6,6 @@ export type APIChannel = Pick<
 >;
 
 export type APIChannelsResult = {
-	success: boolean;
-	data: {
-		length: number;
-		term: string;
-		channels: APIChannel[];
-	};
+	length: number;
+	channels: APIChannel[];
 };

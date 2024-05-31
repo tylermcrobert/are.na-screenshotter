@@ -13,8 +13,8 @@ export async function POST({ request, params }) {
 				screenshot: z
 					.string()
 					.min(1, { message: 'Base64 screenshot is required' }),
-				url: z.string().min(1, { message: 'URL is required' }),
-				title: z.string().min(1, { message: 'Title is required' })
+				originUrl: z.string().min(1, { message: 'URL is required' }),
+				originTitle: z.string().min(1, { message: 'Title is required' })
 			})
 			.parse(await request.json());
 
@@ -22,9 +22,9 @@ export async function POST({ request, params }) {
 
 		const arena = new ArenaScreenshotter(ARENA_PERSONAL_ACCESS_TOKEN);
 		const item = await arena.postItem(params.slug, {
-			source: `https://arena-screenshotter.com/api/redirect?asset=${gcsFile.publicUrl()}&redirect=${body.url}&timestamp=${new Date().getTime()}`,
-			pageTitle: body.title,
-			pageUrl: body.url
+			source: `https://arena-screenshotter.com/api/redirect?asset=${gcsFile.publicUrl()}&redirect=${body.originUrl}&timestamp=${new Date().getTime()}`,
+			originTitle: body.originTitle,
+			originUrl: body.originUrl
 		});
 
 		return json(item, { status: 200 });

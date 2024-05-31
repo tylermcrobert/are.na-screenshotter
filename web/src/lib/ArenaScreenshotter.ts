@@ -105,16 +105,16 @@ export class ArenaScreenshotter {
 		channelId: string,
 		payload: {
 			source: string;
-			pageTitle: string;
-			pageUrl: string;
+			originTitle: string;
+			originUrl: string;
 		}
 	) {
 		const url = `${ARENA_API_BASE_URL}/channels/${channelId}/blocks`;
 
 		return this.fetchApi('POST', url, {
 			source: payload.source,
-			title: payload.pageTitle,
-			description: payload.pageUrl
+			title: payload.originTitle,
+			description: payload.originUrl
 		});
 	}
 

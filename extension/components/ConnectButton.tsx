@@ -3,7 +3,7 @@ import { useState } from "react"
 import { ARENA_API_URL } from "~constants"
 
 type ButtonRowProps = {
-  image: string
+  screenshot: string
   originUrl: string
   originTitle: string
   channelId: string
@@ -12,7 +12,7 @@ type ButtonRowProps = {
 }
 
 export default function ConnectButton({
-  image,
+  screenshot,
   originUrl,
   originTitle,
   channelId,
@@ -33,9 +33,9 @@ export default function ConnectButton({
       const arenaResponse = await fetch(url, {
         method: "POST",
         body: JSON.stringify({
-          screenshot: image,
-          title: originTitle,
-          description: originUrl
+          screenshot,
+          originUrl,
+          originTitle
         })
       })
 

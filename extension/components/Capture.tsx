@@ -6,7 +6,7 @@ import ConnectButton from "./ConnectButton"
 import ImageDisplay from "./ImageDisplay"
 
 export default function Capture() {
-  const [base64Image, setBase64Image] = useState<string | null>(null)
+  const [screenshot, setScreenshot] = useState<string | null>(null)
   const [originTitle, setOriginTitle] = useState<string | null>(null)
   const [originUrl, setOriginUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -19,8 +19,8 @@ export default function Capture() {
    * Captures a screenshot
    */
   async function captureScreenshot() {
-    const screenshot = await chrome.tabs.captureVisibleTab()
-    setBase64Image(screenshot)
+    const chromeCapture = await chrome.tabs.captureVisibleTab()
+    setScreenshot(chromeCapture)
   }
 
   /**
@@ -42,7 +42,7 @@ export default function Capture() {
    */
   function refreshScreenshot() {
     setSuccess(null)
-    setBase64Image(null)
+    setScreenshot(null)
     captureScreenshot()
   }
 
@@ -52,7 +52,10 @@ export default function Capture() {
 
   return (
     <div>
-      <ImageDisplay image={base64Image} refreshScreenshot={refreshScreenshot} />
+      <ImageDisplay
+        screenshot={screenshot}
+        refreshScreenshot={refreshScreenshot}
+      />
 
       {isSuccess ? (
         <div className="my-10 text-center">
@@ -82,7 +85,7 @@ export default function Capture() {
 
         {!isSuccess ? (
           <ConnectButton
-            image={base64Image}
+            screenshot={screenshot}
             originUrl={originUrl}
             originTitle={originTitle}
             onError={(err) => setError(err)}

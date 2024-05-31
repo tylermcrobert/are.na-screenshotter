@@ -25,6 +25,9 @@ devDependencies:
   '@sveltejs/vite-plugin-svelte':
     specifier: ^3.0.0
     version: 3.1.0(svelte@5.0.0-next.142)(vite@5.2.11)
+  '@types/are.na':
+    specifier: ^0.1.4
+    version: 0.1.4
   '@types/eslint':
     specifier: ^8.56.0
     version: 8.56.10
@@ -643,6 +646,10 @@ packages:
     resolution: {integrity: sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==}
     engines: {node: '>= 10'}
     dev: false
+
+  /@types/are.na@0.1.4:
+    resolution: {integrity: sha512-FBvIOY7Y/rYYWYZhHH+sVXNYr37luAfMXhe/OsJYA4TPCfj2MSVIOsVyKmWK9bgVIZl9Mbok0IAGOp8UwGgkFA==}
+    dev: true
 
   /@types/caseless@0.12.5:
     resolution: {integrity: sha512-hWtVTC2q7hc7xZ/RLbxapMvDMgUnDvKvMOpKal4DrMyfGBUfB1oKaZlIRr6mJL+If3bAP6sV/QneGzF6tJjZDg==}

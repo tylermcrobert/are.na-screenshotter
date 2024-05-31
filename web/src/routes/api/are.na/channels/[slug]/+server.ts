@@ -10,9 +10,11 @@ export async function POST({ request, params }) {
 	try {
 		const body = z
 			.object({
-				screenshot: z.string(),
-				url: z.string(),
-				title: z.string()
+				screenshot: z
+					.string()
+					.min(1, { message: 'Base64 screenshot is required' }),
+				url: z.string().min(1, { message: 'URL is required' }),
+				title: z.string().min(1, { message: 'Title is required' })
 			})
 			.parse(await request.json());
 

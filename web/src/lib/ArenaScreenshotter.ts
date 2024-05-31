@@ -1,6 +1,6 @@
 const ARENA_API_BASE_URL = 'https://api.are.na/v2';
 import type Arena from 'are.na';
-import type { APIChannel, APIChannelsResult } from './types';
+import type { APIChannel, APIChannelsResult } from '../types';
 
 class ArenaError extends Error {
 	constructor(message?: string) {

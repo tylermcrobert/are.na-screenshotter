@@ -91,7 +91,6 @@ export class ArenaScreenshotter {
 		);
 
 		return {
-			length: response.length,
 			channels: channels
 		};
 	}
@@ -134,7 +133,6 @@ export class ArenaScreenshotter {
 		);
 
 		return {
-			length: response.length,
 			channels: channels
 		};
 	}

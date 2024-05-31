@@ -18,12 +18,7 @@ export async function GET({ url }) {
 			token: ARENA_PERSONAL_ACCESS_TOKEN
 		});
 
-		const response = {
-			success: true,
-			data: apiRes
-		};
-
-		return json(response, { status: 200 });
+		return json(apiRes, { status: 200 });
 	} catch (error) {
 		console.error(error);
 

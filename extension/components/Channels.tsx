@@ -9,12 +9,19 @@ type ChannelsProps = {
   setCurrentChannel: (channelId: string) => void
 }
 
+type Channel = {
+  title: string
+  id: string
+  status: string
+  length: number
+}
+
 export default function Channels({
   onError,
   setCurrentChannel,
   currentChannelId
 }: ChannelsProps) {
-  const [channels, setChannels] = useState<{ title: string; id: string }[]>([])
+  const [channels, setChannels] = useState<Channel[]>([])
   const [loading, setLoading] = useState(false)
 
   /**
@@ -74,7 +81,7 @@ export default function Channels({
       {channels.length
         ? channels.map((item) => (
             <label
-              className="flex flex-1 items-center gap-2 hover:bg-gray-1 cursor-pointer"
+              className={`flex flex-1 items-center gap-2 hover:bg-status-1 cursor-pointer status-${item.status}`}
               key={item.id}>
               <input
                 hidden
@@ -84,8 +91,9 @@ export default function Channels({
                 checked={currentChannelId === item.id}
               />
 
-              <div className="border-gray-3 peer-checked:border-gray-7 peer-checked:bg-gray-7 border w-2.5 h-2.5"></div>
-              <div className="flex-1 text-gray-5">{item.title}</div>
+              <div className="border-gray-3 peer-checked:border-status-3 peer-checked:bg-status-3 border rounded-full w-2.5 h-2.5"></div>
+              <div className="flex-1 text-status-3">{item.title}</div>
+              <div className="text-gray-4">{item.length} Blocks</div>
             </label>
           ))
         : null}

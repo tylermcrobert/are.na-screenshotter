@@ -11,7 +11,7 @@ type ButtonRowProps = {
   onSuccess: () => void
 }
 
-export default function ButtonRow({
+export default function ConnectButton({
   image,
   originUrl,
   originTitle,

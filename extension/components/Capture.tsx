@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 
-import ButtonRow from "./ButtonRow"
 import CaptureMeta from "./CaptureMeta"
 import Channels from "./Channels"
+import ConnectButton from "./ConnectButton"
 import ImageDisplay from "./ImageDisplay"
 
 export default function Capture() {
@@ -81,7 +81,7 @@ export default function Capture() {
         </button>
 
         {!isSuccess ? (
-          <ButtonRow
+          <ConnectButton
             image={base64Image}
             originUrl={originUrl}
             originTitle={originTitle}

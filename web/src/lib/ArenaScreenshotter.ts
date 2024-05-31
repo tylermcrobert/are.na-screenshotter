@@ -2,10 +2,10 @@ const ARENA_API_BASE_URL = 'https://api.are.na/v2';
 import type Arena from 'are.na';
 import type { APIChannel, APIChannelsResult } from '../types';
 
-class ArenaError extends Error {
+class ArenaAPIError extends Error {
 	constructor(message?: string) {
 		super(message);
-		this.name = 'ArenaError';
+		this.name = 'ArenaAPIError';
 	}
 }
 
@@ -44,10 +44,10 @@ export class ArenaScreenshotter {
 
 			return data;
 		} catch (e) {
-			if (e instanceof ArenaError) {
+			if (e instanceof ArenaAPIError) {
 				throw e;
 			} else {
-				throw new ArenaError('Unknown error');
+				throw new ArenaAPIError('Unknown error');
 			}
 		}
 	}

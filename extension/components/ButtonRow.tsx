@@ -50,7 +50,6 @@ export default function ButtonRow({
       }
 
       setLoading(false)
-
       onSuccess()
       onError(null)
     } catch (e) {

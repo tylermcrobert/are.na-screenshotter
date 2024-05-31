@@ -3,6 +3,7 @@
 import { ARENA_PERSONAL_ACCESS_TOKEN } from '$env/static/private';
 import { getUserChannels } from '$lib';
 import { json } from '@sveltejs/kit';
+import { ZodError } from 'zod';
 
 export async function GET({ params }) {
 	try {
@@ -19,6 +20,13 @@ export async function GET({ params }) {
 		return json(response, { status: 200 });
 	} catch (error) {
 		console.error(error);
+
+		if (error instanceof ZodError) {
+			return json(
+				{ success: false, error: `${error.errors[0].message}` },
+				{ status: 400 }
+			);
+		}
 
 		return json(
 			{ success: false, error: (error as any).message },

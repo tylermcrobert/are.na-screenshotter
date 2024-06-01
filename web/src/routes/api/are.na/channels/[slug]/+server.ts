@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { ARENA_PERSONAL_ACCESS_TOKEN } from '$env/static/private';
 import { uploadBase64Image } from '$lib/upload';
 import { ArenaScreenshotter } from '$lib/ArenaScreenshotter.js';
 import { json } from '@sveltejs/kit';
 import z, { ZodError } from 'zod';
+import { extractAccessToken } from '$lib/util.js';
 
 export async function POST({ request, params }) {
 	try {
@@ -20,7 +20,9 @@ export async function POST({ request, params }) {
 
 		const gcsFile = await uploadBase64Image(body.screenshot);
 
-		const arena = new ArenaScreenshotter(ARENA_PERSONAL_ACCESS_TOKEN);
+		const accessToken = extractAccessToken(request);
+		const arena = new ArenaScreenshotter(accessToken);
+
 		const item = await arena.postItem(params.slug, {
 			source: `https://arena-screenshotter.com/api/redirect?asset=${gcsFile.publicUrl()}&redirect=${body.originUrl}&timestamp=${new Date().getTime()}`,
 			originTitle: body.originTitle,

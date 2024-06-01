@@ -1,17 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { ARENA_PERSONAL_ACCESS_TOKEN } from '$env/static/private';
 import { ArenaScreenshotter } from '$lib/ArenaScreenshotter';
+import { extractAccessToken } from '$lib/util.js';
 import { json } from '@sveltejs/kit';
 import z, { ZodError } from 'zod';
 
-export async function GET({ url }) {
+export async function GET({ url, request }) {
 	try {
 		const params = z
 			.object({ q: z.string().min(1, { message: 'Search query is required' }) })
 			.parse(Object.fromEntries(url.searchParams));
 
-		const arena = new ArenaScreenshotter(ARENA_PERSONAL_ACCESS_TOKEN);
+		const accessToken = extractAccessToken(request);
+
+		const arena = new ArenaScreenshotter(accessToken);
 		const userChannels = await arena.searchChannels(params.q, {
 			userSlug: 'tyler-mcrobert'
 		});

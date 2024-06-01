@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { ARENA_PERSONAL_ACCESS_TOKEN } from '$env/static/private';
 import { ArenaScreenshotter } from '$lib/ArenaScreenshotter.js';
+import { extractAccessToken } from '$lib/util.js';
 import { json } from '@sveltejs/kit';
 import { ZodError } from 'zod';
 
-export async function GET({ params }) {
+export async function GET({ params, request }) {
 	try {
-		const arena = new ArenaScreenshotter(ARENA_PERSONAL_ACCESS_TOKEN);
+		const accessToken = extractAccessToken(request);
+		const arena = new ArenaScreenshotter(accessToken);
 		const userChannels = await arena.getUserChannels(params.slug);
 
 		return json(userChannels, { status: 200 });

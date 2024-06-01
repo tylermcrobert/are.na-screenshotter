@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react"
 
+import { sendToBackground } from "@plasmohq/messaging"
+
 import type { APIChannel } from "../../web/src/types"
 import { ARENA_API_URL } from "../constants"
 import Spinner from "./Spinner"
@@ -8,12 +10,14 @@ type ChannelsProps = {
   currentChannel: APIChannel | null
   onError: (error: string) => void
   setCurrentChannel: (channel: APIChannel) => void
+  accessToken: string
 }
 
 export default function Channels({
   onError,
   setCurrentChannel,
-  currentChannel
+  currentChannel,
+  accessToken
 }: ChannelsProps) {
   const [recentChannels, setRecentChannels] = useState<APIChannel[]>([])
   const [searchChannels, setSearchChannels] = useState<APIChannel[]>([])
@@ -33,27 +37,22 @@ export default function Channels({
        * Post to arena
        */
 
-      const arenaResponse = await fetch(
-        `${ARENA_API_URL}/users/tyler-mcrobert/channels`,
-        { method: "GET" }
-      )
-
-      const arenaJson = await arenaResponse.json()
-
-      /**
-       * Throw error
-       */
-      if (!arenaResponse.ok) {
-        const errorMessage = arenaJson.error
-          ? `API Error: "${arenaJson.error}"`
-          : "An unexpected error occurred posting to Are.na."
-
-        throw new Error(errorMessage)
-      }
+      const response = await sendToBackground({
+        name: "corsRequest",
+        body: {
+          url: `${ARENA_API_URL}/users/tyler-mcrobert/channels`,
+          options: {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${accessToken}`
+            }
+          }
+        }
+      })
 
       setLoading(false)
-      setRecentChannels(arenaJson.channels)
-      setCurrentChannel(arenaJson.channels[0])
+      setRecentChannels(response.channels)
+      setCurrentChannel(response.channels[0])
     } catch (e) {
       /**
        * Catch error
@@ -69,17 +68,31 @@ export default function Channels({
     getChannels()
   }, [])
 
+  async function executeSearch() {
+    try {
+      const response = await sendToBackground({
+        name: "corsRequest",
+        body: {
+          url: `${ARENA_API_URL}/search/channels/?q=${searchQuery}`,
+          options: {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${accessToken}`
+            }
+          }
+        }
+      })
+
+      setSearchChannels(response.channels)
+    } catch (e) {
+      console.log(e)
+      onError("An error occurred while making the API call.")
+    }
+  }
+
   useEffect(() => {
     if (searchQuery.length) {
-      fetch(`${ARENA_API_URL}/search/channels/?q=${searchQuery}`)
-        .then((response) => response.json())
-        .then((data) => {
-          setSearchChannels(data.channels)
-        })
-        .catch((error) => {
-          console.log(error)
-          onError("An error occurred while making the API call.")
-        })
+      executeSearch()
     } else {
       setSearchChannels([])
     }

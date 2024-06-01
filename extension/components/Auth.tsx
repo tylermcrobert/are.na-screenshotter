@@ -10,17 +10,24 @@ export default function Auth({ onAuth }: AuthProps) {
 
     const oAuthUrl = `http://dev.are.na/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code`
 
-    chrome.identity.launchWebAuthFlow(
-      { interactive: true, url: oAuthUrl },
-      (redirectedUrl) => {
-        const url = new URL(redirectedUrl)
-        const code = url.searchParams.get("code")
-
-        chrome.storage.local.set({ auth: code }, () => {
-          onAuth(code)
-        })
+    /**
+     * Handles the redirect from Are.na
+     */
+    function handleRedirect(redirectedUrl: string | undefined) {
+      if (!redirectedUrl) {
+        throw new Error("No redirected URL")
       }
-    )
+
+      const url = new URL(redirectedUrl)
+      const code = url.searchParams.get("code")
+
+      chrome.storage.local.set({ auth: code }, async () => {
+        onAuth(code)
+      })
+    }
+
+    const authOptions = { interactive: true, url: oAuthUrl }
+    chrome.identity.launchWebAuthFlow(authOptions, handleRedirect)
   }
 
   return (

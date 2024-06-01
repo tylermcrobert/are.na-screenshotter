@@ -1,3 +1,5 @@
+import { ARENA_API_URL } from "~constants"
+
 type AuthProps = {
   onAuth: (auth: string) => void
 }
@@ -8,7 +10,7 @@ export default function Auth({ onAuth }: AuthProps) {
     const redirectUri = chrome.identity.getRedirectURL()
     const clientId: string = (manifest.oauth2 as any).client_id
 
-    const oAuthUrl = `http://dev.are.na/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code`
+    const oAuthUrl = `http://dev.are.na/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`
 
     /**
      * Handles the redirect from Are.na
@@ -21,9 +23,21 @@ export default function Auth({ onAuth }: AuthProps) {
       const url = new URL(redirectedUrl)
       const code = url.searchParams.get("code")
 
-      chrome.storage.local.set({ auth: code }, async () => {
-        onAuth(code)
-      })
+      async function onLocalSet() {
+        const authUrl = `${ARENA_API_URL}/oauth/token/?client_id=${clientId}&code=${code}&redirect_uri=${redirectUri}`
+
+        const tokenResponse = await fetch(authUrl, { method: "POST" })
+        const tokenJson = await tokenResponse.json()
+
+        if (!tokenResponse.ok) {
+          console.log(tokenJson)
+          throw new Error(tokenJson.error || "An unexpected error occurred.")
+        }
+
+        console.log("Auth token set", tokenJson.access_token)
+      }
+
+      chrome.storage.local.set({ auth: code }, onLocalSet)
     }
 
     const authOptions = { interactive: true, url: oAuthUrl }

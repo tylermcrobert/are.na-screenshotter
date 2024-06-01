@@ -2,6 +2,8 @@ import { useState } from "react"
 
 import { ARENA_API_URL } from "~constants"
 
+import Spinner from "./Spinner"
+
 type ButtonRowProps = {
   screenshot: string
   originUrl: string
@@ -60,8 +62,10 @@ export default function ConnectButton({
   }
 
   return (
-    <button className="w-full btn" onClick={postToArena}>
-      {!loading ? <>Connect &rarr;</> : "Loading..."}
+    <button
+      className="flex justify-center w-full align-center btn"
+      onClick={postToArena}>
+      {!loading ? <>Connect &rarr;</> : <Spinner />}
     </button>
   )
 }

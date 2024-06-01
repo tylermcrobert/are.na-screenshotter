@@ -8,7 +8,7 @@ type ButtonRowProps = {
   screenshot: string
   originUrl: string
   originTitle: string
-  channelId: string
+  channelId: number | null
   onError: (error: string) => void
   onSuccess: () => void
 }

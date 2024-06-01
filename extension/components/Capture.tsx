@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 
+import type { APIChannel } from "../../web/src/types"
 import CaptureMeta from "./CaptureMeta"
 import Channels from "./Channels"
 import ConnectButton from "./ConnectButton"
@@ -11,7 +12,7 @@ export default function Capture() {
   const [originUrl, setOriginUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isSuccess, setSuccess] = useState(false)
-  const [currentChannelId, setCurrentChannelId] = useState<string | null>(null)
+  const [currentChannel, setCurrentChannel] = useState<APIChannel | null>(null)
 
   const hostName = originUrl ? new URL(originUrl).hostname.toString() : null
 
@@ -60,7 +61,7 @@ export default function Capture() {
       {isSuccess ? (
         <div className="my-10 text-center">
           <div className="mb-1 font-bold text-[15px]">
-            Posted to Lorem Ipsum.
+            Posted to {currentChannel.title}.
           </div>
           <div className="text-gray-4">
             <div>{originTitle}</div>
@@ -72,8 +73,8 @@ export default function Capture() {
           <CaptureMeta hostName={hostName} title={originTitle} />
           <Channels
             onError={(err) => setError(err)}
-            currentChannelId={currentChannelId}
-            setCurrentChannel={setCurrentChannelId}
+            currentChannel={currentChannel}
+            setCurrentChannel={setCurrentChannel}
           />
         </>
       )}
@@ -90,11 +91,11 @@ export default function Capture() {
             originTitle={originTitle}
             onError={(err) => setError(err)}
             onSuccess={() => setSuccess(true)}
-            channelId={currentChannelId}
+            channelId={currentChannel?.id}
           />
         ) : (
           <a
-            href={`https://are.na/channel/${currentChannelId}`}
+            href={`https://are.na/channel/${currentChannel.id}`}
             className="w-full btn"
             target="_blank">
             View channel &rarr;

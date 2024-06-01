@@ -5,25 +5,19 @@ import { ARENA_API_URL } from "../constants"
 import Spinner from "./Spinner"
 
 type ChannelsProps = {
-  currentChannelId: string
+  currentChannel: APIChannel
   onError: (error: string) => void
-  setCurrentChannel: (channelId: string) => void
-}
-
-type Channel = {
-  title: string
-  id: string
-  status: string
-  length: number
+  setCurrentChannel: (channel: APIChannel) => void
 }
 
 export default function Channels({
   onError,
   setCurrentChannel,
-  currentChannelId
+  currentChannel
 }: ChannelsProps) {
-  const [channels, setChannels] = useState<Channel[]>([])
+  const [channels, setChannels] = useState<APIChannel[]>([])
   const [loading, setLoading] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
 
   /**
    * Gets the user's channels
@@ -56,7 +50,7 @@ export default function Channels({
 
       setLoading(false)
       setChannels(arenaJson.channels)
-      setCurrentChannel(arenaJson.channels[0].id)
+      setCurrentChannel(arenaJson.channels[0])
     } catch (e) {
       /**
        * Catch error
@@ -71,33 +65,60 @@ export default function Channels({
     getChannels()
   }, [])
 
+  useEffect(() => {
+    if (searchQuery.length) {
+      fetch(`${ARENA_API_URL}/search/channels/?q=${searchQuery}`)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data)
+          // Process the API response data here
+        })
+        .catch((error) => {
+          console.log(error)
+          onError("An error occurred while making the API call.")
+        })
+    }
+  }, [searchQuery])
+
   return (
-    <div className="relative flex flex-col border-b border-b-gray-2 divide-y divide-gray-1 h-[120px]">
+    <div className="relative flex flex-col h-[148px]">
       {loading && (
         <div className="absolute inset-0 flex justify-center items-center bg-white">
           <Spinner />
         </div>
       )}
 
-      {channels.length
-        ? channels.map((item) => (
-            <label
-              className={`flex flex-1 items-center gap-2 hover:bg-status-1 cursor-pointer status-${item.status}`}
-              key={item.id}>
-              <input
-                hidden
-                type="radio"
-                className="peer"
-                onChange={() => setCurrentChannel(item.id)}
-                checked={currentChannelId === item.id}
-              />
+      <form>
+        <input
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          type="text"
+          className="border-gray-2 focus:border-gray-3 my-2 px-2 py-1 border w-full outline-none"
+          placeholder="Search channels..."
+        />
+      </form>
 
-              <div className="border-gray-3 peer-checked:border-status-3 peer-checked:bg-status-3 border rounded-full w-2.5 h-2.5"></div>
-              <div className="flex-1 text-status-3">{item.title}</div>
-              <div className="text-gray-4">{item.length} Blocks</div>
-            </label>
-          ))
-        : null}
+      <form className="flex flex-col flex-1 divide-y divide-gray-1">
+        {channels.length
+          ? channels.map((channel) => (
+              <label
+                className={`flex flex-1 items-center gap-2 hover:bg-status-1 cursor-pointer status-${channel.status}`}
+                key={channel.id}>
+                <input
+                  hidden
+                  type="radio"
+                  className="peer"
+                  onChange={() => setCurrentChannel(channel)}
+                  checked={currentChannel.id === channel.id}
+                />
+
+                <div className="border-gray-3 peer-checked:border-status-3 peer-checked:bg-status-3 border rounded-full w-2.5 h-2.5"></div>
+                <div className="flex-1 text-status-3">{channel.title}</div>
+                <div className="text-gray-4">{channel.length} Blocks</div>
+              </label>
+            ))
+          : null}
+      </form>
     </div>
   )
 }

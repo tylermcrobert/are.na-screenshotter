@@ -86,28 +86,28 @@ export default function Channels({
   }, [searchQuery])
 
   return (
-    <div className="relative flex flex-col h-[148px]">
-      {loading && (
-        <div className="absolute inset-0 flex justify-center items-center bg-white">
-          <Spinner />
-        </div>
-      )}
-
+    <div>
       <form onSubmit={(e) => e.preventDefault()}>
         <input
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           type="text"
-          className="border-gray-2 focus:border-gray-3 my-2 px-2 py-1 border w-full outline-none"
+          className="border-gray-2 focus:border-gray-3 my-2 px-2 py-1 border w-full placeholder:text-gray-4 outline-none"
           placeholder="Search channels..."
         />
       </form>
 
-      <form className="flex flex-col flex-1 divide-y divide-gray-1">
+      <form className="relative flex-1divide-y divide-gray-1 h-[100px]">
+        {loading && (
+          <div className="absolute inset-0 flex justify-center items-center bg-white">
+            <Spinner />
+          </div>
+        )}
+
         {channels.length
           ? channels.map((channel) => (
               <label
-                className={`flex flex-1 items-center gap-2 hover:bg-status-1 cursor-pointer status-${channel.status}`}
+                className={`flex flex-1 items-center gap-2 hover:bg-status-1 cursor-pointer status-${channel.status} h-[20px]`}
                 key={channel.id}>
                 <input
                   hidden

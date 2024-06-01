@@ -6,11 +6,14 @@ import Channels from "./Channels"
 import ConnectButton from "./ConnectButton"
 import ImageDisplay from "./ImageDisplay"
 
-export default function Capture() {
+type CaptureProps = {
+  setError: (error: string | null) => void
+}
+
+export default function Capture({ setError }: CaptureProps) {
   const [screenshot, setScreenshot] = useState<string | null>(null)
   const [originTitle, setOriginTitle] = useState<string | null>(null)
   const [originUrl, setOriginUrl] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
   const [postedTo, setPostedTo] = useState<APIChannel | null>(null)
   const [currentChannel, setCurrentChannel] = useState<APIChannel | null>(null)
 
@@ -104,8 +107,6 @@ export default function Capture() {
           </a>
         )}
       </div>
-
-      {error && <div className="text-center text-red-500">{error}</div>}
     </div>
   )
 }

@@ -2,14 +2,17 @@ import { ARENA_API_URL } from "~constants"
 
 type AuthProps = {
   setAccessToken: (token: string) => void
+  setError: (token: string | null) => void
 }
 
-export default function Auth({ setAccessToken }: AuthProps) {
+export default function Auth({ setAccessToken, setError }: AuthProps) {
   const manifest = chrome.runtime.getManifest()
   const redirectUri = chrome.identity.getRedirectURL()
   const clientId: string = (manifest.oauth2 as any).client_id
 
   async function openAuthWindow() {
+    setError(null)
+
     const oAuthUrl = `http://dev.are.na/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`
     const authOptions = { interactive: true, url: oAuthUrl }
 
@@ -17,7 +20,7 @@ export default function Auth({ setAccessToken }: AuthProps) {
       const url = new URL(redirectedUrl as string)
       const code = url.searchParams.get("code") as string
 
-      const authUrl = `${ARENA_API_URL}/oauth/token/?client_id=${clientId}&code=${code}s&redirect_uri=${redirectUri}`
+      const authUrl = `${ARENA_API_URL}/oauth/token/?client_id=${clientId}&code=${code}&redirect_uri=${redirectUri}`
 
       try {
         const res = await fetch(authUrl, { method: "POST" })
@@ -31,7 +34,7 @@ export default function Auth({ setAccessToken }: AuthProps) {
         chrome.storage.local.set({ accessToken: json.access_token })
         setAccessToken(json.access_token)
       } catch (e: any) {
-        console.error(e.toString())
+        setError(e.message)
       }
     })
   }

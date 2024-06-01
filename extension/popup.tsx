@@ -7,6 +7,7 @@ import { useEffect, useState } from "react"
 
 function IndexPopup() {
   const [accessToken, setAccessToken] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     chrome.storage.local.get("accessToken").then((res) => {
@@ -16,8 +17,17 @@ function IndexPopup() {
 
   return (
     <div className="px-2 w-[270px]">
-      <Auth setAccessToken={setAccessToken} />
-      {/* {accessToken ? <Capture /> : <Auth setAccessToken={setAccessToken} />} */}
+      {accessToken ? (
+        <Capture setError={setError} />
+      ) : (
+        <Auth setAccessToken={setAccessToken} setError={setError} />
+      )}
+
+      {error && (
+        <div className="bg-red-100 my-2 p-1 rounded text-center text-red-500">
+          {error}
+        </div>
+      )}
     </div>
   )
 }

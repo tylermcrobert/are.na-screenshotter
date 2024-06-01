@@ -6,8 +6,9 @@ export default function Auth({ onAuth }: AuthProps) {
   function launchOAuthFlow() {
     const manifest = chrome.runtime.getManifest()
     const redirectUri = chrome.identity.getRedirectURL()
+    const clientId: string = (manifest.oauth2 as any).client_id
 
-    const oAuthUrl = `http://dev.are.na/oauth/authorize?client_id=${manifest.oauth2.client_id}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code`
+    const oAuthUrl = `http://dev.are.na/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code`
 
     chrome.identity.launchWebAuthFlow(
       { interactive: true, url: oAuthUrl },

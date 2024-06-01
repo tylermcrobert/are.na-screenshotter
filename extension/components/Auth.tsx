@@ -1,10 +1,10 @@
 import { ARENA_API_URL } from "~constants"
 
 type AuthProps = {
-  onAuth: (auth: string) => void
+  setAccessToken: (token: string) => void
 }
 
-export default function Auth({ onAuth }: AuthProps) {
+export default function Auth({ setAccessToken }: AuthProps) {
   function launchOAuthFlow() {
     const manifest = chrome.runtime.getManifest()
     const redirectUri = chrome.identity.getRedirectURL()
@@ -16,28 +16,26 @@ export default function Auth({ onAuth }: AuthProps) {
      * Handles the redirect from Are.na
      */
     function handleRedirect(redirectedUrl: string | undefined) {
-      if (!redirectedUrl) {
-        throw new Error("No redirected URL")
+      const url = new URL(redirectedUrl as string)
+      const authToken = url.searchParams.get("code")
+      fetchAccessToken(authToken)
+    }
+
+    /**
+     * Handles the OAuth flow
+     */
+    async function fetchAccessToken(code: string | null) {
+      const authUrl = `${ARENA_API_URL}/oauth/token/?client_id=${clientId}&code=${code}&redirect_uri=${redirectUri}`
+
+      const tokenResponse = await fetch(authUrl, { method: "POST" })
+      const tokenJson = await tokenResponse.json()
+
+      if (!tokenResponse.ok) {
+        throw new Error(tokenJson.error || "An unexpected error occurred.")
       }
 
-      const url = new URL(redirectedUrl)
-      const code = url.searchParams.get("code")
-
-      async function onLocalSet() {
-        const authUrl = `${ARENA_API_URL}/oauth/token/?client_id=${clientId}&code=${code}&redirect_uri=${redirectUri}`
-
-        const tokenResponse = await fetch(authUrl, { method: "POST" })
-        const tokenJson = await tokenResponse.json()
-
-        if (!tokenResponse.ok) {
-          console.log(tokenJson)
-          throw new Error(tokenJson.error || "An unexpected error occurred.")
-        }
-
-        console.log("Auth token set", tokenJson.access_token)
-      }
-
-      chrome.storage.local.set({ auth: code }, onLocalSet)
+      chrome.storage.local.set({ accessToken: tokenJson.access_token })
+      setAccessToken(tokenJson.access_token)
     }
 
     const authOptions = { interactive: true, url: oAuthUrl }

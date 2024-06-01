@@ -6,17 +6,17 @@ import "./style.css"
 import { useEffect, useState } from "react"
 
 function IndexPopup() {
-  const [authCode, setAuthCode] = useState<string | null>(null)
+  const [accessToken, setAccessToken] = useState<string | null>(null)
 
   useEffect(() => {
-    chrome.storage.local.get("auth").then((res) => {
-      setAuthCode(res.auth)
+    chrome.storage.local.get("accessToken").then((res) => {
+      setAccessToken(res.auth)
     })
   }, [])
 
   return (
     <div className="px-2 w-[270px]">
-      {authCode ? <Capture /> : <Auth onAuth={setAuthCode} />}
+      {accessToken ? <Capture /> : <Auth setAccessToken={setAccessToken} />}
     </div>
   )
 }

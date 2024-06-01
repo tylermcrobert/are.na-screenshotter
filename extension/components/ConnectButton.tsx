@@ -2,14 +2,15 @@ import { useState } from "react"
 
 import { ARENA_API_URL } from "~constants"
 
+import type { APIChannel } from "../../web/src/types"
 import Spinner from "./Spinner"
 
 type ButtonRowProps = {
-  screenshot: string
-  originUrl: string
-  originTitle: string
-  channelId: number | null
-  onError: (error: string) => void
+  screenshot: string | null
+  originUrl: string | null
+  originTitle: string | null
+  currentChannel: APIChannel | null
+  onError: (error: string | null) => void
   onSuccess: () => void
 }
 
@@ -17,7 +18,7 @@ export default function ConnectButton({
   screenshot,
   originUrl,
   originTitle,
-  channelId,
+  currentChannel,
   onError,
   onSuccess
 }: ButtonRowProps) {
@@ -27,10 +28,14 @@ export default function ConnectButton({
    * Posts the screenshot to Are.na
    */
   async function postToArena() {
+    if (!currentChannel) {
+      onError("Please select a channel.")
+    }
+
     setLoading(true)
 
     try {
-      const url = `${ARENA_API_URL}/channels/${channelId}`
+      const url = `${ARENA_API_URL}/channels/${currentChannel?.id}`
 
       const arenaResponse = await fetch(url, {
         method: "POST",
@@ -55,9 +60,10 @@ export default function ConnectButton({
       onSuccess()
       onError(null)
     } catch (e) {
+      const errMesssage = e as any
       console.log(e)
       setLoading(false)
-      onError(e.message ? e.message : "An unexpected error occurred.")
+      onError(errMesssage || "An unexpected error occurred.")
     }
   }
 

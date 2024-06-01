@@ -11,7 +11,7 @@ export default function Capture() {
   const [originTitle, setOriginTitle] = useState<string | null>(null)
   const [originUrl, setOriginUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [isSuccess, setSuccess] = useState(false)
+  const [postedTo, setPostedTo] = useState<APIChannel | null>(null)
   const [currentChannel, setCurrentChannel] = useState<APIChannel | null>(null)
 
   const hostName = originUrl ? new URL(originUrl).hostname.toString() : null
@@ -31,9 +31,11 @@ export default function Capture() {
     captureScreenshot()
 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (tabs[0]) {
+      if (tabs[0].title && tabs[0].url) {
         setOriginTitle(tabs[0].title)
         setOriginUrl(tabs[0].url)
+      } else {
+        setError("Unable to capture the current tab.")
       }
     })
   }, [])
@@ -42,7 +44,7 @@ export default function Capture() {
    * Clears the current state
    */
   function refreshScreenshot() {
-    setSuccess(null)
+    setPostedTo(null)
     setScreenshot(null)
     captureScreenshot()
   }
@@ -58,10 +60,10 @@ export default function Capture() {
         refreshScreenshot={refreshScreenshot}
       />
 
-      {isSuccess ? (
+      {!!postedTo ? (
         <div className="my-10 text-center">
           <div className="mb-1 font-bold text-[15px]">
-            Posted to {currentChannel.title}.
+            Posted to {postedTo.title}.
           </div>
           <div className="text-gray-4">
             <div>{originTitle}</div>
@@ -84,18 +86,18 @@ export default function Capture() {
           Close
         </button>
 
-        {!isSuccess ? (
+        {!postedTo ? (
           <ConnectButton
             screenshot={screenshot}
             originUrl={originUrl}
             originTitle={originTitle}
             onError={(err) => setError(err)}
-            onSuccess={() => setSuccess(true)}
-            channelId={currentChannel?.id}
+            onSuccess={() => setPostedTo(currentChannel)}
+            currentChannel={currentChannel}
           />
         ) : (
           <a
-            href={`https://are.na/channel/${currentChannel.id}`}
+            href={`https://are.na/channel/${postedTo.id}`}
             className="w-full btn"
             target="_blank">
             View channel &rarr;

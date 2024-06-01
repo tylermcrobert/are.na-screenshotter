@@ -1,6 +1,6 @@
 type CaptureMetaProps = {
-  hostName: string
-  title: string
+  hostName: string | null
+  title: string | null
 }
 
 export default function CaptureMeta({ hostName, title }: CaptureMetaProps) {

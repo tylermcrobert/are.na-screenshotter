@@ -5,7 +5,7 @@ import { ARENA_API_URL } from "../constants"
 import Spinner from "./Spinner"
 
 type ChannelsProps = {
-  currentChannel: APIChannel
+  currentChannel: APIChannel | null
   onError: (error: string) => void
   setCurrentChannel: (channel: APIChannel) => void
 }
@@ -15,9 +15,12 @@ export default function Channels({
   setCurrentChannel,
   currentChannel
 }: ChannelsProps) {
-  const [channels, setChannels] = useState<APIChannel[]>([])
+  const [recentChannels, setRecentChannels] = useState<APIChannel[]>([])
+  const [searchChannels, setSearchChannels] = useState<APIChannel[]>([])
   const [loading, setLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
+
+  const channels = searchQuery ? searchChannels : recentChannels
 
   /**
    * Gets the user's channels
@@ -49,15 +52,16 @@ export default function Channels({
       }
 
       setLoading(false)
-      setChannels(arenaJson.channels)
+      setRecentChannels(arenaJson.channels)
       setCurrentChannel(arenaJson.channels[0])
     } catch (e) {
       /**
        * Catch error
        */
       console.log(e)
+      const errMessage = (e as any).message
+      onError(errMessage || "An unexpected error occurred.")
       setLoading(false)
-      onError(e.message ? e.message : "An unexpected error occurred.")
     }
   }
 
@@ -70,13 +74,14 @@ export default function Channels({
       fetch(`${ARENA_API_URL}/search/channels/?q=${searchQuery}`)
         .then((response) => response.json())
         .then((data) => {
-          console.log(data)
-          // Process the API response data here
+          setSearchChannels(data.channels)
         })
         .catch((error) => {
           console.log(error)
           onError("An error occurred while making the API call.")
         })
+    } else {
+      setSearchChannels([])
     }
   }, [searchQuery])
 
@@ -88,7 +93,7 @@ export default function Channels({
         </div>
       )}
 
-      <form>
+      <form onSubmit={(e) => e.preventDefault()}>
         <input
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -109,7 +114,7 @@ export default function Channels({
                   type="radio"
                   className="peer"
                   onChange={() => setCurrentChannel(channel)}
-                  checked={currentChannel.id === channel.id}
+                  checked={currentChannel?.id === channel.id}
                 />
 
                 <div className="border-gray-3 peer-checked:border-status-3 peer-checked:bg-status-3 border rounded-full w-2.5 h-2.5"></div>

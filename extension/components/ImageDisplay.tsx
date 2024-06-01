@@ -1,7 +1,7 @@
 import RefreshIcon from "./RefreshIcon"
 
 type ImageDisplayProps = {
-  screenshot: string
+  screenshot: string | null
   refreshScreenshot: () => void
 }
 

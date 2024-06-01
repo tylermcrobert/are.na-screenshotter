@@ -1,9 +1,12 @@
 import RefreshIcon from "./RefreshIcon"
 
-type ImageDisplayProps = { image: string; refreshScreenshot: () => void }
+type ImageDisplayProps = {
+  screenshot: string
+  refreshScreenshot: () => void
+}
 
 export default function ImageDisplay({
-  image,
+  screenshot,
   refreshScreenshot
 }: ImageDisplayProps) {
   return (
@@ -13,7 +16,7 @@ export default function ImageDisplay({
         onClick={refreshScreenshot}>
         <RefreshIcon />
       </button>
-      {image && <img src={image} className="w-full" />}
+      {screenshot && <img src={screenshot} className="w-full" />}
     </div>
   )
 }

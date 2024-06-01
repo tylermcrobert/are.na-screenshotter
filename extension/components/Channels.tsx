@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 
+import type { APIChannel } from "../../web/src/types"
 import { ARENA_API_URL } from "../constants"
 import Spinner from "./Spinner"
 
@@ -54,8 +55,8 @@ export default function Channels({
       }
 
       setLoading(false)
-      setChannels(arenaJson.data.channels)
-      setCurrentChannel(arenaJson.data.channels[0].id)
+      setChannels(arenaJson.channels)
+      setCurrentChannel(arenaJson.channels[0].id)
     } catch (e) {
       /**
        * Catch error

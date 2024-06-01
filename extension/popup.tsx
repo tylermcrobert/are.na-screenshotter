@@ -10,7 +10,7 @@ function IndexPopup() {
 
   useEffect(() => {
     chrome.storage.local.get("accessToken").then((res) => {
-      setAccessToken(res.auth)
+      setAccessToken(res.accessToken)
     })
   }, [])
 

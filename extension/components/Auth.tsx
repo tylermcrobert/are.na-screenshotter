@@ -9,7 +9,7 @@ export default function Auth({ setAccessToken }: AuthProps) {
   const redirectUri = chrome.identity.getRedirectURL()
   const clientId: string = (manifest.oauth2 as any).client_id
 
-  function openAuthWindow() {
+  async function openAuthWindow() {
     const oAuthUrl = `http://dev.are.na/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`
     const authOptions = { interactive: true, url: oAuthUrl }
 
@@ -17,20 +17,22 @@ export default function Auth({ setAccessToken }: AuthProps) {
       const url = new URL(redirectedUrl as string)
       const code = url.searchParams.get("code") as string
 
-      const authUrl = `${ARENA_API_URL}/oauth/token/?client_id=${clientId}&code=${code}&redirect_uri=${redirectUri}`
+      const authUrl = `${ARENA_API_URL}/oauth/token/?client_id=${clientId}&code=${code}s&redirect_uri=${redirectUri}`
 
-      fetch(authUrl, { method: "POST" })
-        .then(async (res) => {
-          const json = await res.json()
+      try {
+        const res = await fetch(authUrl, { method: "POST" })
+        const json = await res.json()
 
-          if (!res.ok) {
-            throw new Error("Error")
-          }
+        if (!res.ok) {
+          const errorMessage = `Error fetching access token: "${json.error_description}"`
+          throw new Error(errorMessage)
+        }
 
-          chrome.storage.local.set({ accessToken: json.access_token })
-          setAccessToken(json.access_token)
-        })
-        .catch((err) => console.log(err.toString()))
+        chrome.storage.local.set({ accessToken: json.access_token })
+        setAccessToken(json.access_token)
+      } catch (e: any) {
+        console.error(e.toString())
+      }
     })
   }
 

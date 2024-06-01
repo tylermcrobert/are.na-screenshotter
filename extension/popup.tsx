@@ -16,7 +16,8 @@ function IndexPopup() {
 
   return (
     <div className="px-2 w-[270px]">
-      {accessToken ? <Capture /> : <Auth setAccessToken={setAccessToken} />}
+      <Auth setAccessToken={setAccessToken} />
+      {/* {accessToken ? <Capture /> : <Auth setAccessToken={setAccessToken} />} */}
     </div>
   )
 }

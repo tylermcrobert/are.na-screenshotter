@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { ArenaScreenshotter } from '$lib/ArenaScreenshotter';
-import { extractAccessToken } from '$lib/util.js';
+import { extractAccessToken, handleApiError } from '$lib/util.js';
 import { json } from '@sveltejs/kit';
-import z, { ZodError } from 'zod';
+import z from 'zod';
 
 export async function GET({ url, request }) {
 	try {
@@ -20,16 +18,6 @@ export async function GET({ url, request }) {
 
 		return json(userChannels, { status: 200 });
 	} catch (error) {
-		if (error instanceof ZodError) {
-			return json(
-				{ success: false, error: `${error.errors[0].message}` },
-				{ status: 400 }
-			);
-		}
-
-		return json(
-			{ success: false, error: (error as any).message },
-			{ status: 500 }
-		);
+		handleApiError(error);
 	}
 }

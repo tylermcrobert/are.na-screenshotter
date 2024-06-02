@@ -60,16 +60,16 @@ export class ArenaScreenshotter {
 	 * @param options - Additional options for the search, including the user slug.
 	 * @returns A Promise that resolves to an object containing the search results.
 	 */
-	async searchChannels(
-		q: string,
-		options: { userSlug: string }
-	): Promise<APIChannelsResult> {
-		const url = `${ARENA_API_BASE_URL}/search/channels?q=${q}&per=5`;
+	async searchUserChannels(props: {
+		user: string;
+		q: string;
+	}): Promise<APIChannelsResult> {
+		const url = `${ARENA_API_BASE_URL}/search/channels?q=${props.q}&user=${props.user}&per=5`;
 		const response = await this.fetchApi('GET', url);
 
 		const channelResponse: Arena.Channel[] = response.channels;
 		const filteredChannels = channelResponse.filter((channel) => {
-			return channel.user.slug === options.userSlug;
+			return channel.user.slug === props.user;
 		});
 		const channels = filteredChannels.map((channel) =>
 			this.transformChannel(channel)

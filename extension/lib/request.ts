@@ -35,13 +35,13 @@ export class ApiReq {
     return res.data
   }
 
-  async searchChannels(q: string) {
-    const url = `${ARENA_API_URL}/search/channels?q=${q}`
+  async searchUserChannels({ q, user }: { q: string; user: string }) {
+    const url = `${ARENA_API_URL}/search/channels?q=${q}&user=${user}`
     return this.corsRequest(url, "GET")
   }
 
-  async getChannels() {
-    const url = `${ARENA_API_URL}/users/tyler-mcrobert/channels`
+  async getUserChannels(user: string) {
+    const url = `${ARENA_API_URL}/users/${user}/channels`
     return this.corsRequest(url, "GET")
   }
 

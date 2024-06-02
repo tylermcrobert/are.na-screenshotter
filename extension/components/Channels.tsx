@@ -23,7 +23,7 @@ export default function Channels() {
     setLoading(true)
 
     api
-      .getChannels()
+      .getUserChannels("tyler-mcrobert")
       .then((res) => {
         setError(null)
         setCurrentChannel(res.channels[0])
@@ -42,7 +42,7 @@ export default function Channels() {
   useEffect(() => {
     if (searchQuery.length) {
       api
-        .searchChannels(searchQuery)
+        .searchUserChannels({ q: searchQuery, user: "tyler-mcrobert" })
         .then((res) => {
           setError(null)
           setLoading(false)

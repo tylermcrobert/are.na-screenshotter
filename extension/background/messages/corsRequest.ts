@@ -9,9 +9,9 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       throw new Error(data.error || "An unexpected error occurred.")
     }
 
-    res.send(data)
+    res.send({ data })
   } catch (error: any) {
-    res.send({ error: error.toString() })
+    res.send({ error: error.message || "An unknown internal error occurred." })
   }
 }
 

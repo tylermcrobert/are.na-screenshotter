@@ -14,7 +14,7 @@ export class ApiReq {
     method: "GET" | "POST",
     body?: object
   ) {
-    return sendToBackground({
+    const res = await sendToBackground({
       name: "corsRequest",
       body: {
         url: url,
@@ -27,6 +27,12 @@ export class ApiReq {
         }
       }
     })
+
+    if (res.error) {
+      throw new Error(res.error)
+    }
+
+    return res.data
   }
 
   async searchChannels(q: string) {

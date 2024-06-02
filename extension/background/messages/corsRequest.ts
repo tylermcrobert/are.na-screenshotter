@@ -3,9 +3,6 @@ import type { PlasmoMessaging } from "@plasmohq/messaging"
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   try {
     const response = await fetch(req.body.url, req.body.options)
-
-    console.log(req.body.options)
-
     const data = await response.json()
 
     if (!response.ok) {

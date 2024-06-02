@@ -35,8 +35,7 @@ export async function GET({ url }) {
 
 		return new Response(imageData, {
 			headers: {
-				'Content-Type': contentType,
-				'Cache-Control': 'max-age=31536000' // 1 year
+				'Content-Type': contentType
 			}
 		});
 	} catch (error) {

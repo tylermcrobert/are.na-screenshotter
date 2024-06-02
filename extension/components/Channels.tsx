@@ -13,6 +13,7 @@ export default function Channels() {
   const [searchQuery, setSearchQuery] = useState("")
 
   const channels = searchQuery ? searchChannels : recentChannels
+  const isEmptySearch = searchQuery && !searchChannels.length
 
   /**
    * Fetches the user's channels
@@ -39,6 +40,8 @@ export default function Channels() {
    */
   useEffect(() => {
     if (searchQuery.length) {
+      setLoading(true)
+
       api
         .searchUserChannels(searchQuery)
         .then((res) => {
@@ -46,6 +49,7 @@ export default function Channels() {
           setLoading(false)
           setCurrentChannel(res[0])
           setSearchChannels(res)
+          setLoading(false)
         })
         .catch((e) => {
           setError(e.message)
@@ -69,9 +73,15 @@ export default function Channels() {
       </form>
 
       <form className="relative flex-1 divide-y divide-gray-1 h-[100px]">
-        {loading && (
+        {(loading || isEmptySearch) && (
           <div className="absolute inset-0 flex justify-center items-center bg-white">
-            <Spinner />
+            {loading ? (
+              <Spinner />
+            ) : (
+              <span className="text-gray-4">
+                {isEmptySearch && "No results found."}
+              </span>
+            )}
           </div>
         )}
 

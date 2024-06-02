@@ -18,6 +18,6 @@ export async function GET({ url, request }) {
 
 		return json(userChannels, { status: 200 });
 	} catch (error) {
-		handleApiError(error);
+		return handleApiError(error);
 	}
 }

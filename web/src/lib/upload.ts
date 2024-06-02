@@ -25,18 +25,9 @@ const storage = new Storage({
 const BASE_64_REGEX = /^data:([A-Za-z-+/]+);base64,/;
 
 /**
- * Converts a base64 string to a buffer.
- */
-function createBuffer(base64String: string) {
-	const base64Data = base64String.replace(BASE_64_REGEX, '');
-	const buffer = Buffer.from(base64Data, 'base64');
-	return buffer;
-}
-
-/**
  * Generates a unique filename for a given base64 string.
  */
-function getFilename(base64String: string) {
+function parseExtension(base64String: string) {
 	const mimeType = base64String.match(BASE_64_REGEX)?.[1];
 
 	if (!mimeType) {
@@ -52,8 +43,10 @@ function getFilename(base64String: string) {
  * Upload a base64 image to Google Cloud Storage.
  */
 export async function uploadBase64Image(base64String: string) {
-	const buffer = createBuffer(base64String);
-	const filename = getFilename(base64String);
+	const base64Data = base64String.replace(BASE_64_REGEX, '');
+	const buffer = Buffer.from(base64Data, 'base64');
+
+	const filename = parseExtension(base64String);
 
 	const snippetsBucket = storage.bucket(GCS_BUCKET_NAME);
 	const gcsFile = snippetsBucket.file(filename);

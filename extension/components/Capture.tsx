@@ -8,9 +8,10 @@ import ImageDisplay from "./ImageDisplay"
 
 type CaptureProps = {
   setError: (error: string | null) => void
+  accessToken: string
 }
 
-export default function Capture({ setError }: CaptureProps) {
+export default function Capture({ setError, accessToken }: CaptureProps) {
   const [screenshot, setScreenshot] = useState<string | null>(null)
   const [originTitle, setOriginTitle] = useState<string | null>(null)
   const [originUrl, setOriginUrl] = useState<string | null>(null)
@@ -77,6 +78,7 @@ export default function Capture({ setError }: CaptureProps) {
         <>
           <CaptureMeta hostName={hostName} title={originTitle} />
           <Channels
+            accessToken={accessToken}
             onError={(err) => setError(err)}
             currentChannel={currentChannel}
             setCurrentChannel={setCurrentChannel}
@@ -97,6 +99,7 @@ export default function Capture({ setError }: CaptureProps) {
             onError={(err) => setError(err)}
             onSuccess={() => setPostedTo(currentChannel)}
             currentChannel={currentChannel}
+            accessToken={accessToken}
           />
         ) : (
           <a

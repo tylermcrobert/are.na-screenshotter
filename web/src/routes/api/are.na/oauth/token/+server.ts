@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { ARENA_SECRET } from '$env/static/private';
+import { handleApiError } from '$lib/util.js';
 import { json } from '@sveltejs/kit';
-import z, { ZodError } from 'zod';
+import z from 'zod';
 
 export async function POST({ url }) {
 	try {
@@ -28,15 +29,6 @@ export async function POST({ url }) {
 
 		return json(data, { status: 200 });
 	} catch (error: any) {
-		console.log(error);
-
-		if (error instanceof ZodError) {
-			return json(
-				{ success: false, error: `${error.errors[0].message}` },
-				{ status: 400 }
-			);
-		}
-
-		return json({ success: false, error: error.message }, { status: 500 });
+		return handleApiError(error);
 	}
 }

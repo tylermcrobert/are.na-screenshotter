@@ -1,19 +1,22 @@
 import { useEffect, useState } from "react"
 
+import { ApiReq } from "~lib/request"
+
 import type { APIChannel } from "../../web/src/types"
-import { ARENA_API_URL } from "../constants"
 import Spinner from "./Spinner"
 
 type ChannelsProps = {
   currentChannel: APIChannel | null
-  onError: (error: string) => void
+  onError: (error: string | null) => void
   setCurrentChannel: (channel: APIChannel) => void
+  accessToken: string
 }
 
 export default function Channels({
   onError,
   setCurrentChannel,
-  currentChannel
+  currentChannel,
+  accessToken
 }: ChannelsProps) {
   const [recentChannels, setRecentChannels] = useState<APIChannel[]>([])
   const [searchChannels, setSearchChannels] = useState<APIChannel[]>([])
@@ -21,64 +24,44 @@ export default function Channels({
   const [searchQuery, setSearchQuery] = useState("")
 
   const channels = searchQuery ? searchChannels : recentChannels
+  const api = new ApiReq(accessToken)
 
   /**
-   * Gets the user's channels
+   * Fetches the user's channels
    */
-  async function getChannels() {
+  useEffect(() => {
     setLoading(true)
 
-    try {
-      /**
-       * Post to arena
-       */
-
-      const arenaResponse = await fetch(
-        `${ARENA_API_URL}/users/tyler-mcrobert/channels`,
-        { method: "GET" }
-      )
-
-      const arenaJson = await arenaResponse.json()
-
-      /**
-       * Throw error
-       */
-      if (!arenaResponse.ok) {
-        const errorMessage = arenaJson.error
-          ? `API Error: "${arenaJson.error}"`
-          : "An unexpected error occurred posting to Are.na."
-
-        throw new Error(errorMessage)
-      }
-
-      setLoading(false)
-      setRecentChannels(arenaJson.channels)
-      setCurrentChannel(arenaJson.channels[0])
-    } catch (e) {
-      /**
-       * Catch error
-       */
-      console.log(e)
-      const errMessage = (e as any).message
-      onError(errMessage || "An unexpected error occurred.")
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    getChannels()
+    api
+      .getChannels()
+      .then((res) => {
+        onError(null)
+        setCurrentChannel(res.channels[0])
+        setRecentChannels(res.channels)
+        setLoading(false)
+      })
+      .catch((e) => {
+        onError(e.message)
+        setLoading(false)
+      })
   }, [])
 
+  /**
+   * Searching for channels
+   */
   useEffect(() => {
     if (searchQuery.length) {
-      fetch(`${ARENA_API_URL}/search/channels/?q=${searchQuery}`)
-        .then((response) => response.json())
-        .then((data) => {
-          setSearchChannels(data.channels)
+      api
+        .searchChannels(searchQuery)
+        .then((res) => {
+          onError(null)
+          setLoading(false)
+          setCurrentChannel(res.channels[0])
+          setSearchChannels(res.channels)
         })
-        .catch((error) => {
-          console.log(error)
-          onError("An error occurred while making the API call.")
+        .catch((e) => {
+          onError(e.message)
+          setLoading(false)
         })
     } else {
       setSearchChannels([])

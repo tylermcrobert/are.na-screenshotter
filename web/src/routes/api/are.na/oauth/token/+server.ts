@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { ARENA_SECRET } from '$env/static/private';
-import { apiError, handleApiError } from '$lib/util.js';
+import { apiError, handleApiError } from '$lib/api.js';
 import { json } from '@sveltejs/kit';
 import z from 'zod';
 

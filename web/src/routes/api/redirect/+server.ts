@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { handleApiError } from '$lib/util.js';
+import { handleApiError } from '$lib/api.js';
 import { z } from 'zod';
 
 export async function GET({ url }) {

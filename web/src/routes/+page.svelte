@@ -22,18 +22,6 @@
 </main>
 
 <style>
-	* {
-		margin: 0;
-		padding: 0;
-		box-sizing: border-box;
-		-webkit-font-smoothing: antialiased;
-		-moz-osx-font-smoothing: grayscale;
-	}
-
-	:global(body) {
-		font-family: Arial, Helvetica, sans-serif;
-	}
-
 	main {
 		display: flex;
 		flex-direction: column;

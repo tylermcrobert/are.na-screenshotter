@@ -2,13 +2,6 @@ const ARENA_API_BASE_URL = 'https://api.are.na/v2';
 import type Arena from 'are.na';
 import type { APIChannel, APIChannelsResult } from '../types';
 
-class ArenaAPIError extends Error {
-	constructor(message?: string) {
-		super(message);
-		this.name = 'ArenaAPIError';
-	}
-}
-
 export class ArenaScreenshotter {
 	private token: string;
 
@@ -24,32 +17,24 @@ export class ArenaScreenshotter {
 	 * @returns A Promise that resolves to the fetched data.
 	 */
 	private async fetchApi(method: 'GET' | 'POST', url: string, body?: object) {
-		try {
-			const response = await fetch(url, {
-				method,
-				body: JSON.stringify(body),
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${this.token}`
-				}
-			});
-
-			const data = await response.json();
-
-			if (!response.ok) {
-				throw new Error(
-					`API request failed: (${data.code}) ${data.message}: ${data.description}`
-				);
+		const response = await fetch(url, {
+			method,
+			body: JSON.stringify(body),
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${this.token}`
 			}
+		});
 
-			return data;
-		} catch (e) {
-			if (e instanceof ArenaAPIError) {
-				throw e;
-			} else {
-				throw new ArenaAPIError('Unknown error');
-			}
+		const data = await response.json();
+
+		if (!response.ok) {
+			throw new Error(
+				`API request failed: (${data.code}) ${data.message}: ${data.description}`
+			);
 		}
+
+		return data;
 	}
 
 	/**

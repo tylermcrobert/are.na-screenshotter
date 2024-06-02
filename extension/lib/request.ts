@@ -1,6 +1,10 @@
+import type Arena from "are.na"
+
 import { sendToBackground } from "@plasmohq/messaging"
 
 import { ARENA_API_URL } from "~constants"
+
+const ARENA_API_BASE_URL = "https://api.are.na/v2"
 
 export class ApiReq {
   private accessToken: string
@@ -37,13 +41,19 @@ export class ApiReq {
     return res.data
   }
 
-  async searchUserChannels(q: string) {
-    const url = `${ARENA_API_URL}/search/channels?q=${q}&user=${this.userSlug}`
-    return this.corsRequest(url, "GET")
+  async searchUserChannels(q: string): Promise<Arena.Channel[]> {
+    const url = `${ARENA_API_BASE_URL}/search/channels?q=${q}&user=${this.userSlug}&per=5`
+
+    const res = await this.corsRequest(url, "GET")
+    const filteredChannels = res.channels.filter(
+      (a: Arena.Channel) => a.user.slug === this.userSlug
+    )
+
+    return filteredChannels
   }
 
   async getUserChannels() {
-    const url = `${ARENA_API_URL}/users/${this.userSlug}/channels`
+    const url = `${ARENA_API_BASE_URL}/users/${this.userSlug}/channels?per=5`
     return this.corsRequest(url, "GET")
   }
 

@@ -43,11 +43,11 @@ export default function Channels() {
     if (searchQuery.length) {
       api
         .searchUserChannels(searchQuery)
-        .then((res) => {
+        .then((channels) => {
           setError(null)
           setLoading(false)
-          setCurrentChannel(res.channels[0])
-          setSearchChannels(res.channels)
+          setCurrentChannel(channels[0])
+          setSearchChannels(channels)
         })
         .catch((e) => {
           setError(e.message)

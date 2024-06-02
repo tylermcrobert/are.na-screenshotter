@@ -79,7 +79,8 @@ export class ApiReq {
    */
   async getUserChannels(): Promise<Arena.Channel[]> {
     const url = `${ARENA_API_BASE_URL}/users/${this.userSlug}/channels?per=5`
-    return this.corsRequest(url, "GET")
+    const res = await this.corsRequest(url, "GET")
+    return res.channels
   }
 
   /**

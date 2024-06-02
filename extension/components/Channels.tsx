@@ -26,8 +26,8 @@ export default function Channels() {
       .getUserChannels()
       .then((res) => {
         setError(null)
-        setCurrentChannel(res.channels[0])
-        setRecentChannels(res.channels)
+        setCurrentChannel(res[0])
+        setRecentChannels(res)
         setLoading(false)
       })
       .catch((e) => {
@@ -43,11 +43,11 @@ export default function Channels() {
     if (searchQuery.length) {
       api
         .searchUserChannels(searchQuery)
-        .then((channels) => {
+        .then((res) => {
           setError(null)
           setLoading(false)
-          setCurrentChannel(channels[0])
-          setSearchChannels(channels)
+          setCurrentChannel(res[0])
+          setSearchChannels(res)
         })
         .catch((e) => {
           setError(e.message)

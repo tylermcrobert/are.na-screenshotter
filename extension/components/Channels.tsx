@@ -67,12 +67,12 @@ export default function Channels() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           type="text"
-          className="border-gray-2 focus:border-gray-3 my-2 px-2 py-1 border w-full placeholder:text-gray-4 outline-none"
-          placeholder="Search channels..."
+          className="focus:border-gray-3 mb-3 px-2 py-1 border w-full placeholder:text-gray-4 outline-none"
+          placeholder="Search channels"
         />
       </form>
 
-      <form className="relative flex-1 divide-y divide-gray-1 h-[100px]">
+      <form className="relative flex-1 h-[100px]">
         {(loading || isEmptySearch) && (
           <div className="absolute inset-0 flex justify-center items-center bg-white">
             {loading ? (
@@ -97,7 +97,7 @@ export default function Channels() {
                   onChange={() => setCurrentChannel(channel)}
                   checked={currentChannel?.id === channel.id}
                 />
-                <div className="border-gray-3 peer-checked:border-status-3 peer-checked:bg-status-3 border rounded-full w-2.5 h-2.5"></div>
+                <div className="peer-checked:border-status-3 peer-checked:bg-status-3 border rounded-full w-2.5 h-2.5"></div>
                 <div className="flex-1 text-status-3">{channel.title}</div>
                 <div className="text-gray-4">{channel.length} Blocks</div>
               </label>

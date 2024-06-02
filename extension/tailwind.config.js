@@ -6,6 +6,9 @@ module.exports = {
   plugins: [],
   theme: {
     extend: {
+      borderColor: {
+        DEFAULT: "var(--color-gray-2)"
+      },
       colors: {
         gray: {
           0: "var(--color-gray-0)",

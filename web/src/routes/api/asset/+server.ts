@@ -14,9 +14,7 @@ export async function POST({ request }) {
 
 		const body = z
 			.object({
-				screenshot: z
-					.string()
-					.min(1, { message: 'Base64 screenshot is required' })
+				screenshot: z.string({ message: 'Base64 screenshot is required' })
 			})
 			.parse(await request.json());
 

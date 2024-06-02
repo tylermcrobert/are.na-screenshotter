@@ -1,16 +1,36 @@
+import type Arena from "are.na"
+
 import { sendToBackground } from "@plasmohq/messaging"
 
-import { ARENA_API_URL } from "~constants"
+import { SCREENSHOTTER_API_BASE } from "~constants"
 
+const ARENA_API_BASE_URL = "https://api.are.na/v2"
+
+/**
+ * Represents an API request object.
+ */
 export class ApiReq {
   private accessToken: string
   private userSlug: string
 
+  /**
+   * Constructs a new ApiReq object.
+   * @param token - The access token for the API.
+   * @param userSlug - The user slug for the API.
+   */
   constructor(token: string, userSlug: string) {
     this.accessToken = token
     this.userSlug = userSlug
   }
 
+  /**
+   * Sends a CORS request to the API.
+   * @param url - The URL for the request.
+   * @param method - The HTTP method for the request.
+   * @param body - The request body (optional).
+   * @returns A Promise that resolves to the response data.
+   * @throws An error if the request fails.
+   */
   private async corsRequest(
     url: string,
     method: "GET" | "POST",
@@ -24,6 +44,7 @@ export class ApiReq {
           body: JSON.stringify(body),
           method: method,
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${this.accessToken}`
           }
         }
@@ -37,25 +58,54 @@ export class ApiReq {
     return res.data
   }
 
-  async searchUserChannels(q: string) {
-    const url = `${ARENA_API_URL}/search/channels?q=${q}&user=${this.userSlug}`
-    return this.corsRequest(url, "GET")
+  /**
+   * Searches for user channels based on a query.
+   * @param q - The search query.
+   * @returns A Promise that resolves to an array of user channels.
+   */
+  async searchUserChannels(q: string): Promise<Arena.Channel[]> {
+    const url = `${ARENA_API_BASE_URL}/search/channels?q=${q}&user=${this.userSlug}&per=5`
+
+    const res = await this.corsRequest(url, "GET")
+    const filteredChannels = res.channels.filter(
+      (a: Arena.Channel) => a.user.slug === this.userSlug
+    )
+
+    return filteredChannels
   }
 
-  async getUserChannels() {
-    const url = `${ARENA_API_URL}/users/${this.userSlug}/channels`
-    return this.corsRequest(url, "GET")
+  /**
+   * Retrieves the user's channels.
+   * @returns A Promise that resolves to an array of user channels.
+   */
+  async getUserChannels(): Promise<Arena.Channel[]> {
+    const url = `${ARENA_API_BASE_URL}/users/${this.userSlug}/channels?per=5`
+    const res = await this.corsRequest(url, "GET")
+    return res.channels
   }
 
+  /**
+   * Posts a screenshot to a channel.
+   * @param channel - The channel ID.
+   * @param data - The screenshot data.
+   * @returns A Promise that resolves to the response data.
+   */
   async postScreenshot(
     channel: number,
     data: { screenshot: string; originUrl: string; originTitle: string }
   ) {
-    const url = `${ARENA_API_URL}/channels/${channel}`
-    return this.corsRequest(url, "POST", {
-      screenshot: data.screenshot,
-      originUrl: data.originUrl,
-      originTitle: data.originTitle
+    const assetApiUrl = `${SCREENSHOTTER_API_BASE}/asset`
+    const { assetUrl } = await this.corsRequest(assetApiUrl, "POST", {
+      screenshot: data.screenshot
     })
+
+    const arenaApiUrl = `${ARENA_API_BASE_URL}/channels/${channel}/blocks`
+    const res = await this.corsRequest(arenaApiUrl, "POST", {
+      source: `https://arena-screenshotter.com/api/redirect?asset=${assetUrl}&redirect=${data.originUrl}&timestamp=${new Date().getTime()}`,
+      title: data.originTitle,
+      description: data.originUrl
+    })
+
+    return res
   }
 }

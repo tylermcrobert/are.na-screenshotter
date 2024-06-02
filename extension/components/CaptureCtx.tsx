@@ -1,8 +1,7 @@
+import type Arena from "are.na"
 import { createContext, useContext, useState } from "react"
 
 import { ApiReq } from "~lib/request"
-
-import type { APIChannel } from "../../web/src/types"
 
 type CaptureContextValue = {
   api: ApiReq
@@ -11,16 +10,16 @@ type CaptureContextValue = {
   screenshot: string | null
   originTitle: string | null
   originUrl: string | null
-  postedTo: APIChannel | null
-  currentChannel: APIChannel | null
+  postedTo: Arena.Channel | null
+  currentChannel: Arena.Channel | null
   hostName: string | null
   error: string | null
   setError: (error: string | null) => void
   setScreenshot: (screenshot: string | null) => void
   setOriginTitle: (originTitle: string | null) => void
   setOriginUrl: (originUrl: string | null) => void
-  setPostedTo: (postedTo: APIChannel | null) => void
-  setCurrentChannel: (currentChannel: APIChannel | null) => void
+  setPostedTo: (postedTo: Arena.Channel | null) => void
+  setCurrentChannel: (currentChannel: Arena.Channel | null) => void
 }
 
 const CaptureContext = createContext<CaptureContextValue>({
@@ -60,8 +59,10 @@ export const CaptureProvider = ({
   const [screenshot, setScreenshot] = useState<string | null>(null)
   const [originTitle, setOriginTitle] = useState<string | null>(null)
   const [originUrl, setOriginUrl] = useState<string | null>(null)
-  const [postedTo, setPostedTo] = useState<APIChannel | null>(null)
-  const [currentChannel, setCurrentChannel] = useState<APIChannel | null>(null)
+  const [postedTo, setPostedTo] = useState<Arena.Channel | null>(null)
+  const [currentChannel, setCurrentChannel] = useState<Arena.Channel | null>(
+    null
+  )
 
   const api = new ApiReq(accessToken, userSlug)
 

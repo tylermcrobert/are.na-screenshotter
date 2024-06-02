@@ -1,15 +1,11 @@
 import { useState } from "react"
 
-import { ARENA_API_URL } from "~constants"
-import { ApiReq } from "~lib/request"
-
-import type { APIChannel } from "../../web/src/types"
 import { useCaptureCtx } from "./CaptureCtx"
 import Spinner from "./Spinner"
 
 export default function ConnectButton() {
   const {
-    accessToken,
+    api,
     screenshot,
     originUrl,
     originTitle,
@@ -19,8 +15,6 @@ export default function ConnectButton() {
   } = useCaptureCtx()
 
   const [loading, setLoading] = useState(false)
-
-  const api = new ApiReq(accessToken)
 
   /**
    * Posts the screenshot to Are.na

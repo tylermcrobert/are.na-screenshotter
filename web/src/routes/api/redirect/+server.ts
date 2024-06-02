@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { json } from '@sveltejs/kit';
-import { ZodError, z } from 'zod';
+import { handleApiError } from '$lib/api.js';
+import { z } from 'zod';
 
 export async function GET({ url }) {
 	try {
@@ -35,21 +35,10 @@ export async function GET({ url }) {
 
 		return new Response(imageData, {
 			headers: {
-				'Content-Type': contentType,
-				'Cache-Control': 'max-age=31536000' // 1 year
+				'Content-Type': contentType
 			}
 		});
 	} catch (error) {
-		if (error instanceof ZodError) {
-			return json(
-				{ success: false, error: `${error.errors[0].message}` },
-				{ status: 400 }
-			);
-		}
-
-		return json(
-			{ success: false, error: (error as any).message },
-			{ status: 500 }
-		);
+		return handleApiError(error);
 	}
 }

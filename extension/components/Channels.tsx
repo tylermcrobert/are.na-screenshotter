@@ -1,16 +1,14 @@
+import type Arena from "are.na"
 import { useEffect, useState } from "react"
 
-import { ApiReq } from "~lib/request"
-
-import type { APIChannel } from "../../web/src/types"
 import { useCaptureCtx } from "./CaptureCtx"
 import Spinner from "./Spinner"
 
 export default function Channels() {
   const { currentChannel, setError, setCurrentChannel, api } = useCaptureCtx()
 
-  const [recentChannels, setRecentChannels] = useState<APIChannel[]>([])
-  const [searchChannels, setSearchChannels] = useState<APIChannel[]>([])
+  const [recentChannels, setRecentChannels] = useState<Arena.Channel[]>([])
+  const [searchChannels, setSearchChannels] = useState<Arena.Channel[]>([])
   const [loading, setLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
 
@@ -26,8 +24,8 @@ export default function Channels() {
       .getUserChannels()
       .then((res) => {
         setError(null)
-        setCurrentChannel(res.channels[0])
-        setRecentChannels(res.channels)
+        setCurrentChannel(res[0])
+        setRecentChannels(res)
         setLoading(false)
       })
       .catch((e) => {
@@ -46,8 +44,8 @@ export default function Channels() {
         .then((res) => {
           setError(null)
           setLoading(false)
-          setCurrentChannel(res.channels[0])
-          setSearchChannels(res.channels)
+          setCurrentChannel(res[0])
+          setSearchChannels(res)
         })
         .catch((e) => {
           setError(e.message)

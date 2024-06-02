@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 
-import type { APIChannel } from "../../web/src/types"
 import { useCaptureCtx } from "./CaptureCtx"
 import CaptureMeta from "./CaptureMeta"
 import Channels from "./Channels"

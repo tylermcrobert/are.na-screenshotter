@@ -9,6 +9,17 @@ import {
 import { Storage } from '@google-cloud/storage';
 
 /**
+ * Setup the Google Cloud Storage client.
+ */
+const storage = new Storage({
+	projectId: GCS_PROJECT_ID,
+	credentials: {
+		private_key: GCS_PRIVATE_KEY,
+		client_email: GCS_CLIENT_EMAIL
+	}
+});
+
+/**
  * Regular expression to match the base64 string.
  */
 const BASE_64_REGEX = /^data:([A-Za-z-+/]+);base64,/;
@@ -38,33 +49,15 @@ function getFilename(base64String: string) {
 }
 
 /**
- * Setup the Google Cloud Storage client.
+ * Upload a base64 image to Google Cloud Storage.
  */
-const storage = new Storage({
-	projectId: GCS_PROJECT_ID,
-	credentials: {
-		private_key: GCS_PRIVATE_KEY,
-		client_email: GCS_CLIENT_EMAIL
-	}
-});
+export async function uploadBase64Image(base64String: string) {
+	const buffer = createBuffer(base64String);
+	const filename = getFilename(base64String);
 
-/**
- * Upload a file to Google Cloud Storage.
- */
-export async function uploadToGcs(filename: string, buffer: Buffer) {
 	const snippetsBucket = storage.bucket(GCS_BUCKET_NAME);
 	const gcsFile = snippetsBucket.file(filename);
 	await gcsFile.save(buffer);
 
 	return gcsFile;
-}
-
-/**
- * Upload a base64 image to Google Cloud Storage.
- */
-export function uploadBase64Image(base64String: string) {
-	const buffer = createBuffer(base64String);
-	const filename = getFilename(base64String);
-
-	return uploadToGcs(filename, buffer);
 }

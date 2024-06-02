@@ -3,6 +3,10 @@
 import { json } from '@sveltejs/kit';
 import { ZodError } from 'zod';
 
+export function apiError(message: string, code: number) {
+	return json({ error: true, message: message }, { status: code });
+}
+
 export function handleApiError(error: any) {
 	let message = error.message || 'An unknown internal error occurred.';
 	let code = 500;
@@ -12,5 +16,5 @@ export function handleApiError(error: any) {
 		code = 400;
 	}
 
-	return json({ error: true, message: message }, { status: code });
+	return apiError(message, code);
 }

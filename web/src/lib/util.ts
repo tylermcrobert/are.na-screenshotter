@@ -12,5 +12,5 @@ export function handleApiError(error: any) {
 		code = 400;
 	}
 
-	return json({ success: false, error: message }, { status: code });
+	return json({ error: true, message: message }, { status: code });
 }

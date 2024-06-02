@@ -1,4 +1,4 @@
-import { API_ORIGIN_WHITELIST } from '$env/static/private';
+// import { API_ORIGIN_WHITELIST } from '$env/static/private';
 import { uploadBase64Image } from '$lib/upload';
 import { json } from '@sveltejs/kit';
 import z from 'zod';
@@ -10,9 +10,9 @@ export async function POST({ request }) {
 
 		console.log('Request from', request, headers);
 
-		if (headers.get('origin') !== API_ORIGIN_WHITELIST) {
-			return json({ message: 'Unauthorized origin' }, { status: 403 });
-		}
+		// if (headers.get('origin') !== API_ORIGIN_WHITELIST) {
+		// 	return json({ message: 'Unauthorized origin' }, { status: 403 });
+		// }
 
 		const body = z
 			.object({

@@ -1,14 +1,12 @@
+import { useCaptureCtx } from "./CaptureCtx"
 import RefreshIcon from "./RefreshIcon"
 
 type ImageDisplayProps = {
-  screenshot: string | null
   refreshScreenshot: () => void
 }
 
-export default function ImageDisplay({
-  screenshot,
-  refreshScreenshot
-}: ImageDisplayProps) {
+export default function ImageDisplay({ refreshScreenshot }: ImageDisplayProps) {
+  const { screenshot } = useCaptureCtx()
   return (
     <div className="relative flex justify-center items-center bg-black mt-2 p-3 aspect-square group">
       <button

@@ -4,28 +4,22 @@ import { ARENA_API_URL } from "~constants"
 import { ApiReq } from "~lib/request"
 
 import type { APIChannel } from "../../web/src/types"
+import { useCaptureCtx } from "./CaptureCtx"
 import Spinner from "./Spinner"
 
-type ButtonRowProps = {
-  accessToken: string
-  screenshot: string | null
-  originUrl: string | null
-  originTitle: string | null
-  currentChannel: APIChannel | null
-  onError: (error: string | null) => void
-  onSuccess: () => void
-}
+export default function ConnectButton() {
+  const {
+    accessToken,
+    screenshot,
+    originUrl,
+    originTitle,
+    currentChannel,
+    setPostedTo,
+    setError
+  } = useCaptureCtx()
 
-export default function ConnectButton({
-  accessToken,
-  screenshot,
-  originUrl,
-  originTitle,
-  currentChannel,
-  onError,
-  onSuccess
-}: ButtonRowProps) {
   const [loading, setLoading] = useState(false)
+
   const api = new ApiReq(accessToken)
 
   /**
@@ -33,19 +27,19 @@ export default function ConnectButton({
    */
   async function postToArena() {
     setLoading(true)
-    onError(null)
+    setError(null)
 
     if (!currentChannel) {
-      onError("Please select a channel.")
+      setError("Please select a channel.")
     }
 
     if (!screenshot || !originUrl || !originTitle) {
-      onError("Missing screenshot, originUrl, or originTitle.")
+      setError("Missing screenshot, originUrl, or originTitle.")
       return
     }
 
     if (!currentChannel?.id) {
-      onError("Please select a channel.")
+      setError("Please select a channel.")
       return
     }
 
@@ -57,12 +51,12 @@ export default function ConnectButton({
       })
       .then(() => {
         setLoading(false)
-        onSuccess()
-        onError(null)
+        setPostedTo(currentChannel)
+        setError(null)
       })
       .catch((e) => {
         setLoading(false)
-        onError(e.message)
+        setError(e.message)
       })
   }
 

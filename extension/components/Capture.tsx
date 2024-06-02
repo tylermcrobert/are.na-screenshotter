@@ -1,24 +1,23 @@
 import { useEffect, useState } from "react"
 
 import type { APIChannel } from "../../web/src/types"
+import { useCaptureCtx } from "./CaptureCtx"
 import CaptureMeta from "./CaptureMeta"
 import Channels from "./Channels"
 import ConnectButton from "./ConnectButton"
 import ImageDisplay from "./ImageDisplay"
 
-type CaptureProps = {
-  setError: (error: string | null) => void
-  accessToken: string
-}
-
-export default function Capture({ setError, accessToken }: CaptureProps) {
-  const [screenshot, setScreenshot] = useState<string | null>(null)
-  const [originTitle, setOriginTitle] = useState<string | null>(null)
-  const [originUrl, setOriginUrl] = useState<string | null>(null)
-  const [postedTo, setPostedTo] = useState<APIChannel | null>(null)
-  const [currentChannel, setCurrentChannel] = useState<APIChannel | null>(null)
-
-  const hostName = originUrl ? new URL(originUrl).hostname.toString() : null
+export default function Capture() {
+  const {
+    postedTo,
+    originTitle,
+    hostName,
+    setError,
+    setScreenshot,
+    setOriginUrl,
+    setPostedTo,
+    setOriginTitle
+  } = useCaptureCtx()
 
   /**
    * Captures a screenshot
@@ -59,10 +58,7 @@ export default function Capture({ setError, accessToken }: CaptureProps) {
 
   return (
     <div>
-      <ImageDisplay
-        screenshot={screenshot}
-        refreshScreenshot={refreshScreenshot}
-      />
+      <ImageDisplay refreshScreenshot={refreshScreenshot} />
 
       {!!postedTo ? (
         <div className="my-10 text-center">
@@ -76,13 +72,8 @@ export default function Capture({ setError, accessToken }: CaptureProps) {
         </div>
       ) : (
         <>
-          <CaptureMeta hostName={hostName} title={originTitle} />
-          <Channels
-            accessToken={accessToken}
-            onError={(err) => setError(err)}
-            currentChannel={currentChannel}
-            setCurrentChannel={setCurrentChannel}
-          />
+          <CaptureMeta />
+          <Channels />
         </>
       )}
 
@@ -92,15 +83,7 @@ export default function Capture({ setError, accessToken }: CaptureProps) {
         </button>
 
         {!postedTo ? (
-          <ConnectButton
-            screenshot={screenshot}
-            originUrl={originUrl}
-            originTitle={originTitle}
-            onError={(err) => setError(err)}
-            onSuccess={() => setPostedTo(currentChannel)}
-            currentChannel={currentChannel}
-            accessToken={accessToken}
-          />
+          <ConnectButton />
         ) : (
           <a
             href={`https://are.na/channel/${postedTo.id}`}

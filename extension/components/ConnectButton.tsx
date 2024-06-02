@@ -1,11 +1,13 @@
 import { useState } from "react"
 
 import { ARENA_API_URL } from "~constants"
+import { ApiReq } from "~lib/request"
 
 import type { APIChannel } from "../../web/src/types"
 import Spinner from "./Spinner"
 
 type ButtonRowProps = {
+  accessToken: string
   screenshot: string | null
   originUrl: string | null
   originTitle: string | null
@@ -15,6 +17,7 @@ type ButtonRowProps = {
 }
 
 export default function ConnectButton({
+  accessToken,
   screenshot,
   originUrl,
   originTitle,
@@ -23,48 +26,44 @@ export default function ConnectButton({
   onSuccess
 }: ButtonRowProps) {
   const [loading, setLoading] = useState(false)
+  const api = new ApiReq(accessToken)
 
   /**
    * Posts the screenshot to Are.na
    */
   async function postToArena() {
+    setLoading(true)
+    onError(null)
+
     if (!currentChannel) {
       onError("Please select a channel.")
     }
 
-    setLoading(true)
-
-    try {
-      const url = `${ARENA_API_URL}/channels/${currentChannel?.id}`
-
-      const arenaResponse = await fetch(url, {
-        method: "POST",
-        body: JSON.stringify({
-          screenshot,
-          originUrl,
-          originTitle
-        })
-      })
-
-      const arenaJson = await arenaResponse.json()
-
-      if (!arenaResponse.ok) {
-        const errorMessage = arenaJson
-          ? `API Error: "${arenaJson.error}"`
-          : "An unexpected error occurred posting to Are.na."
-
-        throw new Error(errorMessage)
-      }
-
-      setLoading(false)
-      onSuccess()
-      onError(null)
-    } catch (e) {
-      const errMesssage = e as any
-      console.log(e)
-      setLoading(false)
-      onError(errMesssage || "An unexpected error occurred.")
+    if (!screenshot || !originUrl || !originTitle) {
+      onError("Missing screenshot, originUrl, or originTitle.")
+      return
     }
+
+    if (!currentChannel?.id) {
+      onError("Please select a channel.")
+      return
+    }
+
+    api
+      .postScreenshot(currentChannel.id, {
+        screenshot: screenshot,
+        originUrl: originUrl,
+        originTitle: originTitle
+      })
+      .then(() => {
+        setLoading(false)
+        onSuccess()
+        onError(null)
+      })
+      .catch((e) => {
+        setLoading(false)
+        onError(e.message)
+      })
   }
 
   return (

@@ -99,6 +99,7 @@ export default function Capture({ setError, accessToken }: CaptureProps) {
             onError={(err) => setError(err)}
             onSuccess={() => setPostedTo(currentChannel)}
             currentChannel={currentChannel}
+            accessToken={accessToken}
           />
         ) : (
           <a

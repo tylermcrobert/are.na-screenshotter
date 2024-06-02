@@ -9,12 +9,17 @@ export class ApiReq {
     this.accessToken = token
   }
 
-  private async corsRequest(url: string, method: "GET" | "POST") {
+  private async corsRequest(
+    url: string,
+    method: "GET" | "POST",
+    body?: object
+  ) {
     return sendToBackground({
       name: "corsRequest",
       body: {
         url: url,
         options: {
+          body: JSON.stringify(body),
           method: method,
           headers: {
             Authorization: `Bearer ${this.accessToken}`
@@ -34,7 +39,15 @@ export class ApiReq {
     return this.corsRequest(url, "GET")
   }
 
-  async postScreenshot() {
-    // Implement postScreenshot functionality here
+  async postScreenshot(
+    channel: number,
+    data: { screenshot: string; originUrl: string; originTitle: string }
+  ) {
+    const url = `${ARENA_API_URL}/channels/${channel}`
+    return this.corsRequest(url, "POST", {
+      screenshot: data.screenshot,
+      originUrl: data.originUrl,
+      originTitle: data.originTitle
+    })
   }
 }

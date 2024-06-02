@@ -2,10 +2,15 @@ import { ARENA_API_URL } from "~constants"
 
 type AuthProps = {
   setAccessToken: (token: string) => void
+  setUserSlug: (userSlug: string) => void
   setError: (token: string | null) => void
 }
 
-export default function Auth({ setAccessToken, setError }: AuthProps) {
+export default function Auth({
+  setAccessToken,
+  setError,
+  setUserSlug
+}: AuthProps) {
   const manifest = chrome.runtime.getManifest()
   const redirectUri = chrome.identity.getRedirectURL()
   const clientId: string = (manifest.oauth2 as any).client_id
@@ -31,8 +36,13 @@ export default function Auth({ setAccessToken, setError }: AuthProps) {
           throw new Error(errorMessage)
         }
 
-        chrome.storage.local.set({ accessToken: json.access_token })
+        chrome.storage.local.set({
+          accessToken: json.access_token,
+          userSlug: json.user
+        })
+
         setAccessToken(json.access_token)
+        setUserSlug(json.user)
       } catch (e: any) {
         setError(e.message)
       }

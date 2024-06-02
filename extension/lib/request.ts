@@ -4,9 +4,11 @@ import { ARENA_API_URL } from "~constants"
 
 export class ApiReq {
   private accessToken: string
+  private userSlug: string
 
-  constructor(token: string) {
+  constructor(token: string, userSlug: string) {
     this.accessToken = token
+    this.userSlug = userSlug
   }
 
   private async corsRequest(
@@ -35,13 +37,13 @@ export class ApiReq {
     return res.data
   }
 
-  async searchUserChannels({ q, user }: { q: string; user: string }) {
-    const url = `${ARENA_API_URL}/search/channels?q=${q}&user=${user}`
+  async searchUserChannels(q: string) {
+    const url = `${ARENA_API_URL}/search/channels?q=${q}&user=${this.userSlug}`
     return this.corsRequest(url, "GET")
   }
 
-  async getUserChannels(user: string) {
-    const url = `${ARENA_API_URL}/users/${user}/channels`
+  async getUserChannels() {
+    const url = `${ARENA_API_URL}/users/${this.userSlug}/channels`
     return this.corsRequest(url, "GET")
   }
 

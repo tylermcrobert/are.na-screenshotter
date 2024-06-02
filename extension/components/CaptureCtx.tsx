@@ -7,6 +7,7 @@ import type { APIChannel } from "../../web/src/types"
 type CaptureContextValue = {
   api: ApiReq
   accessToken: string
+  userSlug: string
   screenshot: string | null
   originTitle: string | null
   originUrl: string | null
@@ -25,6 +26,7 @@ type CaptureContextValue = {
 const CaptureContext = createContext<CaptureContextValue>({
   api: {} as unknown as ApiReq,
   accessToken: "",
+  userSlug: "",
   screenshot: null,
   originTitle: null,
   originUrl: null,
@@ -44,6 +46,7 @@ interface CaptureProviderProps {
   children: React.ReactNode
   accessToken: string
   error: string | null
+  userSlug: string
   setError: (error: string | null) => void
 }
 
@@ -51,6 +54,7 @@ export const CaptureProvider = ({
   children,
   error,
   accessToken,
+  userSlug,
   setError
 }: CaptureProviderProps) => {
   const [screenshot, setScreenshot] = useState<string | null>(null)
@@ -59,11 +63,12 @@ export const CaptureProvider = ({
   const [postedTo, setPostedTo] = useState<APIChannel | null>(null)
   const [currentChannel, setCurrentChannel] = useState<APIChannel | null>(null)
 
-  const api = new ApiReq(accessToken)
+  const api = new ApiReq(accessToken, userSlug)
 
   const hostName = originUrl ? new URL(originUrl).hostname.toString() : null
 
   const value: CaptureContextValue = {
+    userSlug,
     api,
     accessToken,
     hostName,

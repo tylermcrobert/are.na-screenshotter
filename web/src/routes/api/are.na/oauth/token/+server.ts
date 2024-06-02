@@ -27,7 +27,15 @@ export async function POST({ url }) {
 			return json(data, { status: response.status });
 		}
 
-		return json(data, { status: 200 });
+		const user = `https://api.are.na/v2/me?access_token=${data.access_token}`;
+		const userResponse = await fetch(user);
+		const userData = await userResponse.json();
+
+		if (!userResponse.ok) {
+			return json(data, { status: userResponse.status });
+		}
+
+		return json({ ...data, user: userData.slug }, { status: 200 });
 	} catch (error: any) {
 		return handleApiError(error);
 	}

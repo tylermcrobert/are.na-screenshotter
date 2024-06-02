@@ -3,28 +3,18 @@ import { useEffect, useState } from "react"
 import { ApiReq } from "~lib/request"
 
 import type { APIChannel } from "../../web/src/types"
+import { useCaptureCtx } from "./CaptureCtx"
 import Spinner from "./Spinner"
 
-type ChannelsProps = {
-  currentChannel: APIChannel | null
-  onError: (error: string | null) => void
-  setCurrentChannel: (channel: APIChannel) => void
-  accessToken: string
-}
+export default function Channels() {
+  const { currentChannel, setError, setCurrentChannel, api } = useCaptureCtx()
 
-export default function Channels({
-  onError,
-  setCurrentChannel,
-  currentChannel,
-  accessToken
-}: ChannelsProps) {
   const [recentChannels, setRecentChannels] = useState<APIChannel[]>([])
   const [searchChannels, setSearchChannels] = useState<APIChannel[]>([])
   const [loading, setLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
 
   const channels = searchQuery ? searchChannels : recentChannels
-  const api = new ApiReq(accessToken)
 
   /**
    * Fetches the user's channels
@@ -35,13 +25,13 @@ export default function Channels({
     api
       .getChannels()
       .then((res) => {
-        onError(null)
+        setError(null)
         setCurrentChannel(res.channels[0])
         setRecentChannels(res.channels)
         setLoading(false)
       })
       .catch((e) => {
-        onError(e.message)
+        setError(e.message)
         setLoading(false)
       })
   }, [])
@@ -54,13 +44,13 @@ export default function Channels({
       api
         .searchChannels(searchQuery)
         .then((res) => {
-          onError(null)
+          setError(null)
           setLoading(false)
           setCurrentChannel(res.channels[0])
           setSearchChannels(res.channels)
         })
         .catch((e) => {
-          onError(e.message)
+          setError(e.message)
           setLoading(false)
         })
     } else {

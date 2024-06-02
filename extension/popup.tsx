@@ -5,6 +5,8 @@ import "./style.css"
 
 import { useEffect, useState } from "react"
 
+import { CaptureProvider } from "~components/CaptureCtx"
+
 function IndexPopup() {
   const [accessToken, setAccessToken] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -18,7 +20,12 @@ function IndexPopup() {
   return (
     <div className="px-2 w-[270px]">
       {accessToken ? (
-        <Capture setError={setError} accessToken={accessToken} />
+        <CaptureProvider
+          accessToken={accessToken}
+          setError={setError}
+          error={error}>
+          <Capture />
+        </CaptureProvider>
       ) : (
         <Auth setAccessToken={setAccessToken} setError={setError} />
       )}

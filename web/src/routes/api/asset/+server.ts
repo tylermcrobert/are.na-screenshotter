@@ -8,7 +8,7 @@ export async function POST({ request }) {
 	try {
 		const { headers } = request;
 
-		console.log('Request from', headers.get('origin'));
+		console.log('Request from', request, headers);
 
 		if (headers.get('origin') !== API_ORIGIN_WHITELIST) {
 			return json({ message: 'Unauthorized origin' }, { status: 403 });

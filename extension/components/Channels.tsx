@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react"
 
-import { ApiReq } from "~lib/request"
-
 import type { APIChannel } from "../../web/src/types"
 import { useCaptureCtx } from "./CaptureCtx"
 import Spinner from "./Spinner"

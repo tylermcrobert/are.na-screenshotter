@@ -1,14 +1,14 @@
+import type Arena from "are.na"
 import { useEffect, useState } from "react"
 
-import type { APIChannel } from "../../web/src/types"
 import { useCaptureCtx } from "./CaptureCtx"
 import Spinner from "./Spinner"
 
 export default function Channels() {
   const { currentChannel, setError, setCurrentChannel, api } = useCaptureCtx()
 
-  const [recentChannels, setRecentChannels] = useState<APIChannel[]>([])
-  const [searchChannels, setSearchChannels] = useState<APIChannel[]>([])
+  const [recentChannels, setRecentChannels] = useState<Arena.Channel[]>([])
+  const [searchChannels, setSearchChannels] = useState<Arena.Channel[]>([])
   const [loading, setLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
 

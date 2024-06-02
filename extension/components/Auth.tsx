@@ -1,4 +1,4 @@
-import { ARENA_API_URL } from "~constants"
+import { SCREENSHOTTER_API_BASE } from "~constants"
 
 type AuthProps = {
   setAccessToken: (token: string) => void
@@ -25,7 +25,7 @@ export default function Auth({
       const url = new URL(redirectedUrl as string)
       const code = url.searchParams.get("code") as string
 
-      const authUrl = `${ARENA_API_URL}/oauth/token/?client_id=${clientId}&code=${code}&redirect_uri=${redirectUri}`
+      const authUrl = `${SCREENSHOTTER_API_BASE}/are.na/oauth/token/?client_id=${clientId}&code=${code}&redirect_uri=${redirectUri}`
 
       try {
         const res = await fetch(authUrl, { method: "POST" })

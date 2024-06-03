@@ -92,18 +92,17 @@ export class ApiReq {
    */
   async postScreenshot(
     channel: number,
-    data: { screenshot: string; originUrl: string; originTitle: string }
+    data: {
+      screenshot: string
+      originUrl: string
+      originTitle: string
+    }
   ) {
-    const assetApiUrl = `${SCREENSHOTTER_API_BASE}/asset`
-    const { assetUrl } = await this.corsRequest(assetApiUrl, "POST", {
-      screenshot: data.screenshot
-    })
-
-    const arenaApiUrl = `${ARENA_API_BASE_URL}/channels/${channel}/blocks`
-    const res = await this.corsRequest(arenaApiUrl, "POST", {
-      source: `https://arena-screenshotter.com/api/redirect?asset=${assetUrl}&redirect=${data.originUrl}&timestamp=${new Date().getTime()}`,
+    const apiUrl = `${SCREENSHOTTER_API_BASE}/are.na/channels/${channel}/blocks`
+    const res = await this.corsRequest(apiUrl, "POST", {
+      asset: data.screenshot,
       title: data.originTitle,
-      description: data.originUrl
+      url: data.originUrl
     })
 
     return res

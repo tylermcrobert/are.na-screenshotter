@@ -5,13 +5,9 @@ import z from 'zod';
 import { handleApiError } from '$lib/api.js';
 
 export async function POST({ request, params: { slug } }) {
-	try {
-		console.log(
-			'headers',
-			request.headers.get('Authorization'),
-			request.headers
-		);
+	console.log('headers', request.headers.get('Authorization'), request.headers);
 
+	try {
 		const body = z
 			.object({
 				asset: z.string({ message: 'Base64 screenshot is required' }),
@@ -20,9 +16,14 @@ export async function POST({ request, params: { slug } }) {
 			})
 			.parse(await request.json());
 
-		const authHeader = z
-			.string({ message: 'Authorization is required' })
-			.parse(request.headers.get('Authorization'));
+		const authHeader = request.headers.get('Authorization');
+
+		if (!authHeader) {
+			return json(
+				{ error: true, message: 'Authorization header is required' },
+				{ status: 401 }
+			);
+		}
 
 		const gcsFile = await uploadBase64Image(body.asset);
 		const publicUrl = gcsFile.publicUrl();

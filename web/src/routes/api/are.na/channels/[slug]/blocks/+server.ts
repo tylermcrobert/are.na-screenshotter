@@ -6,6 +6,12 @@ import { handleApiError } from '$lib/api.js';
 
 export async function POST({ request, params: { slug } }) {
 	try {
+		console.log(
+			'headers',
+			request.headers.get('Authorization'),
+			request.headers
+		);
+
 		const body = z
 			.object({
 				asset: z.string({ message: 'Base64 screenshot is required' }),

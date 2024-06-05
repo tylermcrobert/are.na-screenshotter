@@ -1,13 +1,10 @@
-import Auth from "~components/Auth"
-import Capture from "~components/Capture"
-
-import "./style.css"
-
 import { useEffect, useState } from "react"
 
+import Auth from "~components/Auth"
+import Capture from "~components/Capture"
 import { CaptureProvider } from "~components/CaptureCtx"
 
-function IndexPopup() {
+export default function IndexPopup() {
   const [accessToken, setAccessToken] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [userSlug, setUserSlug] = useState<string | null>(null)
@@ -48,5 +45,3 @@ function IndexPopup() {
     </div>
   )
 }
-
-export default IndexPopup

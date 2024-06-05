@@ -8,6 +8,8 @@ export function apiError(message: string, code: number) {
 }
 
 export function handleApiError(error: any) {
+	console.error(error);
+
 	let message = error.message || 'An unknown internal error occurred.';
 	let code = 500;
 

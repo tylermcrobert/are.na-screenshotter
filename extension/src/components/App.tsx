@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react"
 
-import Auth from "~components/Auth"
-import Capture from "~components/Capture"
+import { sendToBackground } from "@plasmohq/messaging"
+
 import { CaptureProvider } from "~components/CaptureCtx"
 
-export default function IndexPopup() {
-  const [accessToken, setAccessToken] = useState<string | null>(null)
+import Auth from "./Auth"
+import Capture from "./Capture"
+
+const PlasmoOverlay = () => {
+  const [screenshot, setScreenshot] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  const [accessToken, setAccessToken] = useState<string | null>(null)
   const [userSlug, setUserSlug] = useState<string | null>(null)
 
   useEffect(() => {
@@ -17,31 +22,50 @@ export default function IndexPopup() {
     chrome.storage.local.get("userSlug").then((res) => {
       setUserSlug(res.userSlug)
     })
-  }, [])
+
+    chrome.storage.local.get("screenshot").then((res) => {
+      setScreenshot(res.screenshot)
+    })
+  })
+
+  // function signOut() {
+  //   chrome.storage.local.remove("userSlug")
+  //   chrome.storage.local.remove("accessToken")
+
+  //   setUserSlug(null)
+  //   setAccessToken(null)
+  // }
+
+  async function authenticate() {
+    try {
+      const response = await sendToBackground({ name: "auth" })
+
+      setAccessToken(response.accessToken)
+      setUserSlug(response.userSlug)
+    } catch (error) {
+      console.error(error)
+      setError("Error authenticating")
+    }
+  }
 
   return (
-    <div className="px-2 w-[270px]">
+    <>
       {accessToken && userSlug ? (
         <CaptureProvider
+          screenshot={screenshot}
           userSlug={userSlug}
           accessToken={accessToken}
-          setError={setError}
-          error={error}>
+          error={error}
+          originTitle={document.title}
+          originUrl={window.location.href}
+          setError={setError}>
           <Capture />
         </CaptureProvider>
       ) : (
-        <Auth
-          setAccessToken={setAccessToken}
-          setError={setError}
-          setUserSlug={setUserSlug}
-        />
+        <Auth authenticate={authenticate} />
       )}
-
-      {error && (
-        <div className="bg-red-100 my-2 p-1 rounded text-center text-red-500">
-          {error}
-        </div>
-      )}
-    </div>
+    </>
   )
 }
+
+export default PlasmoOverlay

@@ -12,6 +12,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
     res.send({ data })
   } catch (error: any) {
+    console.error("Error fetching in background:", error)
     res.send({ error: error.message || "An unknown internal error occurred." })
   }
 }

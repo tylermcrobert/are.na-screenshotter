@@ -5,7 +5,7 @@ import Spinner from "./Spinner"
 
 export default function ConnectButton() {
   const {
-    api,
+    arena,
     screenshot,
     originUrl,
     originTitle,
@@ -37,7 +37,7 @@ export default function ConnectButton() {
       return
     }
 
-    api
+    arena
       .postScreenshot(currentChannel.id, {
         screenshot: screenshot,
         originUrl: originUrl,
@@ -55,9 +55,7 @@ export default function ConnectButton() {
   }
 
   return (
-    <button
-      className="flex justify-center w-full align-center btn"
-      onClick={postToArena}>
+    <button className="w-full btn" onClick={postToArena}>
       {!loading ? <>Connect &rarr;</> : <Spinner />}
     </button>
   )

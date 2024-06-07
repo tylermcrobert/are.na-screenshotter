@@ -2,6 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+.status-private {
+  --color-status-1: var(--color-red-1);
+  --color-status-2: var(--color-red-2);
+  --color-status-3: var(--color-red-3);
+}
+
+.status-public {
+  --color-status-1: var(--color-green-1);
+  --color-status-2: var(--color-green-2);
+  --color-status-3: var(--color-green-3);
+}
+
+.status-closed {
+  --color-status-1: var(--color-gray-1);
+  --color-status-2: var(--color-gray-3);
+  --color-status-3: var(--color-gray-6);
+}
+
 :root {
   --color-red-1: #faf4f3;
   --color-red-2: #dfbebe;
@@ -21,38 +39,14 @@
   --color-gray-7: #000;
 }
 
-.status-private {
-  --color-status-1: var(--color-red-1);
-  --color-status-2: var(--color-red-2);
-  --color-status-3: var(--color-red-3);
-}
-
-.status-public {
-  --color-status-1: var(--color-green-1);
-  --color-status-2: var(--color-green-2);
-  --color-status-3: var(--color-green-3);
-}
-
-.status-closed {
-  --color-status-1: var(--color-gray-1);
-  --color-status-2: var(--color-gray-3);
-  --color-status-3: var(--color-gray-6);
-}
-
-@layer base {
-  * {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  body {
-    font-family: Arial, Helvetica, sans-serif;
-    @apply text-gray-6 leading-tight text-[12.5px] select-none;
-  }
+body,
+html {
+  @apply text-gray-6 leading-tight text-[12.5px] select-none font-sans antialiased;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 @layer components {
   .btn {
-    @apply inline-block bg-gray-1 px-5 py-1.5 font-bold rounded text-gray-6 text-center hover:border-gray-3 border border-transparent;
+    @apply border h-9 flex items-center hover:border-gray-3 justify-center rounded bg-gray-1 px-4 border-transparent font-bold;
   }
 }

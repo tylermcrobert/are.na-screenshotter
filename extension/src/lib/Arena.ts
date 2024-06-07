@@ -1,15 +1,15 @@
-import type Arena from "are.na"
+import type ArenaApi from "are.na"
 
 import { sendToBackground } from "@plasmohq/messaging"
 
-import { SCREENSHOTTER_API_BASE } from "~constants"
-
 const ARENA_API_BASE_URL = "https://api.are.na/v2"
+const SCREENSHOTTER_API_BASE =
+  "https://are-na-screenshotter-git-main-tyler-mcrobert.vercel.app/api"
 
 /**
  * Represents an API request object.
  */
-export class ApiReq {
+export class Arena {
   private accessToken: string
   private userSlug: string
 
@@ -31,13 +31,9 @@ export class ApiReq {
    * @returns A Promise that resolves to the response data.
    * @throws An error if the request fails.
    */
-  private async corsRequest(
-    url: string,
-    method: "GET" | "POST",
-    body?: object
-  ) {
+  private async fetch(url: string, method: "GET" | "POST", body?: object) {
     const res = await sendToBackground({
-      name: "corsRequest",
+      name: "fetch",
       body: {
         url: url,
         options: {
@@ -63,12 +59,12 @@ export class ApiReq {
    * @param q - The search query.
    * @returns A Promise that resolves to an array of user channels.
    */
-  async searchUserChannels(q: string): Promise<Arena.Channel[]> {
+  async searchUserChannels(q: string): Promise<ArenaApi.Channel[]> {
     const url = `${ARENA_API_BASE_URL}/search/channels?q=${q}&user=${this.userSlug}&per=5`
 
-    const res = await this.corsRequest(url, "GET")
+    const res = await this.fetch(url, "GET")
     const filteredChannels = res.channels.filter(
-      (a: Arena.Channel) => a.user.slug === this.userSlug
+      (a: ArenaApi.Channel) => a.user.slug === this.userSlug
     )
 
     return filteredChannels
@@ -78,9 +74,9 @@ export class ApiReq {
    * Retrieves the user's channels.
    * @returns A Promise that resolves to an array of user channels.
    */
-  async getUserChannels(): Promise<Arena.Channel[]> {
+  async getUserChannels(): Promise<ArenaApi.Channel[]> {
     const url = `${ARENA_API_BASE_URL}/users/${this.userSlug}/channels?per=5`
-    const res = await this.corsRequest(url, "GET")
+    const res = await this.fetch(url, "GET")
     return res.channels
   }
 
@@ -99,7 +95,7 @@ export class ApiReq {
     }
   ) {
     const apiUrl = `${SCREENSHOTTER_API_BASE}/are.na/channels/${channel}/blocks`
-    const res = await this.corsRequest(apiUrl, "POST", {
+    const res = await this.fetch(apiUrl, "POST", {
       asset: data.screenshot,
       title: data.originTitle,
       url: data.originUrl

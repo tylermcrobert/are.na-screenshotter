@@ -1,94 +1,80 @@
-import type Arena from "are.na"
+import type ArenaType from "are.na"
 import { createContext, useContext, useState } from "react"
 
-import { ApiReq } from "~lib/request"
+import { Arena } from "~lib/Arena"
 
 type CaptureContextValue = {
-  api: ApiReq
-  accessToken: string
-  userSlug: string
-  screenshot: string | null
-  originTitle: string | null
-  originUrl: string | null
-  postedTo: Arena.Channel | null
-  currentChannel: Arena.Channel | null
+  arena: Arena
+  screenshot: string
+  originTitle: string
+  originUrl: string
+  postedTo: ArenaType.Channel | null
+  currentChannel: ArenaType.Channel | null
   hostName: string | null
   error: string | null
   setError: (error: string | null) => void
-  setScreenshot: (screenshot: string | null) => void
-  setOriginTitle: (originTitle: string | null) => void
-  setOriginUrl: (originUrl: string | null) => void
-  setPostedTo: (postedTo: Arena.Channel | null) => void
-  setCurrentChannel: (currentChannel: Arena.Channel | null) => void
+  setPostedTo: (postedTo: ArenaType.Channel | null) => void
+  setCurrentChannel: (currentChannel: ArenaType.Channel | null) => void
 }
 
 const CaptureContext = createContext<CaptureContextValue>({
-  api: {} as unknown as ApiReq,
-  accessToken: "",
-  userSlug: "",
-  screenshot: null,
-  originTitle: null,
-  originUrl: null,
+  arena: {} as unknown as Arena,
+  screenshot: "",
+  originTitle: "",
+  originUrl: "",
   postedTo: null,
   currentChannel: null,
   hostName: null,
   error: null,
   setError: () => {},
-  setScreenshot: () => {},
-  setOriginTitle: () => {},
-  setOriginUrl: () => {},
   setPostedTo: () => {},
   setCurrentChannel: () => {}
 })
 
-interface CaptureProviderProps {
+type CaptureProviderProps = {
   children: React.ReactNode
-  accessToken: string
-  error: string | null
   userSlug: string
-  setError: (error: string | null) => void
-}
+  accessToken: string
+} & Pick<
+  CaptureContextValue,
+  "originTitle" | "originUrl" | "error" | "screenshot" | "setError"
+>
 
 export const CaptureProvider = ({
+  originTitle,
+  originUrl,
   children,
   error,
+  screenshot,
   accessToken,
   userSlug,
   setError
 }: CaptureProviderProps) => {
-  const [screenshot, setScreenshot] = useState<string | null>(null)
-  const [originTitle, setOriginTitle] = useState<string | null>(null)
-  const [originUrl, setOriginUrl] = useState<string | null>(null)
-  const [postedTo, setPostedTo] = useState<Arena.Channel | null>(null)
-  const [currentChannel, setCurrentChannel] = useState<Arena.Channel | null>(
-    null
-  )
+  const [postedTo, setPostedTo] = useState<ArenaType.Channel | null>(null)
+  const [currentChannel, setCurrentChannel] =
+    useState<ArenaType.Channel | null>(null)
 
-  const api = new ApiReq(accessToken, userSlug)
+  const arena = new Arena(accessToken, userSlug)
 
   const hostName = originUrl ? new URL(originUrl).hostname.toString() : null
 
-  const value: CaptureContextValue = {
-    userSlug,
-    api,
-    accessToken,
-    hostName,
-    screenshot,
-    originTitle,
-    originUrl,
-    postedTo,
-    currentChannel,
-    error,
-    setError,
-    setScreenshot,
-    setOriginTitle,
-    setOriginUrl,
-    setPostedTo,
-    setCurrentChannel
-  }
-
   return (
-    <CaptureContext.Provider value={value}>{children}</CaptureContext.Provider>
+    <CaptureContext.Provider
+      value={{
+        arena,
+        screenshot,
+        hostName,
+        originTitle,
+        originUrl,
+        postedTo,
+        currentChannel,
+        error,
+        setError,
+        setPostedTo,
+        setCurrentChannel
+      }}>
+      {children}
+    </CaptureContext.Provider>
   )
 }
 

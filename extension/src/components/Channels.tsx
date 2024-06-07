@@ -5,7 +5,7 @@ import { useCaptureCtx } from "./CaptureCtx"
 import Spinner from "./Spinner"
 
 export default function Channels() {
-  const { currentChannel, setError, setCurrentChannel, api } = useCaptureCtx()
+  const { arena, currentChannel, setError, setCurrentChannel } = useCaptureCtx()
 
   const [recentChannels, setRecentChannels] = useState<Arena.Channel[]>([])
   const [searchChannels, setSearchChannels] = useState<Arena.Channel[]>([])
@@ -21,7 +21,7 @@ export default function Channels() {
   useEffect(() => {
     setLoading(true)
 
-    api
+    arena
       .getUserChannels()
       .then((res) => {
         setError(null)
@@ -42,7 +42,7 @@ export default function Channels() {
     if (searchQuery.length) {
       setLoading(true)
 
-      api
+      arena
         .searchUserChannels(searchQuery)
         .then((res) => {
           setError(null)
@@ -61,18 +61,18 @@ export default function Channels() {
   }, [searchQuery])
 
   return (
-    <div>
+    <div className="flex flex-col flex-1 gap-3">
       <form onSubmit={(e) => e.preventDefault()}>
         <input
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           type="text"
-          className="focus:border-gray-3 mb-3 px-2 py-1 border w-full placeholder:text-gray-4 outline-none"
+          className="focus:border-gray-3 px-2 py-1 border rounded w-full placeholder:text-gray-4 outline-none"
           placeholder="Search channels"
         />
       </form>
 
-      <form className="relative flex-1 h-[100px]">
+      <form className="relative flex flex-col flex-1">
         {(loading || isEmptySearch) && (
           <div className="absolute inset-0 flex justify-center items-center bg-white">
             {loading ? (
@@ -85,24 +85,26 @@ export default function Channels() {
           </div>
         )}
 
-        {channels.length
-          ? channels.map((channel) => (
-              <label
-                className={`flex flex-1 items-center gap-2 hover:bg-status-1 cursor-pointer status-${channel.status} h-[20px]`}
-                key={channel.id}>
-                <input
-                  hidden
-                  type="radio"
-                  className="peer"
-                  onChange={() => setCurrentChannel(channel)}
-                  checked={currentChannel?.id === channel.id}
-                />
-                <div className="peer-checked:border-status-3 peer-checked:bg-status-3 border rounded-full w-2.5 h-2.5"></div>
-                <div className="flex-1 text-status-3">{channel.title}</div>
-                <div className="text-gray-4">{channel.length} Blocks</div>
-              </label>
-            ))
-          : null}
+        <div className="flex flex-col flex-1">
+          {channels.length
+            ? channels.map((channel) => (
+                <label
+                  className={`flex flex-1 items-center gap-2 hover:bg-status-1 cursor-pointer status-${channel.status} flex-1`}
+                  key={channel.id}>
+                  <input
+                    hidden
+                    type="radio"
+                    className="peer"
+                    onChange={() => setCurrentChannel(channel)}
+                    checked={currentChannel?.id === channel.id}
+                  />
+                  <div className="peer-checked:border-status-3 peer-checked:bg-status-3 border rounded-full w-2.5 h-2.5"></div>
+                  <div className="flex-1 text-status-3">{channel.title}</div>
+                  <div className="text-gray-4">{channel.length} Blocks</div>
+                </label>
+              ))
+            : null}
+        </div>
       </form>
     </div>
   )

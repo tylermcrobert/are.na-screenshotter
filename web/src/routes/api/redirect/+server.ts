@@ -17,10 +17,10 @@ export async function GET({ url }) {
 
 		const timestamp = data.timestamp;
 		const currentTime = new Date().getTime();
-		const thirtySeconds = 30 * 1000;
-		const isThirtySecondsOld = currentTime - timestamp > thirtySeconds;
+		const sixtySeconds = 60 * 1000;
+		const isSixtySecondsOld = currentTime - timestamp > sixtySeconds;
 
-		if (isThirtySecondsOld) {
+		if (isSixtySecondsOld) {
 			return new Response(null, {
 				status: 302,
 				headers: {

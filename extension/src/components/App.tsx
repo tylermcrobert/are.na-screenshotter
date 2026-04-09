@@ -13,19 +13,19 @@ const PlasmoOverlay = () => {
 
   const [accessToken, setAccessToken] = useState<string | null>(null)
   const [userSlug, setUserSlug] = useState<string | null>(null)
+  const [tabUrl, setTabUrl] = useState<string | null>(null)
+  const [tabTitle, setTabTitle] = useState<string | null>(null)
 
   useEffect(() => {
-    chrome.storage.local.get("accessToken").then((res) => {
-      setAccessToken(res.accessToken)
-    })
-
-    chrome.storage.local.get("userSlug").then((res) => {
-      setUserSlug(res.userSlug)
-    })
-
-    chrome.storage.local.get("screenshot").then((res) => {
-      setScreenshot(res.screenshot)
-    })
+    chrome.storage.local
+      .get(["accessToken", "userSlug", "screenshot", "tabUrl", "tabTitle"])
+      .then((res) => {
+        setAccessToken(res.accessToken ?? null)
+        setUserSlug(res.userSlug ?? null)
+        setScreenshot(res.screenshot ?? null)
+        setTabUrl(res.tabUrl ?? null)
+        setTabTitle(res.tabTitle ?? null)
+      })
   })
 
   // function signOut() {
@@ -56,8 +56,8 @@ const PlasmoOverlay = () => {
           userSlug={userSlug}
           accessToken={accessToken}
           error={error}
-          originTitle={document.title}
-          originUrl={window.location.href}
+          originTitle={tabTitle ?? ""}
+          originUrl={tabUrl ?? ""}
           setError={setError}>
           <Capture />
         </CaptureProvider>

@@ -1,6 +1,6 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 
-export const SCREENSHOTTER_API_BASE = "http://localhost:5173/api"
+export const SCREENSHOTTER_API_BASE = "https://localhost:5173/api"
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   console.log("auth handler")

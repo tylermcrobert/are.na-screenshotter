@@ -17,10 +17,16 @@ export async function POST({ url }) {
 			})
 			.parse(Object.fromEntries(url.searchParams));
 
-		const authUrl = `https://dev.are.na/oauth/token?client_id=${client_id}&client_secret=${ARENA_SECRET}&code=${code}&grant_type=authorization_code&redirect_uri=${redirect_uri}`;
-
-		const response = await fetch(authUrl, {
-			method: 'POST'
+		const response = await fetch('https://api.are.na/v3/oauth/token', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				grant_type: 'authorization_code',
+				client_id,
+				client_secret: ARENA_SECRET,
+				code,
+				redirect_uri
+			})
 		});
 
 		const authResponse = await response.json();
@@ -30,8 +36,9 @@ export async function POST({ url }) {
 			return apiError('Could not get access token', response.status);
 		}
 
-		const fetchUserUrl = `https://api.are.na/v2/me?access_token=${authResponse.access_token}`;
-		const userResponse = await fetch(fetchUserUrl);
+		const userResponse = await fetch('https://api.are.na/v3/me', {
+			headers: { Authorization: `Bearer ${authResponse.access_token}` }
+		});
 		const userData = await userResponse.json();
 
 		if (!userResponse.ok) {

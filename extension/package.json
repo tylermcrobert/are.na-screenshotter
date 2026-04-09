@@ -1,7 +1,7 @@
 {
   "name": "arena-screenshotter",
   "displayName": "Arena screenshotter",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Save screenshots of sites to are.na",
   "author": "Tyler McRobert",
   "scripts": {
@@ -26,6 +26,19 @@
     "prettier": "3.2.4",
     "typescript": "5.3.3"
   },
+  "pnpm": {
+    "overrides": {
+      "sharp": "^0.33.0"
+    },
+    "onlyBuiltDependencies": [
+      "sharp",
+      "@swc/core",
+      "esbuild",
+      "@parcel/watcher",
+      "lmdb",
+      "msgpackr-extract"
+    ]
+  },
   "manifest": {
     "name": "Are.na screenshotter",
     "version": "0.0.2",
@@ -38,7 +51,7 @@
       "storage"
     ],
     "oauth2": {
-      "client_id": "Zp0vTp_Nwz5iYpUURyvPJaxJPaELKBAx6lCJDwWr9rI",
+      "client_id": "w00O0_Pl7ZIA9wjnG6CBarNnivmCcGqxTSTE9__TZ4Y",
       "scopes": []
     },
     "web_accessible_resources": [

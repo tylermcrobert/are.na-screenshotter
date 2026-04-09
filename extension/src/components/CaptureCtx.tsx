@@ -1,20 +1,20 @@
-import type ArenaType from "are.na"
 import { createContext, useContext, useState } from "react"
 
 import { Arena } from "~lib/Arena"
+import type { ArenaChannel } from "~lib/types"
 
 type CaptureContextValue = {
   arena: Arena
   screenshot: string
   originTitle: string
   originUrl: string
-  postedTo: ArenaType.Channel | null
-  currentChannel: ArenaType.Channel | null
+  postedTo: ArenaChannel | null
+  currentChannel: ArenaChannel | null
   hostName: string | null
   error: string | null
   setError: (error: string | null) => void
-  setPostedTo: (postedTo: ArenaType.Channel | null) => void
-  setCurrentChannel: (currentChannel: ArenaType.Channel | null) => void
+  setPostedTo: (postedTo: ArenaChannel | null) => void
+  setCurrentChannel: (currentChannel: ArenaChannel | null) => void
 }
 
 const CaptureContext = createContext<CaptureContextValue>({
@@ -50,9 +50,9 @@ export const CaptureProvider = ({
   userSlug,
   setError
 }: CaptureProviderProps) => {
-  const [postedTo, setPostedTo] = useState<ArenaType.Channel | null>(null)
+  const [postedTo, setPostedTo] = useState<ArenaChannel | null>(null)
   const [currentChannel, setCurrentChannel] =
-    useState<ArenaType.Channel | null>(null)
+    useState<ArenaChannel | null>(null)
 
   const arena = new Arena(accessToken, userSlug)
 

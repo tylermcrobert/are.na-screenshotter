@@ -5,8 +5,6 @@ import z from 'zod';
 import { handleApiError } from '$lib/api.js';
 
 export async function POST({ request, params: { slug } }) {
-	console.log('headers', request.headers.get('Authorization'), request.headers);
-
 	try {
 		const body = z
 			.object({
@@ -29,7 +27,7 @@ export async function POST({ request, params: { slug } }) {
 		const publicUrl = gcsFile.publicUrl();
 
 		const sourceUrl = `https://arena-screenshotter.com/api/redirect?asset=${publicUrl}&redirect=${encodeURIComponent(body.url)}&timestamp=${new Date().getTime()}`;
-		const apiUrl = `https://api.are.na/v2/channels/${slug}/blocks`;
+		const apiUrl = `https://api.are.na/v3/blocks`;
 
 		const arenaResponse = await fetch(apiUrl, {
 			method: 'POST',
@@ -38,16 +36,17 @@ export async function POST({ request, params: { slug } }) {
 				Authorization: authHeader
 			},
 			body: JSON.stringify({
+				value: sourceUrl,
 				title: body.title,
 				description: body.url,
-				source: sourceUrl
+				channel_ids: [slug]
 			})
 		});
 
 		const arenaJson = await arenaResponse.json();
 
 		if (!arenaResponse.ok) {
-			throw new Error(arenaJson.description);
+			throw new Error(arenaJson.details?.message ?? arenaJson.error);
 		}
 
 		const apiResponse = {

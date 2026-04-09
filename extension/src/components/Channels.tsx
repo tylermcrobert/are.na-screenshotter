@@ -1,5 +1,6 @@
-import type Arena from "are.na"
 import { useEffect, useState } from "react"
+
+import type { ArenaChannel } from "~lib/types"
 
 import { useCaptureCtx } from "./CaptureCtx"
 import Spinner from "./Spinner"
@@ -7,8 +8,8 @@ import Spinner from "./Spinner"
 export default function Channels() {
   const { arena, currentChannel, setError, setCurrentChannel } = useCaptureCtx()
 
-  const [recentChannels, setRecentChannels] = useState<Arena.Channel[]>([])
-  const [searchChannels, setSearchChannels] = useState<Arena.Channel[]>([])
+  const [recentChannels, setRecentChannels] = useState<ArenaChannel[]>([])
+  const [searchChannels, setSearchChannels] = useState<ArenaChannel[]>([])
   const [loading, setLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
 
@@ -89,7 +90,7 @@ export default function Channels() {
           {channels.length
             ? channels.map((channel) => (
                 <label
-                  className={`flex flex-1 items-center gap-2 hover:bg-status-1 cursor-pointer status-${channel.status} flex-1`}
+                  className={`flex flex-1 items-center gap-2 hover:bg-status-1 cursor-pointer status-${channel.visibility} flex-1`}
                   key={channel.id}>
                   <input
                     hidden
@@ -100,7 +101,9 @@ export default function Channels() {
                   />
                   <div className="peer-checked:border-status-3 peer-checked:bg-status-3 border rounded-full w-2.5 h-2.5"></div>
                   <div className="flex-1 text-status-3">{channel.title}</div>
-                  <div className="text-gray-4">{channel.length} Blocks</div>
+                  <div className="text-gray-4">
+                    {channel.counts.contents} Blocks
+                  </div>
                 </label>
               ))
             : null}

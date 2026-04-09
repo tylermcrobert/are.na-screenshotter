@@ -1,7 +1,6 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 
-export const SCREENSHOTTER_API_BASE =
-  "https://are-na-screenshotter-git-main-tyler-mcrobert.vercel.app/api"
+const SCREENSHOTTER_API_BASE = process.env.PLASMO_PUBLIC_API_BASE
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   console.log("auth handler")
@@ -14,7 +13,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     const redirectUrl = await new Promise<string>((resolve, reject) => {
       chrome.identity.launchWebAuthFlow(
         {
-          url: `http://dev.are.na/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`,
+          url: `https://www.are.na/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=write`,
           interactive: true
         },
         resolve

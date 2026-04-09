@@ -5,8 +5,6 @@ import z from 'zod';
 import { handleApiError } from '$lib/api.js';
 
 export async function POST({ request, params: { slug } }) {
-	console.log('headers', request.headers.get('Authorization'), request.headers);
-
 	try {
 		const body = z
 			.object({

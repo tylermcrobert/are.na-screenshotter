@@ -1,43 +1,26 @@
-import type ArenaApi from "are.na"
-
 import { sendToBackground } from "@plasmohq/messaging"
 
-const ARENA_API_BASE_URL = "https://api.are.na/v2"
-const SCREENSHOTTER_API_BASE =
-  "https://are-na-screenshotter-git-main-tyler-mcrobert.vercel.app/api"
+import type { ArenaChannel } from "./types"
 
-/**
- * Represents an API request object.
- */
+const ARENA_API_BASE_URL = "https://api.are.na/v3"
+const SCREENSHOTTER_API_BASE = "http://localhost:5173/api"
+
 export class Arena {
   private accessToken: string
   private userSlug: string
 
-  /**
-   * Constructs a new ApiReq object.
-   * @param token - The access token for the API.
-   * @param userSlug - The user slug for the API.
-   */
   constructor(token: string, userSlug: string) {
     this.accessToken = token
     this.userSlug = userSlug
   }
 
-  /**
-   * Sends a CORS request to the API.
-   * @param url - The URL for the request.
-   * @param method - The HTTP method for the request.
-   * @param body - The request body (optional).
-   * @returns A Promise that resolves to the response data.
-   * @throws An error if the request fails.
-   */
   private async fetch(url: string, method: "GET" | "POST", body?: object) {
     const res = await sendToBackground({
       name: "fetch",
       body: {
         url: url,
         options: {
-          body: JSON.stringify(body),
+          body: body ? JSON.stringify(body) : undefined,
           method: method,
           headers: {
             "Content-Type": "application/json",
@@ -54,38 +37,24 @@ export class Arena {
     return res.data
   }
 
-  /**
-   * Searches for user channels based on a query.
-   * @param q - The search query.
-   * @returns A Promise that resolves to an array of user channels.
-   */
-  async searchUserChannels(q: string): Promise<ArenaApi.Channel[]> {
-    const url = `${ARENA_API_BASE_URL}/search/channels?q=${q}&user=${this.userSlug}&per=5`
-
+  async searchUserChannels(q: string): Promise<ArenaChannel[]> {
+    const url = `${ARENA_API_BASE_URL}/users/${this.userSlug}/contents?type=Channel&per=100&sort=updated_at_desc`
     const res = await this.fetch(url, "GET")
-    const filteredChannels = res.channels.filter(
-      (a: ArenaApi.Channel) => a.user.slug === this.userSlug
+    const query = q.toLowerCase()
+
+    return res.data.filter(
+      (ch: ArenaChannel) =>
+        ch.title.toLowerCase().includes(query) &&
+        ch.owner.slug === this.userSlug
     )
-
-    return filteredChannels
   }
 
-  /**
-   * Retrieves the user's channels.
-   * @returns A Promise that resolves to an array of user channels.
-   */
-  async getUserChannels(): Promise<ArenaApi.Channel[]> {
-    const url = `${ARENA_API_BASE_URL}/users/${this.userSlug}/channels?per=5`
+  async getUserChannels(): Promise<ArenaChannel[]> {
+    const url = `${ARENA_API_BASE_URL}/users/${this.userSlug}/contents?type=Channel&per=5&sort=updated_at_desc`
     const res = await this.fetch(url, "GET")
-    return res.channels
+    return res.data
   }
 
-  /**
-   * Posts a screenshot to a channel.
-   * @param channel - The channel ID.
-   * @param data - The screenshot data.
-   * @returns A Promise that resolves to the response data.
-   */
   async postScreenshot(
     channel: number,
     data: {

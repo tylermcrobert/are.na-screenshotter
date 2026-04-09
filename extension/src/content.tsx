@@ -22,7 +22,7 @@ export default function content() {
     <div className="root">
       <Window closeWindow={() => setOpen(false)}>
         <iframe
-          src="chrome-extension://elbbeemhfnkpohdahlhlmhkjnjkbbpgd/tabs/iframe.html"
+          src={chrome.runtime.getURL("tabs/iframe.html")}
           className="w-full h-full"
         />
       </Window>

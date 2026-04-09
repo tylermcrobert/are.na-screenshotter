@@ -7,7 +7,9 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
     if (!response.ok) {
       console.error(data)
-      throw new Error(data.message || "An unexpected error occurred.")
+      throw new Error(
+        data.details?.message || data.error || data.message || "An unexpected error occurred."
+      )
     }
 
     res.send({ data })

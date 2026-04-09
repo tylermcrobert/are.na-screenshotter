@@ -29,8 +29,6 @@ export async function POST({ request, params: { slug } }) {
 		const publicUrl = gcsFile.publicUrl();
 
 		const sourceUrl = `https://arena-screenshotter.com/api/redirect?asset=${publicUrl}&redirect=${encodeURIComponent(body.url)}&timestamp=${new Date().getTime()}`;
-		console.log(sourceUrl);
-
 		const apiUrl = `https://api.are.na/v3/blocks`;
 
 		const arenaResponse = await fetch(apiUrl, {

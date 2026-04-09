@@ -6,6 +6,9 @@ const BASE_64_REGEX = /^data:([A-Za-z-+/]+);base64,/;
 
 export async function POST({ request, params: { slug } }) {
 	try {
+		/**
+		 * Parse the request body
+		 */
 		const body = z
 			.object({
 				asset: z.string({ message: 'Base64 screenshot is required' }),
@@ -16,6 +19,9 @@ export async function POST({ request, params: { slug } }) {
 
 		const authHeader = request.headers.get('Authorization');
 
+		/**
+		 * Check if the authorization header is present
+		 */
 		if (!authHeader) {
 			return json(
 				{ error: true, message: 'Authorization header is required' },
@@ -23,8 +29,15 @@ export async function POST({ request, params: { slug } }) {
 			);
 		}
 
+		/**
+		 * Get the MIME type and extension from the screenshot
+		 */
 		const mimeType = body.asset.match(BASE_64_REGEX)?.[1] || 'image/png';
 		const extension = mimeType.split('/')[1] || 'png';
+
+		/**
+		 * Get the presigned URL from Are.na
+		 */
 
 		const presignResponse = await fetch(
 			'https://api.are.na/v3/uploads/presign',
@@ -52,6 +65,10 @@ export async function POST({ request, params: { slug } }) {
 			);
 		}
 
+		/**
+		 * Upload the screenshot to S3
+		 */
+
 		const { upload_url, key, content_type } = presignData.files[0];
 
 		const base64Data = body.asset.replace(BASE_64_REGEX, '');
@@ -68,6 +85,10 @@ export async function POST({ request, params: { slug } }) {
 		}
 
 		const s3Url = `https://s3.amazonaws.com/arena_images-temp/${key}`;
+
+		/**
+		 * Create the block in Are.na
+		 */
 
 		const arenaResponse = await fetch('https://api.are.na/v3/blocks', {
 			method: 'POST',
@@ -94,6 +115,9 @@ export async function POST({ request, params: { slug } }) {
 			);
 		}
 
+		/**
+		 * Return the block ID
+		 */
 		return json({ id: arenaJson.id }, { status: 200 });
 	} catch (error) {
 		return handleApiError(error);

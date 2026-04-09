@@ -78,8 +78,7 @@ export async function POST({ request, params: { slug } }) {
 			body: JSON.stringify({
 				value: s3Url,
 				title: body.title,
-				description: 'Description lorem ipsum dolor',
-				original_source_url: `https://google.com`,
+				original_source_url: body.url,
 				original_source_title: body.title,
 				channel_ids: [slug]
 			})

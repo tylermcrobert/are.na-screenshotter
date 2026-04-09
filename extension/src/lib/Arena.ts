@@ -3,7 +3,7 @@ import { sendToBackground } from "@plasmohq/messaging"
 import type { ArenaChannel } from "./types"
 
 const ARENA_API_BASE_URL = "https://api.are.na/v3"
-const SCREENSHOTTER_API_BASE = "https://localhost:5173/api"
+const SCREENSHOTTER_API_BASE = process.env.PLASMO_PUBLIC_API_BASE
 
 export class Arena {
   private accessToken: string

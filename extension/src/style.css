@@ -1,26 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-.status-private {
-  --color-status-1: var(--color-red-1);
-  --color-status-2: var(--color-red-2);
-  --color-status-3: var(--color-red-3);
-}
-
-.status-public {
-  --color-status-1: var(--color-green-1);
-  --color-status-2: var(--color-green-2);
-  --color-status-3: var(--color-green-3);
-}
-
-.status-closed {
-  --color-status-1: var(--color-gray-1);
-  --color-status-2: var(--color-gray-3);
-  --color-status-3: var(--color-gray-6);
-}
-
-:root {
+@theme {
   --color-red-1: #faf4f3;
   --color-red-2: #dfbebe;
   --color-red-3: #b93d3d;
@@ -45,8 +25,26 @@ html {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-@layer components {
-  .btn {
-    @apply border h-9 flex items-center hover:border-gray-3 justify-center rounded bg-gray-1 px-4 border-transparent font-bold;
+@utility btn {
+  @apply border h-9 flex items-center hover:border-gray-3 justify-center rounded-sm bg-gray-1 px-4 border-transparent font-bold;
+}
+
+@layer utilities {
+  .status-private {
+    --color-status-1: var(--color-red-1);
+    --color-status-2: var(--color-red-2);
+    --color-status-3: var(--color-red-3);
+  }
+
+  .status-public {
+    --color-status-1: var(--color-green-1);
+    --color-status-2: var(--color-green-2);
+    --color-status-3: var(--color-green-3);
+  }
+
+  .status-closed {
+    --color-status-1: var(--color-gray-1);
+    --color-status-2: var(--color-gray-3);
+    --color-status-3: var(--color-gray-6);
   }
 }

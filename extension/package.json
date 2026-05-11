@@ -11,24 +11,27 @@
   },
   "dependencies": {
     "@plasmohq/messaging": "^0.6.2",
-    "plasmo": "0.86.3",
+    "plasmo": "0.90.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "tailwindcss": "3.4.1"
+    "tailwindcss": "4.1.4"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "4.1.1",
+    "@tailwindcss/postcss": "^4.1.4",
     "@types/chrome": "0.0.258",
     "@types/node": "20.11.5",
     "@types/react": "18.2.48",
     "@types/react-dom": "18.2.18",
     "postcss": "8.4.33",
     "prettier": "3.2.4",
+    "prettier-plugin-tailwindcss": "^0.8.0",
     "typescript": "5.3.3"
   },
   "pnpm": {
     "overrides": {
-      "sharp": "^0.33.0"
+      "sharp": "^0.33.0",
+      "jiti": "2.4.2"
     },
     "onlyBuiltDependencies": [
       "sharp",
@@ -37,7 +40,11 @@
       "@parcel/watcher",
       "lmdb",
       "msgpackr-extract"
-    ]
+    ],
+    "patchedDependencies": {
+      "jiti": "patches/jiti.patch",
+      "@tailwindcss/oxide": "patches/@tailwindcss__oxide.patch"
+    }
   },
   "manifest": {
     "name": "Are.na screenshotter",

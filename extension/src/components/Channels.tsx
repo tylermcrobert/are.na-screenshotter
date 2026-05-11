@@ -68,7 +68,7 @@ export default function Channels() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           type="text"
-          className="focus:border-gray-3 px-2 py-1 border rounded w-full placeholder:text-gray-4 outline-none"
+          className="focus:border-gray-3 px-2 py-1 border rounded-sm w-full placeholder:text-gray-4 outline-hidden"
           placeholder="Search channels"
         />
       </form>

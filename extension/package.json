@@ -51,7 +51,7 @@
       "storage"
     ],
     "oauth2": {
-      "client_id": "w00O0_Pl7ZIA9wjnG6CBarNnivmCcGqxTSTE9__TZ4Y",
+      "client_id": "$PLASMO_PUBLIC_ARENA_OAUTH_CLIENT_ID",
       "scopes": []
     },
     "web_accessible_resources": [

@@ -62,20 +62,20 @@ export default function Channels() {
   }, [searchQuery])
 
   return (
-    <div className="flex flex-col flex-1 gap-3">
+    <div className="flex flex-1 flex-col gap-3">
       <form onSubmit={(e) => e.preventDefault()}>
         <input
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           type="text"
-          className="focus:border-gray-3 px-2 py-1 border rounded-sm w-full placeholder:text-gray-4 outline-hidden"
+          className="w-full rounded-sm border px-2 py-1 outline-hidden placeholder:text-gray-4 focus:border-gray-3"
           placeholder="Search channels"
         />
       </form>
 
-      <form className="relative flex flex-col flex-1">
+      <form className="relative flex flex-1 flex-col">
         {(loading || isEmptySearch) && (
-          <div className="absolute inset-0 flex justify-center items-center bg-white">
+          <div className="absolute inset-0 flex items-center justify-center bg-white">
             {loading ? (
               <Spinner />
             ) : (
@@ -86,11 +86,11 @@ export default function Channels() {
           </div>
         )}
 
-        <div className="flex flex-col flex-1">
+        <div className="flex flex-1 flex-col">
           {channels.length
             ? channels.map((channel) => (
                 <label
-                  className={`flex flex-1 items-center gap-2 hover:bg-status-1 cursor-pointer status-${channel.visibility} flex-1`}
+                  className={`hover:bg-status-1 flex flex-1 cursor-pointer items-center gap-2 status-${channel.visibility} flex-1`}
                   key={channel.id}>
                   <input
                     hidden
@@ -99,8 +99,8 @@ export default function Channels() {
                     onChange={() => setCurrentChannel(channel)}
                     checked={currentChannel?.id === channel.id}
                   />
-                  <div className="peer-checked:border-status-3 peer-checked:bg-status-3 border rounded-full w-2.5 h-2.5"></div>
-                  <div className="flex-1 text-status-3">{channel.title}</div>
+                  <div className="peer-checked:border-status-3 peer-checked:bg-status-3 h-2.5 w-2.5 rounded-full border"></div>
+                  <div className="text-status-3 flex-1">{channel.title}</div>
                   <div className="text-gray-4">
                     {channel.counts.contents} Blocks
                   </div>

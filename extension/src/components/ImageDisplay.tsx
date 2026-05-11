@@ -4,9 +4,9 @@ export default function ImageDisplay() {
   const { screenshot } = useCaptureCtx()
 
   return (
-    <div className="relative flex justify-center items-center bg-black p-5 h-[220px]">
+    <div className="relative flex h-[220px] items-center justify-center bg-black p-5">
       {screenshot && (
-        <img src={screenshot} className="w-full h-full object-contain" />
+        <img src={screenshot} className="h-full w-full object-contain" />
       )}
     </div>
   )

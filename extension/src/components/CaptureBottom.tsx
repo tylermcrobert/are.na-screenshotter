@@ -5,7 +5,7 @@ export default function CaptureButton() {
   const { postedTo } = useCaptureCtx()
 
   return (
-    <div className="flex gap-2 m-3">
+    <div className="m-3 flex gap-2">
       {/* <button className="btn" onClick={closeWindow}>
         Close
       </button> */}
@@ -15,7 +15,7 @@ export default function CaptureButton() {
       ) : (
         <a
           href={`https://are.na/channel/${postedTo.id}`}
-          className="w-full btn"
+          className="btn w-full"
           target="_blank">
           View channel &rarr;
         </a>

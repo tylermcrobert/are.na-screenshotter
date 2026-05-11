@@ -23,7 +23,7 @@ export default function content() {
       <Window closeWindow={() => setOpen(false)}>
         <iframe
           src={chrome.runtime.getURL("tabs/iframe.html")}
-          className="w-full h-full"
+          className="h-full w-full"
         />
       </Window>
     </div>

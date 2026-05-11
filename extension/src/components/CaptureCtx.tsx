@@ -51,8 +51,9 @@ export const CaptureProvider = ({
   setError
 }: CaptureProviderProps) => {
   const [postedTo, setPostedTo] = useState<ArenaChannel | null>(null)
-  const [currentChannel, setCurrentChannel] =
-    useState<ArenaChannel | null>(null)
+  const [currentChannel, setCurrentChannel] = useState<ArenaChannel | null>(
+    null
+  )
 
   const arena = new Arena(accessToken, userSlug)
 

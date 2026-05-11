@@ -55,7 +55,7 @@ export default function ConnectButton() {
   }
 
   return (
-    <button className="w-full btn" onClick={postToArena}>
+    <button className="btn w-full" onClick={postToArena}>
       {!loading ? <>Connect &rarr;</> : <Spinner />}
     </button>
   )

@@ -15,13 +15,13 @@ export default function Capture() {
   }
 
   return (
-    <div className="flex flex-col h-[480px]">
+    <div className="flex h-[480px] flex-col">
       <ImageDisplay />
 
-      <div className="flex flex-col px-3 h-[260px]">
+      <div className="flex h-[260px] flex-col px-3">
         {!!postedTo ? (
-          <div className="flex flex-col flex-1 justify-center mt-3 text-center">
-            <div className="mb-1 font-bold text-[15px]">
+          <div className="mt-3 flex flex-1 flex-col justify-center text-center">
+            <div className="mb-1 text-[15px] font-bold">
               Posted to {postedTo.title}.
             </div>
             <div className="text-gray-4">
@@ -36,7 +36,7 @@ export default function Capture() {
           </>
         )}
 
-        <div className="flex gap-3 my-3">
+        <div className="my-3 flex gap-3">
           <button className="btn" onClick={closeWindow}>
             Close
           </button>
@@ -46,7 +46,7 @@ export default function Capture() {
           ) : (
             <a
               href={`https://are.na/channel/${postedTo.id}`}
-              className="w-full btn"
+              className="btn w-full"
               target="_blank">
               View channel &rarr;
             </a>

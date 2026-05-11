@@ -52,7 +52,7 @@ export class Arena {
   async getUserChannels(): Promise<ArenaChannel[]> {
     const url = `${ARENA_API_BASE_URL}/users/${this.userSlug}/contents?type=Channel&per=5&sort=updated_at_desc`
     const res = await this.fetch(url, "GET")
-    return res.data
+    return [...res.data].reverse() // API returns newest last; UI expects newest first (default + list order).
   }
 
   async postScreenshot(

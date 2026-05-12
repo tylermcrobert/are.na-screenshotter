@@ -1,5 +1,3 @@
-import { useEffect } from "react"
-
 import { useCaptureCtx } from "./CaptureCtx"
 import CaptureMeta from "./CaptureMeta"
 import CapturePreview from "./CapturePreview"
@@ -10,7 +8,7 @@ export default function Capture() {
   const { postedTo, originTitle, hostName } = useCaptureCtx()
 
   function closeWindow() {
-    window.close()
+    void chrome.runtime.sendMessage({ type: "closePanel" })
   }
 
   return (

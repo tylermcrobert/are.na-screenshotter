@@ -8,12 +8,20 @@ export default function content() {
   const [isOpen, setOpen] = useState(false)
 
   useEffect(() => {
-    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    function onMessage(
+      message: { type: string },
+      _sender: chrome.runtime.MessageSender,
+      sendResponse: () => void
+    ) {
       if (message.type === "screenshot") {
-        setOpen(!isOpen)
-        sendResponse({})
+        setOpen((open) => !open)
+        sendResponse()
+      } else if (message.type === "closePanel") {
+        setOpen(false)
       }
-    })
+    }
+    chrome.runtime.onMessage.addListener(onMessage)
+    return () => chrome.runtime.onMessage.removeListener(onMessage)
   }, [])
 
   if (!isOpen) return null

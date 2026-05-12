@@ -11,21 +11,25 @@ const VISIBILITY_STATUS_CLASS = {
   closed: "status-closed"
 }
 
+const SEARCH_DEBOUNCE_MS = 300
+
 export default function Channels() {
   const { arena, currentChannel, setError, setCurrentChannel } = useCaptureCtx()
 
   const [recentChannels, setRecentChannels] = useState<ArenaChannel[]>([])
-  const [searchChannels, setSearchChannels] = useState<ArenaChannel[]>([])
-  const [loading, setLoading] = useState(false)
+  const [searchChannels, setSearchChannels] = useState<ArenaChannel[] | null>(null)
+
+  const [initialLoading, setInitialLoading] = useState(false)
+  const [searchLoading, setSearchLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
 
-  const channels = searchQuery ? searchChannels : recentChannels
+  const channels = searchChannels === null ? recentChannels : searchChannels
 
   /**
    * Fetches the user's channels
    */
   useEffect(() => {
-    setLoading(true)
+    setInitialLoading(true)
 
     arena
       .getUserChannels()
@@ -33,48 +37,64 @@ export default function Channels() {
         setError(null)
         setCurrentChannel(res[0])
         setRecentChannels(res)
-        setLoading(false)
+        setInitialLoading(false)
       })
       .catch((e) => {
         setError(e.message)
-        setLoading(false)
+        setInitialLoading(false)
       })
   }, [])
 
   /**
-   * Searching for channels
+   * Searching for channels (debounced; stale in-flight results are ignored)
    */
   useEffect(() => {
-    if (searchQuery.length) {
-      setLoading(true)
+    if (!searchQuery.length) {
+      setSearchChannels(null)
+      setSearchLoading(false)
+      return
+    }
 
+    setSearchLoading(true)
+    let discarded = false
+
+    const timeoutId = window.setTimeout(() => {
       arena
         .searchUserChannels(searchQuery)
         .then((res) => {
+          if (discarded) return
           setError(null)
-          setLoading(false)
           setCurrentChannel(res[0])
           setSearchChannels(res)
-          setLoading(false)
+          setSearchLoading(false)
         })
         .catch((e) => {
+          if (discarded) return
           setError(e.message)
-          setLoading(false)
+          setSearchLoading(false)
         })
-    } else {
-      setSearchChannels([])
+    }, SEARCH_DEBOUNCE_MS)
+
+    return () => {
+      window.clearTimeout(timeoutId)
+      discarded = true
     }
   }, [searchQuery])
 
   return (
     <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-3">
-      <input
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        type="text"
-        className="w-full rounded-sm border px-2 py-1 placeholder:text-gray-4"
-        placeholder="Search channels"
-      />
+      <div className="relative">
+        <div className="absolute top-1/2 right-2 flex -translate-y-1/2 items-center justify-center">
+          {searchLoading ? <Spinner /> : null}
+        </div>
+        <input
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          type="text"
+          className="w-full rounded-sm border px-2 py-1 pr-8 placeholder:text-gray-4"
+          placeholder="Search channels"
+        />
+      </div>
 
       <div className="relative flex min-h-[calc(var(--spacing-channel-row-height)*5+var(--spacing-channel-row-gap)*4)] flex-col gap-channel-row-gap">
         {channels.length ? (
@@ -102,7 +122,7 @@ export default function Channels() {
           ))
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
-            {loading ? <Spinner /> : <span>No channels found</span>}
+            {initialLoading ? <Spinner /> : <span>No channels found</span>}
           </div>
         )}
       </div>

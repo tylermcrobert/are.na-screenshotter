@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import type { ArenaChannel } from "~lib/types"
 
@@ -11,10 +11,10 @@ const SEARCH_DEBOUNCE_MS = 300
 export default function Channels() {
   const { arena, currentChannel, setError, setCurrentChannel } = useCaptureCtx()
 
-  const [recentChannels, setRecentChannels] = useState<ArenaChannel[]>([])
-  const [searchChannels, setSearchChannels] = useState<ArenaChannel[] | null>(null)
+  const recentChannels = useRef<ArenaChannel[]>([])
+  const [channels, setChannels] = useState<ArenaChannel[]>([])
+  const [initialLoading, setInitialLoading] = useState(true)
 
-  const [initialLoading, setInitialLoading] = useState(false)
   const [searchLoading, setSearchLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
 
@@ -22,18 +22,19 @@ export default function Channels() {
    * Fetches the user's channels
    */
   useEffect(() => {
-    setInitialLoading(true)
-
     arena
       .getUserChannels()
       .then((res) => {
+        recentChannels.current = res
+
         setError(null)
         setCurrentChannel(res[0])
-        setRecentChannels(res)
-        setInitialLoading(false)
+        setChannels(res)
       })
       .catch((e) => {
         setError(e.message)
+      })
+      .finally(() => {
         setInitialLoading(false)
       })
   }, [])
@@ -43,7 +44,7 @@ export default function Channels() {
    */
   useEffect(() => {
     if (!searchQuery.length) {
-      setSearchChannels(null)
+      setChannels(recentChannels.current)
       setSearchLoading(false)
       return
     }
@@ -58,12 +59,13 @@ export default function Channels() {
           if (discarded) return
           setError(null)
           setCurrentChannel(res[0])
-          setSearchChannels(res)
-          setSearchLoading(false)
+          setChannels(res)
         })
         .catch((e) => {
           if (discarded) return
           setError(e.message)
+        })
+        .finally(() => {
           setSearchLoading(false)
         })
     }, SEARCH_DEBOUNCE_MS)
@@ -90,7 +92,7 @@ export default function Channels() {
       </div>
 
       <ChannelList
-        channels={searchChannels === null ? recentChannels : searchChannels}
+        channels={channels}
         currentChannel={currentChannel}
         initialLoading={initialLoading}
         onSelectChannel={setCurrentChannel}

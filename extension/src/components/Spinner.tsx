@@ -23,7 +23,7 @@ export default function Spinner({}: SpinnerProps) {
         style={{
           transformOrigin: "center",
           animation: "spinner_T6mA .75s step-end infinite",
-          fill: "#333"
+          fill: "currentColor"
         }}>
         <path d="M11 1h2v5h-2z" opacity=".14" />
         <path d="m16.634 1.974 1.732 1-2.5 4.33-1.732-1z" opacity=".29" />

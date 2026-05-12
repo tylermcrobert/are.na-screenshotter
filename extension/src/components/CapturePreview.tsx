@@ -1,6 +1,6 @@
 import { useCaptureCtx } from "./CaptureCtx"
 
-export default function ImageDisplay() {
+export default function CapturePreview() {
   const { screenshot } = useCaptureCtx()
 
   return (

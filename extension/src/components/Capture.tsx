@@ -3,9 +3,9 @@ import { useEffect } from "react"
 import CaptureBottom from "./CaptureBottom"
 import { useCaptureCtx } from "./CaptureCtx"
 import CaptureMeta from "./CaptureMeta"
+import CapturePreview from "./CapturePreview"
 import Channels from "./Channels"
 import ConnectButton from "./ConnectButton"
-import ImageDisplay from "./ImageDisplay"
 
 export default function Capture() {
   const { postedTo, originTitle, hostName } = useCaptureCtx()
@@ -16,7 +16,7 @@ export default function Capture() {
 
   return (
     <div className="flex h-[480px] flex-col">
-      <ImageDisplay />
+      <CapturePreview />
 
       <div className="flex h-[260px] flex-col px-3">
         {!!postedTo ? (

@@ -96,7 +96,10 @@ export default function Channels() {
           {channels.length
             ? channels.map((channel) => (
                 <label
-                  className={`${VISIBILITY_STATUS_CLASS[channel.visibility]} flex h-channel-row-height cursor-pointer items-center gap-2 rounded-sm bg-status-1 px-2`}
+                  className={[
+                    VISIBILITY_STATUS_CLASS[channel.visibility],
+                    `flex h-channel-row-height cursor-pointer items-center gap-2 rounded-sm bg-status-1 px-2 text-nowrap text-status-3`
+                  ].join(" ")}
                   key={channel.id}>
                   <input
                     hidden
@@ -105,11 +108,12 @@ export default function Channels() {
                     onChange={() => setCurrentChannel(channel)}
                     checked={currentChannel?.id === channel.id}
                   />
-                  <div className="h-2.5 w-2.5 rounded-full border border-status-2 peer-checked:border-status-3 peer-checked:bg-status-3"></div>
-                  <div className="flex-1 text-status-3">{channel.title}</div>
-                  <div className="text-gray-4">
-                    {channel.counts.contents} Blocks
+                  <div className="h-2.5 w-2.5 shrink-0 rounded-full border border-status-2 peer-checked:border-status-3 peer-checked:bg-status-3"></div>
+                  <div className="flex min-w-0 flex-1 gap-2">
+                    <span className="truncate">{channel.title}</span>
+                    <span>{channel.counts.contents}</span>
                   </div>
+                  <div>{channel.owner.name}</div>
                 </label>
               ))
             : null}

@@ -96,13 +96,20 @@ export default function Channels() {
         />
       </div>
 
-      <div className="relative flex min-h-[calc(var(--spacing-channel-row-height)*5+var(--spacing-channel-row-gap)*4)] flex-col gap-channel-row-gap">
+      <div
+        className={[
+          channels.length > 4
+            ? "pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-3 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-1"
+            : "",
+          "relative flex flex-col gap-channel-row-gap overflow-y-auto",
+          "h-[calc((var(--spacing-channel-row-height)*5_+_var(--spacing-channel-row-gap)*4)_-_var(--spacing-channel-row-height)/2)]"
+        ].join(" ")}>
         {channels.length ? (
           channels.map((channel) => (
             <label
               className={[
                 VISIBILITY_STATUS_CLASS[channel.visibility],
-                `flex h-channel-row-height cursor-pointer items-center gap-2 rounded-sm bg-status-1 px-2 text-nowrap text-status-3`
+                `flex h-channel-row-height shrink-0 cursor-pointer items-center gap-2 rounded-sm bg-status-1 px-2 text-nowrap text-status-3`
               ].join(" ")}
               key={channel.id}>
               <input

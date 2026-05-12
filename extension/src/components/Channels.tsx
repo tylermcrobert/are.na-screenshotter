@@ -77,45 +77,35 @@ export default function Channels() {
         placeholder="Search channels"
       />
 
-      <div className="relative">
-        {(loading || isNoResults) && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white">
-            {loading ? (
-              <Spinner />
-            ) : (
-              <span className="text-gray-4">
-                {isNoResults && "No results found."}
-              </span>
-            )}
+      <div className="relative flex min-h-[calc(var(--spacing-channel-row-height)*5+var(--spacing-channel-row-gap)*4)] flex-col gap-channel-row-gap">
+        {channels.length ? (
+          channels.map((channel) => (
+            <label
+              className={[
+                VISIBILITY_STATUS_CLASS[channel.visibility],
+                `flex h-channel-row-height cursor-pointer items-center gap-2 rounded-sm bg-status-1 px-2 text-nowrap text-status-3`
+              ].join(" ")}
+              key={channel.id}>
+              <input
+                hidden
+                type="radio"
+                className="peer"
+                onChange={() => setCurrentChannel(channel)}
+                checked={currentChannel?.id === channel.id}
+              />
+              <div className="h-2.5 w-2.5 shrink-0 rounded-full border border-status-2 peer-checked:border-status-3 peer-checked:bg-status-3"></div>
+              <div className="flex min-w-0 flex-1 gap-2">
+                <span className="truncate">{channel.title}</span>
+                <span>{channel.counts.contents}</span>
+              </div>
+              <div>{channel.owner.name}</div>
+            </label>
+          ))
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            {loading ? <Spinner /> : <span>No channels found</span>}
           </div>
         )}
-
-        <div className="flex min-h-[calc(var(--spacing-channel-row-height)*5+var(--spacing-channel-row-gap)*4)] flex-col gap-channel-row-gap">
-          {channels.length
-            ? channels.map((channel) => (
-                <label
-                  className={[
-                    VISIBILITY_STATUS_CLASS[channel.visibility],
-                    `flex h-channel-row-height cursor-pointer items-center gap-2 rounded-sm bg-status-1 px-2 text-nowrap text-status-3`
-                  ].join(" ")}
-                  key={channel.id}>
-                  <input
-                    hidden
-                    type="radio"
-                    className="peer"
-                    onChange={() => setCurrentChannel(channel)}
-                    checked={currentChannel?.id === channel.id}
-                  />
-                  <div className="h-2.5 w-2.5 shrink-0 rounded-full border border-status-2 peer-checked:border-status-3 peer-checked:bg-status-3"></div>
-                  <div className="flex min-w-0 flex-1 gap-2">
-                    <span className="truncate">{channel.title}</span>
-                    <span>{channel.counts.contents}</span>
-                  </div>
-                  <div>{channel.owner.name}</div>
-                </label>
-              ))
-            : null}
-        </div>
       </div>
     </form>
   )

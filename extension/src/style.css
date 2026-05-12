@@ -9,6 +9,10 @@
   --color-green-2: #b4d6b3;
   --color-green-3: #238020;
 
+  --color-blue-1: #ebecf7;
+  --color-blue-2: #3d46c2;
+  --color-blue-3: #00075f;
+
   --color-gray-0: #fff;
   --color-gray-1: #f7f7f7;
   --color-gray-2: #ededed;
@@ -21,6 +25,17 @@
   --color-status-1: transparent;
   --color-status-2: transparent;
   --color-status-3: transparent;
+
+  --color-border: var(--color-gray-2);
+  --color-ring: var(--color-blue-2);
+}
+
+* {
+  @apply border-border outline-ring focus:outline-1;
+}
+
+input {
+  @apply focus:border-ring focus:outline-none;
 }
 
 body,
@@ -30,7 +45,11 @@ html {
 }
 
 @utility btn {
-  @apply flex h-9 items-center justify-center rounded-sm border border-transparent bg-gray-1 px-4 font-bold hover:border-gray-3;
+  @apply h-9 cursor-pointer items-center justify-center rounded-sm border bg-gray-1 px-4 font-bold hover:border-gray-3;
+}
+
+@utility btn-primary {
+  @apply btn border-none border-transparent bg-blue-3 text-white hover:opacity-90;
 }
 
 @utility status-private {

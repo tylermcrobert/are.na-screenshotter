@@ -82,8 +82,8 @@ export default function Channels() {
   }, [searchQuery])
 
   return (
-    <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-3">
-      <div className="relative">
+    <form onSubmit={(e) => e.preventDefault()}>
+      <div className="relative mb-2">
         <div className="absolute top-1/2 right-2 flex -translate-y-1/2 items-center justify-center">
           {searchLoading ? <Spinner /> : null}
         </div>

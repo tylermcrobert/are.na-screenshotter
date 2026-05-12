@@ -26,16 +26,17 @@
   --color-status-2: transparent;
   --color-status-3: transparent;
 
-  --color-border: var(--color-gray-2);
   --color-ring: var(--color-blue-2);
-}
 
-* {
-  @apply border-border outline-ring focus:outline-1;
+  --spacing-preview: 180px;
+  --spacing-bottom: 280px;
+  --spacing-window-height: calc(var(--spacing-preview) + var(--spacing-bottom));
+  --spacing-channel-row-height: 2rem;
+  --spacing-channel-row-gap: 2px;
 }
 
 input {
-  @apply focus:border-ring focus:outline-none;
+  @apply border-gray-3 focus:border-ring focus:outline-none;
 }
 
 body,
@@ -45,7 +46,7 @@ html {
 }
 
 @utility btn {
-  @apply h-9 cursor-pointer items-center justify-center rounded-sm border bg-gray-1 px-4 font-bold hover:border-gray-3;
+  @apply flex h-9 cursor-pointer items-center justify-center rounded-sm border border-gray-3 bg-gray-1 px-4 font-bold ring-ring outline-none hover:border-gray-3 focus-visible:ring-2 focus-visible:ring-offset-1;
 }
 
 @utility btn-primary {

@@ -20,7 +20,6 @@ export default function Channels() {
   const [searchQuery, setSearchQuery] = useState("")
 
   const channels = searchQuery ? searchChannels : recentChannels
-  const isNoResults = searchQuery && !searchChannels.length
 
   /**
    * Fetches the user's channels

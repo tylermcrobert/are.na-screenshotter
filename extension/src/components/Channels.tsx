@@ -5,6 +5,12 @@ import type { ArenaChannel } from "~lib/types"
 import { useCaptureCtx } from "./CaptureCtx"
 import Spinner from "./Spinner"
 
+const VISIBILITY_STATUS_CLASS = {
+  private: "status-private",
+  public: "status-public",
+  closed: "status-closed"
+}
+
 export default function Channels() {
   const { arena, currentChannel, setError, setCurrentChannel } = useCaptureCtx()
 
@@ -90,7 +96,7 @@ export default function Channels() {
           {channels.length
             ? channels.map((channel) => (
                 <label
-                  className={`hover:bg-status-1 flex flex-1 cursor-pointer items-center gap-2 status-${channel.visibility} flex-1`}
+                  className={`${VISIBILITY_STATUS_CLASS[channel.visibility]} flex flex-1 cursor-pointer items-center gap-2 hover:bg-status-1`}
                   key={channel.id}>
                   <input
                     hidden
@@ -99,8 +105,8 @@ export default function Channels() {
                     onChange={() => setCurrentChannel(channel)}
                     checked={currentChannel?.id === channel.id}
                   />
-                  <div className="peer-checked:border-status-3 peer-checked:bg-status-3 h-2.5 w-2.5 rounded-full border"></div>
-                  <div className="text-status-3 flex-1">{channel.title}</div>
+                  <div className="h-2.5 w-2.5 rounded-full border peer-checked:border-status-3 peer-checked:bg-status-3"></div>
+                  <div className="flex-1 text-status-3">{channel.title}</div>
                   <div className="text-gray-4">
                     {channel.counts.contents} Blocks
                   </div>

@@ -17,34 +17,36 @@
   --color-gray-5: #696969;
   --color-gray-6: #333;
   --color-gray-7: #000;
+
+  --color-status-1: transparent;
+  --color-status-2: transparent;
+  --color-status-3: transparent;
 }
 
 body,
 html {
-  @apply text-gray-6 leading-tight text-[12.5px] select-none font-sans antialiased;
+  @apply font-sans text-[12.5px] leading-tight text-gray-6 antialiased select-none;
   font-family: Arial, Helvetica, sans-serif;
 }
 
 @utility btn {
-  @apply border h-9 flex items-center hover:border-gray-3 justify-center rounded-sm bg-gray-1 px-4 border-transparent font-bold;
+  @apply flex h-9 items-center justify-center rounded-sm border border-transparent bg-gray-1 px-4 font-bold hover:border-gray-3;
 }
 
-@layer utilities {
-  .status-private {
-    --color-status-1: var(--color-red-1);
-    --color-status-2: var(--color-red-2);
-    --color-status-3: var(--color-red-3);
-  }
+@utility status-private {
+  --color-status-1: var(--color-red-1);
+  --color-status-2: var(--color-red-2);
+  --color-status-3: var(--color-red-3);
+}
 
-  .status-public {
-    --color-status-1: var(--color-green-1);
-    --color-status-2: var(--color-green-2);
-    --color-status-3: var(--color-green-3);
-  }
+@utility status-public {
+  --color-status-1: var(--color-green-1);
+  --color-status-2: var(--color-green-2);
+  --color-status-3: var(--color-green-3);
+}
 
-  .status-closed {
-    --color-status-1: var(--color-gray-1);
-    --color-status-2: var(--color-gray-3);
-    --color-status-3: var(--color-gray-6);
-  }
+@utility status-closed {
+  --color-status-1: var(--color-gray-1);
+  --color-status-2: var(--color-gray-3);
+  --color-status-3: var(--color-gray-6);
 }

@@ -20,7 +20,7 @@ export default function Channels() {
   const [searchQuery, setSearchQuery] = useState("")
 
   const channels = searchQuery ? searchChannels : recentChannels
-  const isEmptySearch = searchQuery && !searchChannels.length
+  const isNoResults = searchQuery && !searchChannels.length
 
   /**
    * Fetches the user's channels
@@ -78,13 +78,13 @@ export default function Channels() {
       />
 
       <div className="relative">
-        {(loading || isEmptySearch) && (
+        {(loading || isNoResults) && (
           <div className="absolute inset-0 flex items-center justify-center bg-white">
             {loading ? (
               <Spinner />
             ) : (
               <span className="text-gray-4">
-                {isEmptySearch && "No results found."}
+                {isNoResults && "No results found."}
               </span>
             )}
           </div>

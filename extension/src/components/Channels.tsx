@@ -68,18 +68,16 @@ export default function Channels() {
   }, [searchQuery])
 
   return (
-    <div className="flex flex-col gap-3">
-      <form onSubmit={(e) => e.preventDefault()}>
-        <input
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          type="text"
-          className="w-full rounded-sm border px-2 py-1 placeholder:text-gray-4"
-          placeholder="Search channels"
-        />
-      </form>
+    <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-3">
+      <input
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        type="text"
+        className="w-full rounded-sm border px-2 py-1 placeholder:text-gray-4"
+        placeholder="Search channels"
+      />
 
-      <form className="relative">
+      <div className="relative">
         {(loading || isEmptySearch) && (
           <div className="absolute inset-0 flex items-center justify-center bg-white">
             {loading ? (
@@ -118,7 +116,7 @@ export default function Channels() {
               ))
             : null}
         </div>
-      </form>
-    </div>
+      </div>
+    </form>
   )
 }

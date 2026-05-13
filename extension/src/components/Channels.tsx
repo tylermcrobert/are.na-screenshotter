@@ -1,6 +1,5 @@
+import type { Channel } from "@aredotna/sdk/dist/index.js"
 import { useEffect, useRef, useState } from "react"
-
-import type { ArenaChannel } from "~lib/types"
 
 import { useCaptureCtx } from "./CaptureCtx"
 import ChannelList from "./ChannelList"
@@ -11,8 +10,8 @@ const SEARCH_DEBOUNCE_MS = 300
 export default function Channels() {
   const { arena, currentChannel, setError, setCurrentChannel } = useCaptureCtx()
 
-  const recentChannels = useRef<ArenaChannel[]>([])
-  const [channels, setChannels] = useState<ArenaChannel[]>([])
+  const recentChannels = useRef<Channel[]>([])
+  const [channels, setChannels] = useState<Channel[]>([])
   const [initialLoading, setInitialLoading] = useState(true)
 
   const [searchLoading, setSearchLoading] = useState(false)
@@ -25,11 +24,11 @@ export default function Channels() {
     arena
       .getUserChannels()
       .then((res) => {
-        recentChannels.current = res
+        recentChannels.current = res.data
 
         setError(null)
-        setCurrentChannel(res[0])
-        setChannels(res)
+        setCurrentChannel(res.data[0] ?? null)
+        setChannels(res.data)
       })
       .catch((e) => {
         setError(e.message)
@@ -58,7 +57,7 @@ export default function Channels() {
         .then((res) => {
           if (discarded) return
           setError(null)
-          setCurrentChannel(res[0])
+          setCurrentChannel(res[0] ?? null)
           setChannels(res)
         })
         .catch((e) => {

@@ -1,58 +1,56 @@
-import { sendToBackground } from "@plasmohq/messaging"
+import { createArena, type Arena as ArenaType, type Channel } from "@aredotna/sdk/dist/index.js"
 
-import type { ArenaChannel } from "./types"
+type UserContentsResponse = Awaited<ReturnType<ArenaType["users"]["contents"]>>
+export type UserChannelsListResponse = Omit<UserContentsResponse, "data"> & { data: Channel[] }
 
-const ARENA_API_BASE_URL = "https://api.are.na/v3"
-const SCREENSHOTTER_API_BASE = process.env.PLASMO_PUBLIC_API_BASE
+function isChannel(row: { type: string }): row is Channel {
+  return row.type === "Channel"
+}
 
-export class Arena {
-  private accessToken: string
+export class ArenaScreenshotterClient {
   private userSlug: string
+  private client: ArenaType
 
   constructor(token: string, userSlug: string) {
-    this.accessToken = token
+    this.client = createArena({ token: token })
     this.userSlug = userSlug
   }
 
-  private async fetch(url: string, method: "GET" | "POST", body?: object) {
-    const res = await sendToBackground({
-      name: "fetch",
-      body: {
-        url: url,
-        options: {
-          body: body ? JSON.stringify(body) : undefined,
-          method: method,
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${this.accessToken}`
-          }
-        }
-      }
+  /**
+   * Searches for channels
+   * @param q - The query to search for
+   * @returns The channels that match the query
+   */
+  async searchUserChannels(q: string): Promise<Channel[]> {
+    // TODO: Implement pagination
+    // TODO: Get all channels not just the first 100
+
+    const res = await this.client.users.contents(this.userSlug, {
+      type: "Channel",
+      per: 100,
+      sort: "updated_at_desc"
     })
 
-    if (res.error) {
-      throw new Error(res.error)
-    }
+    const channels = res.data.filter(isChannel)
+    const needle = q.trim().toLowerCase()
+    if (!needle.length) return channels
 
-    return res.data
-  }
-
-  async searchUserChannels(q: string): Promise<ArenaChannel[]> {
-    const url = `${ARENA_API_BASE_URL}/users/${this.userSlug}/contents?type=Channel&per=100&sort=updated_at_desc`
-    const res = await this.fetch(url, "GET")
-    const query = q.toLowerCase()
-
-    return res.data.filter(
-      (ch: ArenaChannel) =>
-        ch.title.toLowerCase().includes(query) &&
-        ch.owner.slug === this.userSlug
+    return channels.filter(
+      (ch) => ch.title.toLowerCase().includes(needle) || ch.slug.toLowerCase().includes(needle)
     )
   }
 
-  async getUserChannels(): Promise<ArenaChannel[]> {
-    const url = `${ARENA_API_BASE_URL}/users/${this.userSlug}/contents?type=Channel&per=5&sort=updated_at_desc`
-    const res = await this.fetch(url, "GET")
-    return [...res.data].reverse() // API returns newest last; UI expects newest first (default + list order).
+  /**
+   * Gets the user's channels
+   */
+  async getUserChannels(): Promise<UserChannelsListResponse> {
+    const res = await this.client.users.contents(this.userSlug, {
+      type: "Channel",
+      per: 20,
+      sort: "updated_at_desc"
+    })
+
+    return { ...res, data: [...res.data.filter(isChannel)].reverse() }
   }
 
   async postScreenshot(
@@ -63,13 +61,12 @@ export class Arena {
       originTitle: string
     }
   ) {
-    const apiUrl = `${SCREENSHOTTER_API_BASE}/are.na/channels/${channel}/blocks`
-    const res = await this.fetch(apiUrl, "POST", {
-      asset: data.screenshot,
-      title: data.originTitle,
-      url: data.originUrl
-    })
-
-    return res
+    // const apiUrl = `${SCREENSHOTTER_API_BASE}/are.na/channels/${channel}/blocks`
+    // const res = await this.fetch(apiUrl, "POST", {
+    //   asset: data.screenshot,
+    //   title: data.originTitle,
+    //   url: data.originUrl
+    // })
+    // return res
   }
 }

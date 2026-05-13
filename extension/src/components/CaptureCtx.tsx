@@ -1,24 +1,24 @@
+import type { Channel } from "@aredotna/sdk/dist/index.js"
 import { createContext, useContext, useState } from "react"
 
-import { Arena } from "~lib/Arena"
-import type { ArenaChannel } from "~lib/types"
+import { ArenaScreenshotterClient } from "~lib/Arena"
 
 type CaptureContextValue = {
-  arena: Arena
+  arena: ArenaScreenshotterClient
   screenshot: string
   originTitle: string
   originUrl: string
-  postedTo: ArenaChannel | null
-  currentChannel: ArenaChannel | null
+  postedTo: Channel | null
+  currentChannel: Channel | null
   hostName: string | null
   error: string | null
   setError: (error: string | null) => void
-  setPostedTo: (postedTo: ArenaChannel | null) => void
-  setCurrentChannel: (currentChannel: ArenaChannel | null) => void
+  setPostedTo: (postedTo: Channel | null) => void
+  setCurrentChannel: (currentChannel: Channel | null) => void
 }
 
 const CaptureContext = createContext<CaptureContextValue>({
-  arena: {} as unknown as Arena,
+  arena: {} as unknown as ArenaScreenshotterClient,
   screenshot: "",
   originTitle: "",
   originUrl: "",
@@ -35,10 +35,7 @@ type CaptureProviderProps = {
   children: React.ReactNode
   userSlug: string
   accessToken: string
-} & Pick<
-  CaptureContextValue,
-  "originTitle" | "originUrl" | "error" | "screenshot" | "setError"
->
+} & Pick<CaptureContextValue, "originTitle" | "originUrl" | "error" | "screenshot" | "setError">
 
 export const CaptureProvider = ({
   originTitle,
@@ -50,12 +47,10 @@ export const CaptureProvider = ({
   userSlug,
   setError
 }: CaptureProviderProps) => {
-  const [postedTo, setPostedTo] = useState<ArenaChannel | null>(null)
-  const [currentChannel, setCurrentChannel] = useState<ArenaChannel | null>(
-    null
-  )
+  const [postedTo, setPostedTo] = useState<Channel | null>(null)
+  const [currentChannel, setCurrentChannel] = useState<Channel | null>(null)
 
-  const arena = new Arena(accessToken, userSlug)
+  const arena = new ArenaScreenshotterClient(accessToken, userSlug)
 
   const hostName = originUrl ? new URL(originUrl).hostname.toString() : null
 

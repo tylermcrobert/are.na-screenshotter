@@ -1,4 +1,4 @@
-import type { ArenaChannel } from "~lib/types"
+import type { Channel } from "@aredotna/sdk/dist"
 
 import Spinner from "./Spinner"
 
@@ -9,10 +9,10 @@ const VISIBILITY_STATUS_CLASS = {
 } as const
 
 type ChannelListProps = {
-  channels: ArenaChannel[]
-  currentChannel: ArenaChannel | null
+  channels: Channel[]
+  currentChannel: Channel | null
   initialLoading: boolean
-  onSelectChannel: (channel: ArenaChannel) => void
+  onSelectChannel: (channel: Channel) => void
 }
 
 export default function ChannelList({

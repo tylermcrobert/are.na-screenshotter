@@ -10,6 +10,7 @@
     "package": "plasmo package"
   },
   "dependencies": {
+    "@aredotna/sdk": "^0.0.4",
     "@plasmohq/messaging": "^0.6.2",
     "plasmo": "0.90.5",
     "react": "18.2.0",

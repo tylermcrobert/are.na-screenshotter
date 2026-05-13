@@ -63,8 +63,8 @@ export default function ChannelList({
         </div>
       )}
       {hasMore ? (
-        <button onClick={onLoadMore}>
-          <Spinner />
+        <button className="btn shrink-0" onClick={onLoadMore}>
+          Load more...
         </button>
       ) : null}
     </div>

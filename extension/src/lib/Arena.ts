@@ -19,10 +19,12 @@ function isChannel(row: { type: string }): row is Channel {
 export class ArenaScreenshotterClient {
   private userSlug: string
   private client: ArenaType
+  private allChannels: Channel[] = []
 
   constructor(token: string, userSlug: string) {
     this.client = createArena({ token: token })
     this.userSlug = userSlug
+    this.allChannels = []
   }
 
   /**
@@ -35,17 +37,18 @@ export class ArenaScreenshotterClient {
  
   */
   async searchUserChannels(q: string, options?: RequestOverrides): Promise<Channel[]> {
-    const res = await this.client.users.contents(
-      this.userSlug,
-      { type: "Channel", per: 100, sort: "updated_at_desc" },
-      options
-    )
+    if (this.allChannels.length === 0) {
+      const res = await this.client.users.contents(
+        this.userSlug,
+        { type: "Channel", per: 100, sort: "updated_at_desc" },
+        options
+      )
+      this.allChannels = res.data.filter(isChannel)
+    }
 
-    const channels = res.data.filter(isChannel)
     const needle = q.trim().toLowerCase()
-    if (!needle.length) return channels
 
-    return channels.filter(
+    return this.allChannels.filter(
       (ch) => ch.title.toLowerCase().includes(needle) || ch.slug.toLowerCase().includes(needle)
     )
   }

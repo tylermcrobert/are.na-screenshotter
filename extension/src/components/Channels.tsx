@@ -12,8 +12,19 @@ const PER_PAGE = 20
 export default function Channels() {
   const { arena, currentChannel, setError, setCurrentChannel } = useCaptureCtx()
 
-  const recentChannels = useRef<Channel[]>([])
-  const [channels, setChannels] = useState<Channel[]>([])
+  const [searchChannels, setSearchChannels] = useState<Channel[]>([])
+  const [recentChannels, setRecentChannels] = useState<{
+    items: Channel[]
+    loadingMore: boolean
+    hasMore: boolean
+    loadingInitial: boolean
+  }>({
+    items: [],
+    loadingMore: false,
+    hasMore: false,
+    loadingInitial: true
+  })
+
   const [initialLoading, setInitialLoading] = useState(true)
 
   const [searchLoading, setSearchLoading] = useState(false)
@@ -21,16 +32,27 @@ export default function Channels() {
   const debouncedSearchQuery = useDebounce(searchQuery, 300)
 
   useEffect(() => {
+    if (!searchQuery.length) {
+      setSearchLoading(false)
+      setCurrentChannel(recentChannels.items[0] ?? null)
+    } else {
+      setSearchLoading(true)
+    }
+  }, [searchQuery, recentChannels.items, setCurrentChannel])
+
+  useEffect(() => {
     const controller = new AbortController()
 
     arena
       .getUserChannels({ per: PER_PAGE }, { signal: controller.signal })
       .then((res) => {
-        recentChannels.current = res.data
-
-        setError(null)
+        setError(null) // TODO: this doesn't go anywhere
         setCurrentChannel(res.data[0] ?? null)
-        setChannels(res.data)
+        setRecentChannels((prev) => ({
+          ...prev,
+          items: res.data,
+          hasMore: res.meta.total_count > res.data.length
+        }))
       })
       .catch((e) => {
         if (controller.signal.aborted) return
@@ -53,7 +75,7 @@ export default function Channels() {
       .then((res) => {
         setError(null)
         setCurrentChannel(res[0] ?? null)
-        setChannels(res)
+        setSearchChannels(res)
       })
       .catch((e) => {
         if (controller.signal.aborted) return
@@ -67,14 +89,18 @@ export default function Channels() {
   }, [arena, debouncedSearchQuery, setError, setCurrentChannel])
 
   async function loadMore() {
-    if (!debouncedSearchQuery.length) {
-      const newChannels = await arena.getUserChannels({
-        page: channels.length / PER_PAGE + 1,
-        per: PER_PAGE
-      })
+    if (!recentChannels.hasMore) return
 
-      setChannels((prev) => [...prev, ...newChannels.data])
-    }
+    const newChannels = await arena.getUserChannels({
+      page: recentChannels.items.length / PER_PAGE + 1,
+      per: PER_PAGE
+    })
+
+    setRecentChannels((prev) => ({
+      ...prev,
+      items: [...prev.items, ...newChannels.data],
+      hasMore: prev.items.length + newChannels.data.length < newChannels.meta.total_count
+    }))
   }
 
   return (
@@ -85,17 +111,7 @@ export default function Channels() {
         </div>
         <input
           value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value)
-
-            if (!e.target.value.length) {
-              setSearchLoading(false)
-              setChannels(recentChannels.current)
-              setCurrentChannel(recentChannels.current[0] ?? null)
-            } else {
-              setSearchLoading(true)
-            }
-          }}
+          onChange={(e) => setSearchQuery(e.target.value)}
           type="text"
           className="w-full rounded-sm border px-2 py-1 pr-8 placeholder:text-gray-4"
           placeholder="Search channels"
@@ -104,8 +120,8 @@ export default function Channels() {
 
       <ChannelList
         onLoadMore={loadMore}
-        hasMore={channels.length % 20 === 0}
-        channels={channels}
+        hasMore={recentChannels.hasMore}
+        channels={debouncedSearchQuery.length ? searchChannels : recentChannels.items}
         currentChannel={currentChannel}
         initialLoading={initialLoading}
         onSelectChannel={setCurrentChannel}

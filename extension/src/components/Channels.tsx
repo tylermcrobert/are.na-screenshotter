@@ -48,7 +48,6 @@ export default function Channels() {
     }
 
     const controller = new AbortController()
-    setSearchLoading(true)
 
     arena
       .searchUserChannels(debouncedSearchQuery, { signal: controller.signal })
@@ -82,6 +81,8 @@ export default function Channels() {
             if (!e.target.value.length) {
               setChannels(recentChannels.current)
               setCurrentChannel(recentChannels.current[0] ?? null)
+            } else {
+              setSearchLoading(true)
             }
           }}
           type="text"

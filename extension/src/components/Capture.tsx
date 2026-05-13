@@ -1,7 +1,7 @@
 import { useCaptureCtx } from "./CaptureCtx"
 import CaptureMeta from "./CaptureMeta"
 import CapturePreview from "./CapturePreview"
-import Channels from "./Channels"
+import Channels from "./Channels/Channels"
 import ConnectButton from "./ConnectButton"
 
 export default function Capture() {
@@ -18,9 +18,7 @@ export default function Capture() {
       <div className="flex h-bottom flex-col px-3">
         {!!postedTo ? (
           <div className="mt-3 flex flex-1 flex-col justify-center text-center">
-            <div className="mb-1 text-[15px] font-bold">
-              Posted to {postedTo.title}.
-            </div>
+            <div className="mb-1 text-[15px] font-bold">Posted to {postedTo.title}.</div>
             <div className="text-gray-4">
               <div>{originTitle}</div>
               <div>{hostName}</div>

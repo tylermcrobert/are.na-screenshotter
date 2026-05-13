@@ -1,5 +1,6 @@
 import type { Channel } from "@aredotna/sdk/dist"
 
+import { useCaptureCtx } from "./CaptureCtx"
 import Spinner from "./Spinner"
 
 const VISIBILITY_STATUS_CLASS = {
@@ -10,21 +11,19 @@ const VISIBILITY_STATUS_CLASS = {
 
 type ChannelListProps = {
   channels: Channel[]
-  currentChannel: Channel | null
   initialLoading: boolean
-  onSelectChannel: (channel: Channel) => void
   onLoadMore: () => void
   hasMore: boolean
 }
 
 export default function ChannelList({
   channels,
-  currentChannel,
   initialLoading,
-  onSelectChannel,
   onLoadMore,
   hasMore
 }: ChannelListProps) {
+  const { currentChannel, setCurrentChannel } = useCaptureCtx()
+
   return (
     <div
       className={[
@@ -46,7 +45,7 @@ export default function ChannelList({
               hidden
               type="radio"
               className="peer"
-              onChange={() => onSelectChannel(channel)}
+              onChange={() => setCurrentChannel(channel)}
               checked={currentChannel?.id === channel.id}
             />
             <div className="h-2.5 w-2.5 shrink-0 rounded-full border border-status-2 peer-checked:border-status-3 peer-checked:bg-status-3"></div>

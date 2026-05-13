@@ -1,5 +1,6 @@
 import { createArena, type Arena as ArenaType, type Channel } from "@aredotna/sdk/dist/index.js"
 
+type RequestOverrides = NonNullable<Parameters<ArenaType["users"]["contents"]>[2]>
 type UserContentsResponse = Awaited<ReturnType<ArenaType["users"]["contents"]>>
 export type UserChannelsListResponse = Omit<UserContentsResponse, "data"> & { data: Channel[] }
 
@@ -20,16 +21,17 @@ export class ArenaScreenshotterClient {
    * Searches for channels
    * @param q - The query to search for
    * @returns The channels that match the query
-   */
-  async searchUserChannels(q: string): Promise<Channel[]> {
-    // TODO: Implement pagination
-    // TODO: Get all channels not just the first 100
-
-    const res = await this.client.users.contents(this.userSlug, {
-      type: "Channel",
-      per: 100,
-      sort: "updated_at_desc"
-    })
+ 
+  // TODO: Implement pagination
+  // TODO: Get all channels not just the first 100
+ 
+  */
+  async searchUserChannels(q: string, options?: RequestOverrides): Promise<Channel[]> {
+    const res = await this.client.users.contents(
+      this.userSlug,
+      { type: "Channel", per: 100, sort: "updated_at_desc" },
+      options
+    )
 
     const channels = res.data.filter(isChannel)
     const needle = q.trim().toLowerCase()
@@ -43,12 +45,12 @@ export class ArenaScreenshotterClient {
   /**
    * Gets the user's channels
    */
-  async getUserChannels(): Promise<UserChannelsListResponse> {
-    const res = await this.client.users.contents(this.userSlug, {
-      type: "Channel",
-      per: 20,
-      sort: "updated_at_desc"
-    })
+  async getUserChannels(options?: RequestOverrides): Promise<UserChannelsListResponse> {
+    const res = await this.client.users.contents(
+      this.userSlug,
+      { type: "Channel", per: 20, sort: "updated_at_desc" },
+      options
+    )
 
     return { ...res, data: [...res.data.filter(isChannel)].reverse() }
   }

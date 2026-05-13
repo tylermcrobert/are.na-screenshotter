@@ -42,10 +42,7 @@ export default function Channels() {
   }, [arena, setError, setCurrentChannel])
 
   useEffect(() => {
-    if (!debouncedSearchQuery.length) {
-      setSearchLoading(false)
-      return
-    }
+    if (!debouncedSearchQuery.length) return
 
     const controller = new AbortController()
 

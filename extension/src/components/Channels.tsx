@@ -39,7 +39,7 @@ export default function Channels() {
       })
 
     return () => controller.abort()
-  }, [])
+  }, [arena, setError, setCurrentChannel])
 
   useEffect(() => {
     if (!debouncedSearchQuery.length) {
@@ -65,10 +65,10 @@ export default function Channels() {
       })
 
     return () => controller.abort()
-  }, [debouncedSearchQuery])
+  }, [arena, debouncedSearchQuery, setError, setCurrentChannel])
 
   return (
-    <form>
+    <div>
       <div className="relative mb-2">
         <div className="absolute top-1/2 right-2 flex -translate-y-1/2 items-center justify-center">
           {searchLoading ? <Spinner /> : null}
@@ -79,6 +79,7 @@ export default function Channels() {
             setSearchQuery(e.target.value)
 
             if (!e.target.value.length) {
+              setSearchLoading(false)
               setChannels(recentChannels.current)
               setCurrentChannel(recentChannels.current[0] ?? null)
             } else {
@@ -97,6 +98,6 @@ export default function Channels() {
         initialLoading={initialLoading}
         onSelectChannel={setCurrentChannel}
       />
-    </form>
+    </div>
   )
 }

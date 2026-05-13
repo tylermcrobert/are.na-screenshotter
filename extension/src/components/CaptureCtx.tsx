@@ -1,5 +1,5 @@
 import type { Channel } from "@aredotna/sdk/dist/index.js"
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useMemo, useState } from "react"
 
 import { ArenaScreenshotterClient } from "~lib/Arena"
 
@@ -50,7 +50,10 @@ export const CaptureProvider = ({
   const [postedTo, setPostedTo] = useState<Channel | null>(null)
   const [currentChannel, setCurrentChannel] = useState<Channel | null>(null)
 
-  const arena = new ArenaScreenshotterClient(accessToken, userSlug)
+  const arena = useMemo(
+    () => new ArenaScreenshotterClient(accessToken, userSlug),
+    [accessToken, userSlug]
+  )
 
   const hostName = originUrl ? new URL(originUrl).hostname.toString() : null
 

@@ -1,4 +1,11 @@
-import { createArena, type Arena as ArenaType, type Channel } from "@aredotna/sdk/dist/index.js"
+import {
+  createArena,
+  type Arena as ArenaType,
+  type Block,
+  type Channel
+} from "@aredotna/sdk/dist/index.js"
+
+const DATA_URL_MIME = /^data:([^;,]+)/
 
 type RequestOverrides = NonNullable<Parameters<ArenaType["users"]["contents"]>[2]>
 type UserContentsResponse = Awaited<ReturnType<ArenaType["users"]["contents"]>>
@@ -56,19 +63,31 @@ export class ArenaScreenshotterClient {
   }
 
   async postScreenshot(
-    channel: number,
+    channelId: number,
     data: {
       screenshot: string
       originUrl: string
       originTitle: string
     }
-  ) {
-    // const apiUrl = `${SCREENSHOTTER_API_BASE}/are.na/channels/${channel}/blocks`
-    // const res = await this.fetch(apiUrl, "POST", {
-    //   asset: data.screenshot,
-    //   title: data.originTitle,
-    //   url: data.originUrl
-    // })
-    // return res
+  ): Promise<Block> {
+    const res = await fetch(data.screenshot)
+    const blob = await res.blob()
+    const mimeType = blob.type || data.screenshot.match(DATA_URL_MIME)?.[1] || "image/png"
+    const extension = mimeType.split("/")[1] || "png"
+    const buffer = await blob.arrayBuffer()
+
+    return this.client.uploads.createBlock({
+      file: {
+        data: new Uint8Array(buffer),
+        contentType: mimeType,
+        filename: `screenshot.${extension}`
+      },
+      channels: [{ id: channelId }],
+      block: {
+        title: data.originTitle,
+        original_source_url: data.originUrl,
+        original_source_title: data.originTitle
+      }
+    })
   }
 }

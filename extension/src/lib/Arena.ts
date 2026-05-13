@@ -10,6 +10,7 @@ const DATA_URL_MIME = /^data:([^;,]+)/
 type RequestOverrides = NonNullable<Parameters<ArenaType["users"]["contents"]>[2]>
 type UserContentsResponse = Awaited<ReturnType<ArenaType["users"]["contents"]>>
 export type UserChannelsListResponse = Omit<UserContentsResponse, "data"> & { data: Channel[] }
+type UserContentsOptions = NonNullable<Parameters<ArenaType["users"]["contents"]>[1]>
 
 function isChannel(row: { type: string }): row is Channel {
   return row.type === "Channel"
@@ -52,11 +53,19 @@ export class ArenaScreenshotterClient {
   /**
    * Gets the user's channels
    */
-  async getUserChannels(options?: RequestOverrides): Promise<UserChannelsListResponse> {
+  async getUserChannels(
+    options: UserContentsOptions & { per: number },
+    overrides?: RequestOverrides
+  ): Promise<UserChannelsListResponse> {
     const res = await this.client.users.contents(
       this.userSlug,
-      { type: "Channel", per: 20, sort: "updated_at_desc" },
-      options
+      {
+        type: "Channel",
+        sort: "updated_at_desc",
+        page: options.page,
+        ...options
+      },
+      overrides
     )
 
     return { ...res, data: [...res.data.filter(isChannel)].reverse() }

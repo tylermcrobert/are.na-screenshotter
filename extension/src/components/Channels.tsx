@@ -7,6 +7,8 @@ import { useCaptureCtx } from "./CaptureCtx"
 import ChannelList from "./ChannelList"
 import Spinner from "./Spinner"
 
+const PER_PAGE = 20
+
 export default function Channels() {
   const { arena, currentChannel, setError, setCurrentChannel } = useCaptureCtx()
 
@@ -22,7 +24,7 @@ export default function Channels() {
     const controller = new AbortController()
 
     arena
-      .getUserChannels({ signal: controller.signal })
+      .getUserChannels({ per: PER_PAGE }, { signal: controller.signal })
       .then((res) => {
         recentChannels.current = res.data
 
@@ -64,6 +66,17 @@ export default function Channels() {
     return () => controller.abort()
   }, [arena, debouncedSearchQuery, setError, setCurrentChannel])
 
+  async function loadMore() {
+    if (!debouncedSearchQuery.length) {
+      const newChannels = await arena.getUserChannels({
+        page: channels.length / PER_PAGE + 1,
+        per: PER_PAGE
+      })
+
+      setChannels((prev) => [...prev, ...newChannels.data])
+    }
+  }
+
   return (
     <div>
       <div className="relative mb-2">
@@ -90,6 +103,8 @@ export default function Channels() {
       </div>
 
       <ChannelList
+        onLoadMore={loadMore}
+        hasMore={channels.length % 20 === 0}
         channels={channels}
         currentChannel={currentChannel}
         initialLoading={initialLoading}

@@ -13,13 +13,17 @@ type ChannelListProps = {
   currentChannel: Channel | null
   initialLoading: boolean
   onSelectChannel: (channel: Channel) => void
+  onLoadMore: () => void
+  hasMore: boolean
 }
 
 export default function ChannelList({
   channels,
   currentChannel,
   initialLoading,
-  onSelectChannel
+  onSelectChannel,
+  onLoadMore,
+  hasMore
 }: ChannelListProps) {
   return (
     <div
@@ -58,6 +62,11 @@ export default function ChannelList({
           {initialLoading ? <Spinner /> : <span>No channels found</span>}
         </div>
       )}
+      {hasMore ? (
+        <button onClick={onLoadMore}>
+          <Spinner />
+        </button>
+      ) : null}
     </div>
   )
 }

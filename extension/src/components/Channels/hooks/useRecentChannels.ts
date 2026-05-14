@@ -37,7 +37,8 @@ export function useRecentChannels() {
         }))
       })
       .catch((e) => {
-        setError(e.message)
+        console.error(e)
+        setError("There was an error fetching recent channels.")
       })
       .finally(() => {
         setInitialLoading(false)

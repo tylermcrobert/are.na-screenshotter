@@ -33,7 +33,8 @@ export function useSearchChannels() {
         setCurrentChannel(res[0] ?? null)
       })
       .catch((e) => {
-        setError(e.message)
+        console.error(e)
+        setError("There was an error fetching channels for search.")
       })
       .finally(() => {
         setSearchLoading(false)

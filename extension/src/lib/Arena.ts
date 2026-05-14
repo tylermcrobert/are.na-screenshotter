@@ -52,7 +52,8 @@ export class ArenaScreenshotterClient {
       Array.from({ length: totalPages - 1 }, (_, i) => i + 2).map((page) => getPage(page))
     ).then((res) => res.flatMap((r) => r.data.filter(isChannel)))
 
-    return [...initialItems, ...remainingPages]
+    this.allChannels = [...initialItems, ...remainingPages]
+    return this.allChannels
   }
 
   /**

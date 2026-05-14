@@ -1,4 +1,5 @@
 import type { Channel } from "@aredotna/sdk/dist"
+import { useEffect, useRef, useState } from "react"
 
 import { useCaptureCtx } from "./CaptureCtx"
 import Spinner from "./Spinner"
@@ -12,15 +13,17 @@ const VISIBILITY_STATUS_CLASS = {
 type ChannelListProps = {
   channels: Channel[]
   loading: boolean
-  onLoadMore: () => void
+  onLoadMore: () => void | Promise<void>
   hasMore: boolean
 }
 
 export default function ChannelList({ channels, loading, onLoadMore, hasMore }: ChannelListProps) {
   const { currentChannel, setCurrentChannel } = useCaptureCtx()
+  const scrollRef = useRef<HTMLDivElement>(null)
 
   return (
     <div
+      ref={scrollRef}
       className={[
         channels.length > 4
           ? "pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-3 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-1"
@@ -57,10 +60,69 @@ export default function ChannelList({ channels, loading, onLoadMore, hasMore }: 
         </div>
       )}
       {hasMore ? (
-        <button className="btn shrink-0" onClick={onLoadMore}>
-          Load more...
-        </button>
+        <LoadMoreSentinel
+          scrollRef={scrollRef}
+          hasMore={hasMore}
+          onLoadMore={onLoadMore}
+          channels={channels}
+        />
       ) : null}
+    </div>
+  )
+}
+
+function LoadMoreSentinel({
+  hasMore,
+  onLoadMore,
+  channels,
+  scrollRef
+}: {
+  hasMore: boolean
+  onLoadMore: () => void
+  channels: Channel[]
+  scrollRef: React.RefObject<HTMLDivElement>
+}) {
+  const endRef = useRef<HTMLDivElement>(null)
+  const [loadingMore, setLoadingMore] = useState(false)
+
+  useEffect(() => {
+    if (!hasMore) return
+
+    const root = scrollRef.current
+    const target = endRef.current
+
+    if (!target) return
+
+    let cancelled = false
+    let isInFlight = false
+
+    function onIntersection(entries: IntersectionObserverEntry[]) {
+      if (!entries[0]?.isIntersecting || isInFlight) return
+      isInFlight = true
+      setLoadingMore(true)
+
+      Promise.resolve(onLoadMore()).finally(() => {
+        isInFlight = false
+        if (!cancelled) setLoadingMore(false)
+      })
+    }
+
+    const observer = new IntersectionObserver(onIntersection, {
+      root: root,
+      rootMargin: "80px"
+    })
+
+    observer.observe(target)
+
+    return () => {
+      cancelled = true
+      observer.disconnect()
+    }
+  }, [hasMore, channels.length, onLoadMore])
+
+  return (
+    <div ref={endRef} className="flex shrink-0 justify-center py-2">
+      {loadingMore ? <Spinner /> : null}
     </div>
   )
 }

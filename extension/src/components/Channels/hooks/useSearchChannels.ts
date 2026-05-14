@@ -23,25 +23,21 @@ export function useSearchChannels() {
 
   useEffect(() => {
     if (!debouncedSearchQuery.length || allChannels.length) return
-    const controller = new AbortController()
     setSearchLoading(true)
 
     arena
-      .getAllChannels({ signal: controller.signal })
+      .getAllChannels()
       .then((res) => {
         setAllChannels(res)
         setError(null)
         setCurrentChannel(res[0] ?? null)
       })
       .catch((e) => {
-        if (controller.signal.aborted) return
         setError(e.message)
       })
       .finally(() => {
-        if (!controller.signal.aborted) setSearchLoading(false)
+        setSearchLoading(false)
       })
-
-    return () => controller.abort()
   }, [arena, debouncedSearchQuery, setError, setCurrentChannel])
 
   function getFilteredChannels(query: string) {

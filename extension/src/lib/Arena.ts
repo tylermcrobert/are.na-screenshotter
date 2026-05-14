@@ -7,7 +7,6 @@ import {
 
 const DATA_URL_MIME = /^data:([^;,]+)/
 
-type RequestOverrides = NonNullable<Parameters<ArenaType["users"]["contents"]>[2]>
 type UserContentsResponse = Awaited<ReturnType<ArenaType["users"]["contents"]>>
 export type UserChannelsListResponse = Omit<UserContentsResponse, "data"> & { data: Channel[] }
 type UserContentsOptions = NonNullable<Parameters<ArenaType["users"]["contents"]>[1]>
@@ -33,16 +32,17 @@ export class ArenaScreenshotterClient {
    * @returns The channels
    */
 
-  async getAllChannels(options?: RequestOverrides): Promise<Channel[]> {
+  async getAllChannels(): Promise<Channel[]> {
     if (this.allChannels.length) return this.allChannels
 
     const getPage = (page: number) => {
       const PAGE_SIZE = 100
-      return this.client.users.contents(
-        this.userSlug,
-        { type: "Channel", per: PAGE_SIZE, sort: "updated_at_desc", page },
-        options
-      )
+      return this.client.users.contents(this.userSlug, {
+        type: "Channel",
+        per: PAGE_SIZE,
+        sort: "updated_at_desc",
+        page
+      })
     }
 
     const initialResponse = await getPage(1)
@@ -59,19 +59,14 @@ export class ArenaScreenshotterClient {
    * Gets the user's recent channels
    */
   async getRecentChannels(
-    options: UserContentsOptions & { per: number },
-    overrides?: RequestOverrides
+    options: UserContentsOptions & { per: number }
   ): Promise<UserChannelsListResponse> {
-    const res = await this.client.users.contents(
-      this.userSlug,
-      {
-        type: "Channel",
-        sort: "updated_at_desc",
-        page: options.page,
-        ...options
-      },
-      overrides
-    )
+    const res = await this.client.users.contents(this.userSlug, {
+      type: "Channel",
+      sort: "updated_at_desc",
+      page: options.page,
+      ...options
+    })
 
     return { ...res, data: [...res.data.filter(isChannel)].reverse() }
   }

@@ -1,75 +1,105 @@
-import { sendToBackground } from "@plasmohq/messaging"
+import {
+  createArena,
+  type Arena as ArenaType,
+  type Block,
+  type Channel
+} from "@aredotna/sdk/dist/index.js"
 
-import type { ArenaChannel } from "./types"
+const DATA_URL_MIME = /^data:([^;,]+)/
 
-const ARENA_API_BASE_URL = "https://api.are.na/v3"
-const SCREENSHOTTER_API_BASE = process.env.PLASMO_PUBLIC_API_BASE
+type RequestOverrides = NonNullable<Parameters<ArenaType["users"]["contents"]>[2]>
+type UserContentsResponse = Awaited<ReturnType<ArenaType["users"]["contents"]>>
+export type UserChannelsListResponse = Omit<UserContentsResponse, "data"> & { data: Channel[] }
+type UserContentsOptions = NonNullable<Parameters<ArenaType["users"]["contents"]>[1]>
 
-export class Arena {
-  private accessToken: string
+function isChannel(row: { type: string }): row is Channel {
+  return row.type === "Channel"
+}
+
+export class ArenaScreenshotterClient {
   private userSlug: string
+  private client: ArenaType
+  private allChannels: Channel[] = []
 
   constructor(token: string, userSlug: string) {
-    this.accessToken = token
+    this.client = createArena({ token: token })
     this.userSlug = userSlug
+    this.allChannels = []
   }
 
-  private async fetch(url: string, method: "GET" | "POST", body?: object) {
-    const res = await sendToBackground({
-      name: "fetch",
-      body: {
-        url: url,
-        options: {
-          body: body ? JSON.stringify(body) : undefined,
-          method: method,
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${this.accessToken}`
-          }
-        }
-      }
-    })
-
-    if (res.error) {
-      throw new Error(res.error)
+  /**
+   * Searches for channels
+   * @param q - The query to search for
+   * @returns The channels that match the query
+ 
+  // TODO: Implement pagination
+  // TODO: Get all channels not just the first 100
+ 
+  */
+  async searchUserChannels(q: string, options?: RequestOverrides): Promise<Channel[]> {
+    if (this.allChannels.length === 0) {
+      const res = await this.client.users.contents(
+        this.userSlug,
+        { type: "Channel", per: 100, sort: "updated_at_desc" },
+        options
+      )
+      this.allChannels = res.data.filter(isChannel)
     }
 
-    return res.data
-  }
+    const needle = q.trim().toLowerCase()
 
-  async searchUserChannels(q: string): Promise<ArenaChannel[]> {
-    const url = `${ARENA_API_BASE_URL}/users/${this.userSlug}/contents?type=Channel&per=100&sort=updated_at_desc`
-    const res = await this.fetch(url, "GET")
-    const query = q.toLowerCase()
-
-    return res.data.filter(
-      (ch: ArenaChannel) =>
-        ch.title.toLowerCase().includes(query) &&
-        ch.owner.slug === this.userSlug
+    return this.allChannels.filter(
+      (ch) => ch.title.toLowerCase().includes(needle) || ch.slug.toLowerCase().includes(needle)
     )
   }
 
-  async getUserChannels(): Promise<ArenaChannel[]> {
-    const url = `${ARENA_API_BASE_URL}/users/${this.userSlug}/contents?type=Channel&per=5&sort=updated_at_desc`
-    const res = await this.fetch(url, "GET")
-    return [...res.data].reverse() // API returns newest last; UI expects newest first (default + list order).
+  /**
+   * Gets the user's channels
+   */
+  async getUserChannels(
+    options: UserContentsOptions & { per: number },
+    overrides?: RequestOverrides
+  ): Promise<UserChannelsListResponse> {
+    const res = await this.client.users.contents(
+      this.userSlug,
+      {
+        type: "Channel",
+        sort: "updated_at_desc",
+        page: options.page,
+        ...options
+      },
+      overrides
+    )
+
+    return { ...res, data: [...res.data.filter(isChannel)].reverse() }
   }
 
   async postScreenshot(
-    channel: number,
+    channelId: number,
     data: {
       screenshot: string
       originUrl: string
       originTitle: string
     }
-  ) {
-    const apiUrl = `${SCREENSHOTTER_API_BASE}/are.na/channels/${channel}/blocks`
-    const res = await this.fetch(apiUrl, "POST", {
-      asset: data.screenshot,
-      title: data.originTitle,
-      url: data.originUrl
-    })
+  ): Promise<Block> {
+    const res = await fetch(data.screenshot)
+    const blob = await res.blob()
+    const mimeType = blob.type || data.screenshot.match(DATA_URL_MIME)?.[1] || "image/png"
+    const extension = mimeType.split("/")[1] || "png"
+    const buffer = await blob.arrayBuffer()
 
-    return res
+    return this.client.uploads.createBlock({
+      file: {
+        data: new Uint8Array(buffer),
+        contentType: mimeType,
+        filename: `screenshot.${extension}`
+      },
+      channels: [{ id: channelId }],
+      block: {
+        title: data.originTitle,
+        original_source_url: data.originUrl,
+        original_source_title: data.originTitle
+      }
+    })
   }
 }

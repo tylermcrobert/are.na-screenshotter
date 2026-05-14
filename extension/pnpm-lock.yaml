@@ -20,6 +20,9 @@ importers:
 
   .:
     dependencies:
+      '@aredotna/sdk':
+        specifier: ^0.0.4
+        version: 0.0.4
       '@plasmohq/messaging':
         specifier: ^0.6.2
         version: 0.6.2(react@18.2.0)
@@ -76,6 +79,10 @@ packages:
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
+
+  '@aredotna/sdk@0.0.4':
+    resolution: {integrity: sha512-OktVIpgpDkkcvqXEbkE6utBl8OUbcIZEHtsGN235ylHw4R4q9I8rhTI1WAVvtt/XBl9ua4FfymmQkCOZg+OJbg==}
+    engines: {node: '>=20'}
 
   '@babel/code-frame@7.29.0':
     resolution: {integrity: sha512-9NhCeYjq9+3uxgdtp20LSiJXJvN0FeCtNGpJxuMFZ1Kv3cWUNb6DOhJwUvcVCzKGR66cw4njwM6hrJLqgOwbcw==}
@@ -2911,6 +2918,10 @@ packages:
     resolution: {integrity: sha512-TfySrs/5nm8fQJDcBDuUng3VOUKsd7S+zqvbOTiGXHfxX4wK31ard+hoNuvkicM/2YFzlpDgABOevKSsB4G/FA==}
     engines: {node: '>= 6'}
 
+  pkce-challenge@6.0.0:
+    resolution: {integrity: sha512-KrEAOa2aGlEyV+gN2jMXwSQhZ5gUR4WwivtPjSktYzh7srb70pYvVGV0uLfmoCx75fUQtqTairuoxayHLtvo9w==}
+    engines: {node: '>=16.20.0'}
+
   plasmo@0.90.5:
     resolution: {integrity: sha512-VRFsRCHTKCDSRz7ZGmN4hCFqrHE8z7vDYqJK63v5gjRs+EUFdfEciQyGhPmG5NkT+yPvmMZO+R/j1HU/pg2BKA==}
     hasBin: true
@@ -3406,6 +3417,10 @@ snapshots:
     dependencies:
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
+
+  '@aredotna/sdk@0.0.4':
+    dependencies:
+      pkce-challenge: 6.0.0
 
   '@babel/code-frame@7.29.0':
     dependencies:
@@ -6337,6 +6352,8 @@ snapshots:
     optional: true
 
   pirates@4.0.7: {}
+
+  pkce-challenge@6.0.0: {}
 
   plasmo@0.90.5(@swc/core@1.15.24(@swc/helpers@0.5.21))(@swc/helpers@0.5.21)(@types/node@20.11.5)(lodash@4.18.1)(postcss@8.4.33)(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:

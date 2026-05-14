@@ -1,2 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Collapse lockfile diffs by default on GitHub; exclude from language stats
+**/pnpm-lock.yaml linguist-generated

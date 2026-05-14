@@ -26,7 +26,7 @@ const PlasmoOverlay = () => {
         setTabUrl(res.tabUrl ?? null)
         setTabTitle(res.tabTitle ?? null)
       })
-  })
+  }, [])
 
   // function signOut() {
   //   chrome.storage.local.remove("userSlug")

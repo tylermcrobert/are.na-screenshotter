@@ -1,5 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+/**
+ * Redirect API (for older blocks)
+ *
+ * This used to both upload to GCS and if older than 60 seconds, redirect to the archive.org URL.
+ * It is now just a redirect to the archive.org URL.
+ *
+ * ⚠️ Do not remove this, it is still used for older blocks.
+ */
 import { handleApiError } from '$lib/api.js';
 import { z } from 'zod';
 
@@ -7,35 +15,14 @@ export async function GET({ url }) {
 	try {
 		const data = z
 			.object({
-				redirect: z.string({ message: 'redirect paramater is required.' }),
-				asset: z.string({ message: 'asset paramater is required.' }),
-				timestamp: z.coerce.number({
-					message: 'timestamp paramater is required.'
-				})
+				redirect: z.string({ message: 'redirect paramater is required.' })
 			})
 			.parse(Object.fromEntries(url.searchParams));
 
-		const timestamp = data.timestamp;
-		const currentTime = new Date().getTime();
-		const sixtySeconds = 60 * 1000;
-		const isSixtySecondsOld = currentTime - timestamp > sixtySeconds;
-
-		if (isSixtySecondsOld) {
-			return new Response(null, {
-				status: 302,
-				headers: {
-					Location: data.redirect
-				}
-			});
-		}
-
-		const response = await fetch(data.asset);
-		const imageData = await response.arrayBuffer();
-		const contentType = response.headers.get('content-type') || '';
-
-		return new Response(imageData, {
+		return new Response(null, {
+			status: 302,
 			headers: {
-				'Content-Type': contentType
+				Location: data.redirect
 			}
 		});
 	} catch (error) {

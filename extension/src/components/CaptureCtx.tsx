@@ -80,5 +80,3 @@ export const CaptureProvider = ({
 export const useCaptureCtx = () => {
   return useContext(CaptureContext)
 }
-
-export default CaptureContext

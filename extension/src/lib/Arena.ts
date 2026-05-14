@@ -8,7 +8,7 @@ import {
 const DATA_URL_MIME = /^data:([^;,]+)/
 
 type UserContentsResponse = Awaited<ReturnType<ArenaType["users"]["contents"]>>
-export type UserChannelsListResponse = Omit<UserContentsResponse, "data"> & { data: Channel[] }
+type UserChannelsListResponse = Omit<UserContentsResponse, "data"> & { data: Channel[] }
 type UserContentsOptions = NonNullable<Parameters<ArenaType["users"]["contents"]>[1]>
 
 function isChannel(row: { type: string }): row is Channel {

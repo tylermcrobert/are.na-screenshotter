@@ -49,7 +49,7 @@
   },
   "manifest": {
     "name": "Are.na screenshotter",
-    "version": "0.3.3",
+    "version": "0.4.0",
     "host_permissions": [
       "https://*/*"
     ],

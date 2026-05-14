@@ -5,16 +5,12 @@ import { useSearchChannels } from "./hooks/useSearchChannels"
 
 export default function Channels() {
   const { recentChannels, initialLoading, loadMore } = useRecentChannels()
-  const {
-    //
-    searchChannels,
-    searchLoading,
-    setSearchQuery,
-    searchQuery,
-    debouncedSearchQuery
-  } = useSearchChannels()
+  const { searchChannels, searchLoading, setSearchQuery, searchQuery, debouncedSearchQuery } =
+    useSearchChannels()
 
-  const showingSearchResults = debouncedSearchQuery.length > 0 && !searchLoading
+  const isSearchActive = debouncedSearchQuery.length > 0
+  const showingSearchResults = isSearchActive && !searchLoading
+  const listEmptyLoading = isSearchActive ? searchLoading : initialLoading
 
   return (
     <div>
@@ -35,7 +31,7 @@ export default function Channels() {
         onLoadMore={loadMore}
         hasMore={showingSearchResults ? false : recentChannels.hasMore}
         channels={showingSearchResults ? searchChannels : recentChannels.items}
-        initialLoading={initialLoading}
+        initialLoading={listEmptyLoading}
       />
     </div>
   )

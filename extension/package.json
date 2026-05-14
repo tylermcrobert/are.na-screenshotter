@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",
-    "package": "plasmo package"
+    "package": "plasmo package",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@aredotna/sdk": "^0.0.4",
@@ -24,10 +26,15 @@
     "@types/node": "20.11.5",
     "@types/react": "18.2.48",
     "@types/react-dom": "18.2.18",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^17.6.0",
     "postcss": "8.4.33",
     "prettier": "3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
-    "typescript": "5.3.3"
+    "typescript": "5.3.3",
+    "typescript-eslint": "^8.59.3"
   },
   "pnpm": {
     "overrides": {

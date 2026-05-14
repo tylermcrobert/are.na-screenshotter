@@ -8,6 +8,7 @@ export type AuthResponse =
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   const manifest = chrome.runtime.getManifest()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const clientId: string = (manifest.oauth2 as any).client_id
   const redirectUri = chrome.identity.getRedirectURL()
 
@@ -20,7 +21,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   }
 
   try {
-    const redirectUrl = await new Promise<string>((resolve, reject) => {
+    const redirectUrl = await new Promise<string>((resolve) => {
       chrome.identity.launchWebAuthFlow(
         {
           url: `https://www.are.na/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=write`,

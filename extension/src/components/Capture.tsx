@@ -42,7 +42,8 @@ export default function Capture() {
             <a
               href={`https://are.na/channel/${postedTo.id}`}
               className="btn-primary w-full"
-              target="_blank">
+              target="_blank"
+              rel="noreferrer">
               View channel &rarr;
             </a>
           )}

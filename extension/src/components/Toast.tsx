@@ -1,5 +1,3 @@
-import { useEffect } from "react"
-
 type ToastProps = {
   onClose: () => void
   error: string | null

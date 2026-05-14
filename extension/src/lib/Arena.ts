@@ -7,7 +7,6 @@ import {
 
 const DATA_URL_MIME = /^data:([^;,]+)/
 
-type RequestOverrides = NonNullable<Parameters<ArenaType["users"]["contents"]>[2]>
 type UserContentsResponse = Awaited<ReturnType<ArenaType["users"]["contents"]>>
 export type UserChannelsListResponse = Omit<UserContentsResponse, "data"> & { data: Channel[] }
 type UserContentsOptions = NonNullable<Parameters<ArenaType["users"]["contents"]>[1]>
@@ -28,48 +27,47 @@ export class ArenaScreenshotterClient {
   }
 
   /**
-   * Searches for channels
-   * @param q - The query to search for
-   * @returns The channels that match the query
- 
-  // TODO: Implement pagination
-  // TODO: Get all channels not just the first 100
- 
-  */
-  async searchUserChannels(q: string, options?: RequestOverrides): Promise<Channel[]> {
-    if (this.allChannels.length === 0) {
-      const res = await this.client.users.contents(
-        this.userSlug,
-        { type: "Channel", per: 100, sort: "updated_at_desc" },
-        options
-      )
-      this.allChannels = res.data.filter(isChannel)
+   * Gets all of the user's channels
+   * @param options - The options for the request
+   * @returns The channels
+   */
+
+  async getAllChannels(): Promise<Channel[]> {
+    if (this.allChannels.length) return this.allChannels
+
+    const getPage = (page: number) => {
+      const PAGE_SIZE = 100
+      return this.client.users.contents(this.userSlug, {
+        type: "Channel",
+        per: PAGE_SIZE,
+        sort: "updated_at_desc",
+        page
+      })
     }
 
-    const needle = q.trim().toLowerCase()
+    const initialResponse = await getPage(1)
+    const totalPages = initialResponse.meta.total_pages
+    const initialItems = initialResponse.data.filter(isChannel)
+    const remainingPages = await Promise.all(
+      Array.from({ length: totalPages - 1 }, (_, i) => i + 2).map((page) => getPage(page))
+    ).then((res) => res.flatMap((r) => r.data.filter(isChannel)))
 
-    return this.allChannels.filter(
-      (ch) => ch.title.toLowerCase().includes(needle) || ch.slug.toLowerCase().includes(needle)
-    )
+    this.allChannels = [...initialItems, ...remainingPages]
+    return this.allChannels
   }
 
   /**
-   * Gets the user's channels
+   * Gets the user's recent channels
    */
-  async getUserChannels(
-    options: UserContentsOptions & { per: number },
-    overrides?: RequestOverrides
+  async getRecentChannels(
+    options: UserContentsOptions & { per: number }
   ): Promise<UserChannelsListResponse> {
-    const res = await this.client.users.contents(
-      this.userSlug,
-      {
-        type: "Channel",
-        sort: "updated_at_desc",
-        page: options.page,
-        ...options
-      },
-      overrides
-    )
+    const res = await this.client.users.contents(this.userSlug, {
+      type: "Channel",
+      sort: "updated_at_desc",
+      page: options.page,
+      ...options
+    })
 
     return { ...res, data: [...res.data.filter(isChannel)].reverse() }
   }

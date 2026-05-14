@@ -25,10 +25,8 @@ export function useRecentChannels() {
   })
 
   useEffect(() => {
-    const controller = new AbortController()
-
     arena
-      .getUserChannels({ per: PER_PAGE }, { signal: controller.signal })
+      .getRecentChannels({ per: PER_PAGE })
       .then((res) => {
         setError(null) // TODO: this doesn't go anywhere
         setCurrentChannel(res.data[0] ?? null)
@@ -39,20 +37,17 @@ export function useRecentChannels() {
         }))
       })
       .catch((e) => {
-        if (controller.signal.aborted) return
         setError(e.message)
       })
       .finally(() => {
-        if (!controller.signal.aborted) setInitialLoading(false)
+        setInitialLoading(false)
       })
-
-    return () => controller.abort()
   }, [arena, setError, setCurrentChannel])
 
   async function loadMore() {
     if (!recentChannels.hasMore) return
 
-    const newChannels = await arena.getUserChannels({
+    const newChannels = await arena.getRecentChannels({
       page: recentChannels.items.length / PER_PAGE + 1,
       per: PER_PAGE
     })

@@ -14,40 +14,48 @@ export function useSearchChannels() {
 
   const [searchQuery, setSearchQuery] = useState("")
   const [searchLoading, setSearchLoading] = useState(false)
+  const [allChannels, setAllChannels] = useState<Channel[]>([])
+
   const debouncedSearchQuery = useDebounce(searchQuery, 300)
-  const [searchChannels, setSearchChannels] = useState<Channel[]>([])
 
+  /**
+   * When there's a search query, fetch every single channel
+   */
   useEffect(() => {
-    if (!debouncedSearchQuery.length) return
-
-    const controller = new AbortController()
+    if (!debouncedSearchQuery.length || allChannels.length) return
     setSearchLoading(true)
 
     arena
-      .searchUserChannels(debouncedSearchQuery, { signal: controller.signal })
+      .getAllChannels()
       .then((res) => {
+        setAllChannels(res)
         setError(null)
-        setSearchLoading(false)
         setCurrentChannel(res[0] ?? null)
-        setSearchChannels(res)
       })
       .catch((e) => {
-        if (controller.signal.aborted) return
         setError(e.message)
       })
       .finally(() => {
-        if (!controller.signal.aborted) setSearchLoading(false)
+        setSearchLoading(false)
       })
-
-    return () => controller.abort()
   }, [arena, debouncedSearchQuery, setError, setCurrentChannel])
 
+  /**
+   * Derrived filtered channels from the search query
+   * @param query - The query to filter the channels by
+   * @returns The filtered channels
+   */
+  function getFilteredChannels(query: string) {
+    return allChannels.filter((channel) =>
+      channel.title.toLowerCase().includes(query.toLowerCase())
+    )
+  }
+
   return {
-    searchChannels,
+    searchChannels: getFilteredChannels(debouncedSearchQuery),
     searchLoading,
     setSearchQuery,
     searchQuery,
-    debouncedSearchQuery,
-    setSearchLoading
+    debouncedSearchQuery
   }
 }

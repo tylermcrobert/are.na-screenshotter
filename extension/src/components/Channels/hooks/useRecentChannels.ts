@@ -28,7 +28,7 @@ export function useRecentChannels() {
     const controller = new AbortController()
 
     arena
-      .getUserChannels({ per: PER_PAGE }, { signal: controller.signal })
+      .getRecentChannels({ per: PER_PAGE }, { signal: controller.signal })
       .then((res) => {
         setError(null) // TODO: this doesn't go anywhere
         setCurrentChannel(res.data[0] ?? null)
@@ -52,7 +52,7 @@ export function useRecentChannels() {
   async function loadMore() {
     if (!recentChannels.hasMore) return
 
-    const newChannels = await arena.getUserChannels({
+    const newChannels = await arena.getRecentChannels({
       page: recentChannels.items.length / PER_PAGE + 1,
       per: PER_PAGE
     })

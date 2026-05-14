@@ -14,13 +14,13 @@ export function useSearchChannels() {
 
   const [searchQuery, setSearchQuery] = useState("")
   const [searchLoading, setSearchLoading] = useState(false)
-  const debouncedSearchQuery = useDebounce(searchQuery, 300)
   const [allChannels, setAllChannels] = useState<Channel[]>([])
+
+  const debouncedSearchQuery = useDebounce(searchQuery, 300)
 
   /**
    * When there's a search query, fetch every single channel
    */
-
   useEffect(() => {
     if (!debouncedSearchQuery.length || allChannels.length) return
     setSearchLoading(true)
@@ -40,6 +40,11 @@ export function useSearchChannels() {
       })
   }, [arena, debouncedSearchQuery, setError, setCurrentChannel])
 
+  /**
+   * Derrived filtered channels from the search query
+   * @param query - The query to filter the channels by
+   * @returns The filtered channels
+   */
   function getFilteredChannels(query: string) {
     return allChannels.filter((channel) =>
       channel.title.toLowerCase().includes(query.toLowerCase())
@@ -51,7 +56,6 @@ export function useSearchChannels() {
     searchLoading,
     setSearchQuery,
     searchQuery,
-    debouncedSearchQuery,
-    setSearchLoading
+    debouncedSearchQuery
   }
 }

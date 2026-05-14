@@ -1,5 +1,5 @@
 import type { Channel } from "@aredotna/sdk/dist/index.js"
-import { useEffect, useState } from "react"
+import { useCallback, useState } from "react"
 
 import { useCaptureCtx } from "~components/CaptureCtx"
 
@@ -18,11 +18,7 @@ export function useSearchChannels() {
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300)
 
-  /**
-   * When there's a search query, fetch every single channel
-   */
-  useEffect(() => {
-    if (!debouncedSearchQuery.length || allChannels.length) return
+  const fetchAllChannels = useCallback(async () => {
     setSearchLoading(true)
 
     arena
@@ -39,7 +35,7 @@ export function useSearchChannels() {
       .finally(() => {
         setSearchLoading(false)
       })
-  }, [arena, debouncedSearchQuery, setError, setCurrentChannel])
+  }, [arena, setError, setCurrentChannel])
 
   /**
    * Derrived filtered channels from the search query
@@ -55,8 +51,10 @@ export function useSearchChannels() {
   return {
     searchChannels: getFilteredChannels(debouncedSearchQuery),
     searchLoading,
-    setSearchQuery,
+    showSpinner: searchLoading && searchQuery.length > 0,
     searchQuery,
-    debouncedSearchQuery
+    debouncedSearchQuery,
+    setSearchQuery,
+    fetchAllChannels
   }
 }

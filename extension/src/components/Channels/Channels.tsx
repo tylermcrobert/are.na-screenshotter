@@ -5,8 +5,15 @@ import { useSearchChannels } from "./hooks/useSearchChannels"
 
 export default function Channels() {
   const { recentChannels, initialLoading, loadMore } = useRecentChannels()
-  const { searchChannels, searchLoading, setSearchQuery, searchQuery, debouncedSearchQuery } =
-    useSearchChannels()
+  const {
+    fetchAllChannels,
+    setSearchQuery,
+    searchChannels,
+    searchLoading,
+    showSpinner,
+    searchQuery,
+    debouncedSearchQuery
+  } = useSearchChannels()
 
   const isSearchActive = debouncedSearchQuery.length > 0
   const showingSearchResults = isSearchActive && !searchLoading
@@ -16,9 +23,10 @@ export default function Channels() {
     <div>
       <div className="relative mb-2">
         <div className="absolute top-1/2 right-2 flex -translate-y-1/2 items-center justify-center">
-          {searchLoading ? <Spinner /> : null}
+          {showSpinner ? <Spinner /> : null}
         </div>
         <input
+          onFocus={fetchAllChannels}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           type="text"

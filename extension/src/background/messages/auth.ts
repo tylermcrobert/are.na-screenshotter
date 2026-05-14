@@ -2,12 +2,22 @@ import type { PlasmoMessaging } from "@plasmohq/messaging"
 
 const SCREENSHOTTER_API_BASE = process.env.PLASMO_PUBLIC_API_BASE
 
-const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
-  console.log("auth handler")
+export type AuthResponse =
+  | { ok: true; accessToken: string; userSlug: string }
+  | { ok: false; message: string }
 
+const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   const manifest = chrome.runtime.getManifest()
   const clientId: string = (manifest.oauth2 as any).client_id
   const redirectUri = chrome.identity.getRedirectURL()
+
+  if (!SCREENSHOTTER_API_BASE) {
+    res.send({
+      ok: false,
+      message: "Missing API base URL."
+    } satisfies AuthResponse)
+    return
+  }
 
   try {
     const redirectUrl = await new Promise<string>((resolve, reject) => {
@@ -38,15 +48,23 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     }
 
     const payload = {
+      ok: true,
       accessToken: tokenJson.access_token,
       userSlug: tokenJson.user
-    }
+    } satisfies AuthResponse
 
-    chrome.storage.local.set(payload)
+    chrome.storage.local.set({
+      accessToken: payload.accessToken,
+      userSlug: payload.userSlug
+    })
 
     res.send(payload)
   } catch (error) {
     console.log(error)
+    res.send({
+      ok: false,
+      message: error instanceof Error ? error.message : "Authentication failed."
+    } satisfies AuthResponse)
   }
 }
 

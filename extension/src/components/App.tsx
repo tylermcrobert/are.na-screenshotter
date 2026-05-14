@@ -2,10 +2,12 @@ import { useEffect, useState } from "react"
 
 import { sendToBackground } from "@plasmohq/messaging"
 
+import type { AuthResponse } from "~background/messages/auth"
 import { CaptureProvider } from "~components/CaptureCtx"
 
 import Auth from "./Auth"
 import Capture from "./Capture"
+import Toast from "./Toast"
 
 const PlasmoOverlay = () => {
   const [screenshot, setScreenshot] = useState<string | null>(null)
@@ -28,17 +30,14 @@ const PlasmoOverlay = () => {
       })
   }, [])
 
-  // function signOut() {
-  //   chrome.storage.local.remove("userSlug")
-  //   chrome.storage.local.remove("accessToken")
-
-  //   setUserSlug(null)
-  //   setAccessToken(null)
-  // }
-
   async function authenticate() {
     try {
-      const response = await sendToBackground({ name: "auth" })
+      const response = await sendToBackground<AuthResponse>({ name: "auth" })
+
+      if (!response.ok) {
+        setError(response.message)
+        return
+      }
 
       setAccessToken(response.accessToken)
       setUserSlug(response.userSlug)
@@ -50,6 +49,7 @@ const PlasmoOverlay = () => {
 
   return (
     <>
+      {error ? <Toast error={error} onClose={() => setError(null)} /> : null}
       {accessToken && userSlug ? (
         <CaptureProvider
           screenshot={screenshot}

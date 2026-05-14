@@ -11,17 +11,12 @@ const VISIBILITY_STATUS_CLASS = {
 
 type ChannelListProps = {
   channels: Channel[]
-  initialLoading: boolean
+  loading: boolean
   onLoadMore: () => void
   hasMore: boolean
 }
 
-export default function ChannelList({
-  channels,
-  initialLoading,
-  onLoadMore,
-  hasMore
-}: ChannelListProps) {
+export default function ChannelList({ channels, loading, onLoadMore, hasMore }: ChannelListProps) {
   const { currentChannel, setCurrentChannel } = useCaptureCtx()
 
   return (
@@ -58,7 +53,7 @@ export default function ChannelList({
         ))
       ) : (
         <div className="absolute inset-0 flex items-center justify-center">
-          {initialLoading ? <Spinner /> : <span>No channels found</span>}
+          {loading ? <Spinner /> : <span>No channels found</span>}
         </div>
       )}
       {hasMore ? (

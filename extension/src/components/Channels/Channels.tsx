@@ -31,7 +31,7 @@ export default function Channels() {
         onLoadMore={loadMore}
         hasMore={showingSearchResults ? false : recentChannels.hasMore}
         channels={showingSearchResults ? searchChannels : recentChannels.items}
-        initialLoading={listEmptyLoading}
+        loading={listEmptyLoading}
       />
     </div>
   )

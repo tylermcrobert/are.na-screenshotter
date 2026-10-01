@@ -15,23 +15,23 @@ export default function Capture() {
       <CapturePreview />
 
       <div className="flex h-bottom flex-col px-3">
-        {!!postedTo ? (
-          <PostedConfirmation />
+        {postedTo ? (
+          <>
+            <PostedConfirmation />
+            <ButtonBar>
+              <CloseButton />
+              <ViewChannel channelId={postedTo.id} />
+            </ButtonBar>
+          </>
         ) : (
           <>
             <CaptureMeta />
             <Channels />
+            <ButtonBar>
+              <ConnectButton />
+            </ButtonBar>
           </>
         )}
-
-        <ButtonBar>
-          {!postedTo ? (
-            <ConnectButton />
-          ) : (
-            <ViewChannel channelId={postedTo.id} />
-          )}
-          <CloseButton />
-        </ButtonBar>
       </div>
     </div>
   )

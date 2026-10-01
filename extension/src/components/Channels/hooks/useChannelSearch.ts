@@ -6,10 +6,10 @@ import { useCaptureCtx } from "~components/CaptureCtx"
 import { useDebounce } from "./useDebounce"
 
 /**
- * useSearchChannels
+ * useChannelSearch
  * @description Handles the search functionality for channels
  */
-export function useSearchChannels() {
+export function useChannelSearch() {
   const { arena, setError, setCurrentChannel } = useCaptureCtx()
 
   const [searchQuery, setSearchQuery] = useState("")
@@ -26,7 +26,6 @@ export function useSearchChannels() {
       .then((res) => {
         setAllChannels(res)
         setError(null)
-        setCurrentChannel(res[0] ?? null)
       })
       .catch((e) => {
         console.error(e)
@@ -35,10 +34,10 @@ export function useSearchChannels() {
       .finally(() => {
         setSearchLoading(false)
       })
-  }, [arena, setError, setCurrentChannel])
+  }, [arena, setError])
 
   /**
-   * Derrived filtered channels from the search query
+   * Derived filtered channels from the search query
    * @param query - The query to filter the channels by
    * @returns The filtered channels
    */
@@ -48,13 +47,22 @@ export function useSearchChannels() {
     )
   }
 
+  /**
+   * Updates the query and selects the top match
+   */
+  function search(query: string) {
+    setSearchQuery(query)
+    const [topMatch] = getFilteredChannels(query)
+    if (query && topMatch) setCurrentChannel(topMatch)
+  }
+
   return {
-    searchChannels: getFilteredChannels(debouncedSearchQuery),
+    searchResults: getFilteredChannels(debouncedSearchQuery),
     searchLoading,
     showSpinner: searchLoading && searchQuery.length > 0,
     searchQuery,
     debouncedSearchQuery,
-    setSearchQuery,
+    search,
     fetchAllChannels
   }
 }

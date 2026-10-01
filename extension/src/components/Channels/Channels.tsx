@@ -1,19 +1,19 @@
 import ChannelList from "../ChannelList"
 import Spinner from "../Spinner"
+import { useChannelSearch } from "./hooks/useChannelSearch"
 import { useRecentChannels } from "./hooks/useRecentChannels"
-import { useSearchChannels } from "./hooks/useSearchChannels"
 
 export default function Channels() {
   const { recentChannels, initialLoading, loadMore } = useRecentChannels()
   const {
     fetchAllChannels,
-    setSearchQuery,
-    searchChannels,
+    search,
+    searchResults,
     searchLoading,
     showSpinner,
     searchQuery,
     debouncedSearchQuery
-  } = useSearchChannels()
+  } = useChannelSearch()
 
   const isSearchActive = debouncedSearchQuery.length > 0
   const showingSearchResults = isSearchActive && !searchLoading
@@ -28,7 +28,7 @@ export default function Channels() {
         <input
           onFocus={fetchAllChannels}
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={(e) => search(e.target.value)}
           type="text"
           className="w-full rounded-sm border px-2 py-1 pr-8 placeholder:text-gray-4"
           placeholder="Search channels"
@@ -38,7 +38,7 @@ export default function Channels() {
       <ChannelList
         onLoadMore={loadMore}
         hasMore={showingSearchResults ? false : recentChannels.hasMore}
-        channels={showingSearchResults ? searchChannels : recentChannels.items}
+        channels={showingSearchResults ? searchResults : recentChannels.items}
         loading={listEmptyLoading}
       />
     </div>

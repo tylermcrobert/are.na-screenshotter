@@ -8,7 +8,10 @@
   "trailingComma": "none",
   "bracketSpacing": true,
   "bracketSameLine": true,
-  "plugins": ["@ianvs/prettier-plugin-sort-imports", "prettier-plugin-tailwindcss"],
+  "plugins": [
+    "@ianvs/prettier-plugin-sort-imports",
+    "prettier-plugin-tailwindcss"
+  ],
   "tailwindStylesheet": "./src/style.css",
   "tailwindFunctions": ["clsx", "cn", "twMerge"],
   "importOrder": [

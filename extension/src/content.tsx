@@ -3,8 +3,9 @@ import type { PlasmoCSConfig } from "plasmo"
 import { useEffect, useState } from "react"
 
 import Window from "~components/Window"
+import { MESSAGE } from "~lib/messages"
 
-export default function content() {
+export default function Content() {
   const [isOpen, setOpen] = useState(false)
 
   useEffect(() => {
@@ -16,7 +17,7 @@ export default function content() {
       if (message.type === "screenshot") {
         setOpen((open) => !open)
         sendResponse()
-      } else if (message.type === "closePanel") {
+      } else if (message.type === MESSAGE.CLOSE_PANEL) {
         setOpen(false)
       }
     }

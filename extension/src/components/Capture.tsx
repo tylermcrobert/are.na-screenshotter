@@ -7,7 +7,7 @@ import CapturePreview from "./CapturePreview"
 import Channels from "./Channels/Channels"
 import Spinner from "./Spinner"
 
-export default function Window() {
+export default function Capture() {
   const { postedTo } = useCaptureCtx()
 
   return (
@@ -15,13 +15,13 @@ export default function Window() {
       <CapturePreview />
 
       <div className="flex h-bottom flex-col px-3">
-        {postedTo ? <PostedConfirmation /> : <Capture />}
+        {postedTo ? <ConnectConfirm /> : <ConnectForm />}
       </div>
     </div>
   )
 }
 
-function Capture() {
+function ConnectForm() {
   const { originTitle, hostName } = useCaptureCtx()
 
   return (
@@ -80,7 +80,7 @@ function ConnectButton() {
   )
 }
 
-function PostedConfirmation() {
+function ConnectConfirm() {
   const { postedTo, originTitle, hostName } = useCaptureCtx()
 
   return (

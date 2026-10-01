@@ -1,4 +1,4 @@
-import type { Channel } from "@aredotna/sdk/dist"
+import type { Channel } from "@aredotna/sdk"
 import { useEffect, useRef, useState } from "react"
 
 import { useCaptureCtx } from "./CaptureCtx"

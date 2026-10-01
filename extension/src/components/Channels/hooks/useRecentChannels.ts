@@ -1,4 +1,4 @@
-import type { Channel } from "@aredotna/sdk/dist/index.js"
+import type { Channel } from "@aredotna/sdk"
 import { useEffect, useState } from "react"
 
 import { useCaptureCtx } from "~components/CaptureCtx"

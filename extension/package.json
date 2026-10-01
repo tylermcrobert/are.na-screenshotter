@@ -37,6 +37,9 @@
     "typescript": "5.3.3",
     "typescript-eslint": "^8.59.3"
   },
+  "@parcel/resolver-default": {
+    "packageExports": true
+  },
   "pnpm": {
     "overrides": {
       "sharp": "^0.33.0",

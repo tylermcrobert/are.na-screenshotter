@@ -3,7 +3,7 @@ import {
   type Arena as ArenaType,
   type Block,
   type Channel
-} from "@aredotna/sdk/dist/index.js"
+} from "@aredotna/sdk"
 
 const DATA_URL_MIME = /^data:([^;,]+)/
 

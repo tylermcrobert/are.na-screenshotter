@@ -1,4 +1,4 @@
-import type { Channel } from "@aredotna/sdk/dist/index.js"
+import type { Channel } from "@aredotna/sdk"
 import { createContext, useContext, useMemo, useState } from "react"
 
 import { ArenaScreenshotterClient } from "~lib/Arena"

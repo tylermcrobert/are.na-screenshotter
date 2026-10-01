@@ -22,46 +22,8 @@ export default function Capture() {
 }
 
 function ConnectForm() {
-  const { originTitle, hostName } = useCaptureCtx()
+  const { originTitle, hostName, postToArena } = useCaptureCtx()
 
-  return (
-    <>
-      <div className="flex min-h-16 flex-1 flex-col justify-center text-center">
-        <div className="font-bold">{originTitle}</div>
-        <div className="text-gray-4">{hostName}</div>
-      </div>
-      <Channels />
-      <ButtonBar>
-        <CloseButton />
-        <ConnectButton />
-      </ButtonBar>
-    </>
-  )
-}
-
-function ButtonBar({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="sticky bottom-0 flex gap-3 bg-white py-3">{children}</div>
-  )
-}
-
-function CloseButton() {
-  async function closeWindow() {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
-    if (tab?.id) {
-      await chrome.tabs.sendMessage(tab.id, { type: MESSAGE.CLOSE_PANEL })
-    }
-  }
-
-  return (
-    <button className="btn" onClick={closeWindow}>
-      Close
-    </button>
-  )
-}
-
-function ConnectButton() {
-  const { postToArena } = useCaptureCtx()
   const [loading, setLoading] = useState(false)
 
   async function onClick() {
@@ -74,9 +36,22 @@ function ConnectButton() {
   }
 
   return (
-    <button className="btn-primary w-full" onClick={onClick} disabled={loading}>
-      {!loading ? <>Connect &rarr;</> : <Spinner />}
-    </button>
+    <>
+      <div className="flex min-h-16 flex-1 flex-col justify-center text-center">
+        <div className="font-bold">{originTitle}</div>
+        <div className="text-gray-4">{hostName}</div>
+      </div>
+      <Channels />
+      <ButtonBar>
+        <CloseButton />
+        <button
+          className="btn-primary w-full"
+          onClick={onClick}
+          disabled={loading}>
+          {!loading ? <>Connect &rarr;</> : <Spinner />}
+        </button>
+      </ButtonBar>
+    </>
   )
 }
 
@@ -106,5 +81,26 @@ function ConnectConfirm() {
         </a>
       </ButtonBar>
     </>
+  )
+}
+
+function ButtonBar({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="sticky bottom-0 flex gap-3 bg-white py-3">{children}</div>
+  )
+}
+
+function CloseButton() {
+  async function closeWindow() {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+    if (tab?.id) {
+      await chrome.tabs.sendMessage(tab.id, { type: MESSAGE.CLOSE_PANEL })
+    }
+  }
+
+  return (
+    <button className="btn" onClick={closeWindow}>
+      Close
+    </button>
   )
 }

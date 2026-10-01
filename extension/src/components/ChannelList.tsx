@@ -4,20 +4,11 @@ import { useEffect, useRef, useState } from "react"
 import { useCaptureCtx } from "./CaptureCtx"
 import Spinner from "./Spinner"
 
-const VISIBILITY_STATUS_CLASS = {
-  private: "status-private",
-  public: "status-public",
-  closed: "status-closed"
-} as const
-
 const LIST_CLASS =
   "relative flex h-[calc((var(--spacing-channel-row-height)*5_+_var(--spacing-channel-row-gap)*4)_-_var(--spacing-channel-row-height)/2)] flex-col gap-channel-row-gap overflow-y-auto"
 
 const SCROLLBAR_CLASS =
   "pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-3 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-1"
-
-const ROW_CLASS =
-  "flex h-channel-row-height shrink-0 cursor-pointer items-center gap-2 rounded-sm bg-status-1 px-2 text-nowrap text-status-3 ring-ring ring-inset has-focus-visible:ring-1"
 
 type ChannelListProps = {
   channels: Channel[]
@@ -61,12 +52,18 @@ export default function ChannelList({
   )
 }
 
+const VISIBILITY_STATUS_CLASS = {
+  private: "status-private",
+  public: "status-public",
+  closed: "status-closed"
+} as const
+
 function ChannelRow({ channel }: { channel: Channel }) {
   const { currentChannel, setCurrentChannel } = useCaptureCtx()
 
   return (
     <label
-      className={`${VISIBILITY_STATUS_CLASS[channel.visibility]} ${ROW_CLASS}`}>
+      className={`${VISIBILITY_STATUS_CLASS[channel.visibility]} flex h-channel-row-height shrink-0 cursor-pointer items-center gap-2 rounded-sm bg-status-1 px-2 text-nowrap text-status-3 ring-ring ring-inset has-focus-visible:ring-1`}>
       <input
         type="radio"
         name="channel"

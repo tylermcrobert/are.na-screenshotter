@@ -1,3 +1,5 @@
+import { MESSAGE } from "~lib/messages"
+
 import { useCaptureCtx } from "./CaptureCtx"
 import CaptureMeta from "./CaptureMeta"
 import CapturePreview from "./CapturePreview"
@@ -8,7 +10,7 @@ export default function Capture() {
   const { postedTo, originTitle, hostName } = useCaptureCtx()
 
   function closeWindow() {
-    void chrome.runtime.sendMessage({ type: "closePanel" })
+    void chrome.runtime.sendMessage({ type: MESSAGE.CLOSE_PANEL })
   }
 
   return (
@@ -18,7 +20,9 @@ export default function Capture() {
       <div className="flex h-bottom flex-col px-3">
         {!!postedTo ? (
           <div className="mt-3 flex flex-1 flex-col justify-center text-center">
-            <div className="mb-1 text-[15px] font-bold">Posted to {postedTo.title}.</div>
+            <div className="mb-1 text-[15px] font-bold">
+              Posted to {postedTo.title}.
+            </div>
             <div className="text-gray-4">
               <div>{originTitle}</div>
               <div>{hostName}</div>

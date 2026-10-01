@@ -19,12 +19,10 @@ export default function ConnectButton() {
   /**
    * Posts the screenshot to Are.na
    */
-  async function postToArena() {
-    setLoading(true)
-    setError(null)
-
-    if (!currentChannel) {
+  function postToArena() {
+    if (!currentChannel?.id) {
       setError("Please select a channel.")
+      return
     }
 
     if (!screenshot || !originUrl || !originTitle) {
@@ -32,10 +30,8 @@ export default function ConnectButton() {
       return
     }
 
-    if (!currentChannel?.id) {
-      setError("Please select a channel.")
-      return
-    }
+    setLoading(true)
+    setError(null)
 
     arena
       .postScreenshot(currentChannel.id, {

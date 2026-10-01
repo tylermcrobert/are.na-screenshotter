@@ -51,7 +51,10 @@ export default function ConnectButton() {
   }
 
   return (
-    <button className="btn-primary w-full" onClick={postToArena}>
+    <button
+      className="btn-primary w-full"
+      onClick={postToArena}
+      disabled={loading}>
       {!loading ? <>Connect &rarr;</> : <Spinner />}
     </button>
   )

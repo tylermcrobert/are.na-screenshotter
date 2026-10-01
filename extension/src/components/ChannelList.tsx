@@ -23,7 +23,6 @@ export default function ChannelList({
   onLoadMore,
   hasMore
 }: ChannelListProps) {
-  const { currentChannel, setCurrentChannel } = useCaptureCtx()
   const scrollRef = useRef<HTMLDivElement>(null)
 
   return (
@@ -38,32 +37,14 @@ export default function ChannelList({
       ].join(" ")}>
       {channels.length ? (
         channels.map((channel) => (
-          <label
-            className={[
-              VISIBILITY_STATUS_CLASS[channel.visibility],
-              `flex h-channel-row-height shrink-0 cursor-pointer items-center gap-2 rounded-sm bg-status-1 px-2 text-nowrap text-status-3 ring-ring ring-inset has-focus-visible:ring-1`
-            ].join(" ")}
-            key={channel.id}>
-            <input
-              type="radio"
-              name="channel"
-              className="peer sr-only"
-              onChange={() => setCurrentChannel(channel)}
-              checked={currentChannel?.id === channel.id}
-            />
-            <div className="h-2.5 w-2.5 shrink-0 rounded-full border border-status-2 peer-checked:border-status-3 peer-checked:bg-status-3"></div>
-            <div className="flex min-w-0 flex-1 gap-2">
-              <span className="truncate">{channel.title}</span>
-              <span>{channel.counts.contents}</span>
-            </div>
-            <div>{channel.owner.name}</div>
-          </label>
+          <ChannelRow key={channel.id} channel={channel} />
         ))
       ) : (
         <div className="absolute inset-0 flex items-center justify-center">
           {loading ? <Spinner /> : <span>No channels found</span>}
         </div>
       )}
+
       {hasMore ? (
         <LoadMoreSentinel
           scrollRef={scrollRef}
@@ -73,6 +54,36 @@ export default function ChannelList({
         />
       ) : null}
     </div>
+  )
+}
+
+function ChannelRow({ channel }: { channel: Channel }) {
+  const { currentChannel, setCurrentChannel } = useCaptureCtx()
+
+  return (
+    <label
+      className={[
+        VISIBILITY_STATUS_CLASS[channel.visibility],
+        `flex h-channel-row-height shrink-0 cursor-pointer items-center gap-2 rounded-sm bg-status-1 px-2 text-nowrap text-status-3 ring-ring ring-inset has-focus-visible:ring-1`
+      ].join(" ")}
+      key={channel.id}>
+      <input
+        type="radio"
+        name="channel"
+        className="peer sr-only"
+        onChange={() => setCurrentChannel(channel)}
+        checked={currentChannel?.id === channel.id}
+      />
+
+      <div className="h-2.5 w-2.5 shrink-0 rounded-full border border-status-2 peer-checked:border-status-3 peer-checked:bg-status-3"></div>
+
+      <div className="flex min-w-0 flex-1 gap-2">
+        <span className="truncate">{channel.title}</span>
+        <span>{channel.counts.contents}</span>
+      </div>
+
+      <div>{channel.owner.name}</div>
+    </label>
   )
 }
 
@@ -93,7 +104,6 @@ function LoadMoreSentinel({
   useEffect(() => {
     if (!hasMore) return
 
-    const root = scrollRef.current
     const target = endRef.current
 
     if (!target) return
@@ -113,7 +123,7 @@ function LoadMoreSentinel({
     }
 
     const observer = new IntersectionObserver(onIntersection, {
-      root: root,
+      root: scrollRef.current,
       rootMargin: "80px"
     })
 
@@ -123,7 +133,7 @@ function LoadMoreSentinel({
       cancelled = true
       observer.disconnect()
     }
-  }, [hasMore, channels.length, onLoadMore])
+  }, [hasMore, channels.length, onLoadMore, scrollRef])
 
   return (
     <div ref={endRef} className="flex shrink-0 justify-center py-2">

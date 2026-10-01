@@ -10,6 +10,15 @@ const VISIBILITY_STATUS_CLASS = {
   closed: "status-closed"
 } as const
 
+const LIST_CLASS =
+  "relative flex h-[calc((var(--spacing-channel-row-height)*5_+_var(--spacing-channel-row-gap)*4)_-_var(--spacing-channel-row-height)/2)] flex-col gap-channel-row-gap overflow-y-auto"
+
+const SCROLLBAR_CLASS =
+  "pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-3 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-1"
+
+const ROW_CLASS =
+  "flex h-channel-row-height shrink-0 cursor-pointer items-center gap-2 rounded-sm bg-status-1 px-2 text-nowrap text-status-3 ring-ring ring-inset has-focus-visible:ring-1"
+
 type ChannelListProps = {
   channels: Channel[]
   loading: boolean
@@ -28,13 +37,9 @@ export default function ChannelList({
   return (
     <div
       ref={scrollRef}
-      className={[
-        channels.length > 4
-          ? "pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-3 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-1"
-          : "",
-        "relative flex flex-col gap-channel-row-gap overflow-y-auto",
-        "h-[calc((var(--spacing-channel-row-height)*5_+_var(--spacing-channel-row-gap)*4)_-_var(--spacing-channel-row-height)/2)]"
-      ].join(" ")}>
+      className={
+        channels.length > 4 ? `${LIST_CLASS} ${SCROLLBAR_CLASS}` : LIST_CLASS
+      }>
       {channels.length ? (
         channels.map((channel) => (
           <ChannelRow key={channel.id} channel={channel} />
@@ -46,11 +51,10 @@ export default function ChannelList({
       )}
 
       {hasMore ? (
-        <LoadMoreSentinel
+        <LoadMore
           scrollRef={scrollRef}
-          hasMore={hasMore}
           onLoadMore={onLoadMore}
-          channels={channels}
+          itemCount={channels.length}
         />
       ) : null}
     </div>
@@ -62,11 +66,7 @@ function ChannelRow({ channel }: { channel: Channel }) {
 
   return (
     <label
-      className={[
-        VISIBILITY_STATUS_CLASS[channel.visibility],
-        `flex h-channel-row-height shrink-0 cursor-pointer items-center gap-2 rounded-sm bg-status-1 px-2 text-nowrap text-status-3 ring-ring ring-inset has-focus-visible:ring-1`
-      ].join(" ")}
-      key={channel.id}>
+      className={`${VISIBILITY_STATUS_CLASS[channel.visibility]} ${ROW_CLASS}`}>
       <input
         type="radio"
         name="channel"
@@ -87,57 +87,55 @@ function ChannelRow({ channel }: { channel: Channel }) {
   )
 }
 
-function LoadMoreSentinel({
-  hasMore,
+function LoadMore({
   onLoadMore,
-  channels,
+  itemCount,
   scrollRef
 }: {
-  hasMore: boolean
-  onLoadMore: () => void
-  channels: Channel[]
-  scrollRef: React.RefObject<HTMLDivElement>
+  onLoadMore: () => void | Promise<void>
+  itemCount: number
+  scrollRef: React.RefObject<HTMLDivElement | null>
 }) {
   const endRef = useRef<HTMLDivElement>(null)
-  const [loadingMore, setLoadingMore] = useState(false)
+  const onLoadMoreRef = useRef(onLoadMore)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (!hasMore) return
+    onLoadMoreRef.current = onLoadMore
+  })
 
+  useEffect(() => {
     const target = endRef.current
-
     if (!target) return
 
-    let cancelled = false
-    let isInFlight = false
+    let active = true
+    let loadingPage = false
 
-    function onIntersection(entries: IntersectionObserverEntry[]) {
-      if (!entries[0]?.isIntersecting || isInFlight) return
-      isInFlight = true
-      setLoadingMore(true)
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting || loadingPage) return
+        loadingPage = true
+        setLoading(true)
 
-      Promise.resolve(onLoadMore()).finally(() => {
-        isInFlight = false
-        if (!cancelled) setLoadingMore(false)
-      })
-    }
-
-    const observer = new IntersectionObserver(onIntersection, {
-      root: scrollRef.current,
-      rootMargin: "80px"
-    })
+        Promise.resolve(onLoadMoreRef.current()).finally(() => {
+          loadingPage = false
+          if (active) setLoading(false)
+        })
+      },
+      { root: scrollRef.current, rootMargin: "80px" }
+    )
 
     observer.observe(target)
 
     return () => {
-      cancelled = true
+      active = false
       observer.disconnect()
     }
-  }, [hasMore, channels.length, onLoadMore, scrollRef])
+  }, [itemCount, scrollRef])
 
   return (
     <div ref={endRef} className="flex shrink-0 justify-center py-2">
-      {loadingMore ? <Spinner /> : null}
+      {loading ? <Spinner /> : null}
     </div>
   )
 }

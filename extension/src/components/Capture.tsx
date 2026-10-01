@@ -1,17 +1,12 @@
+import { useState } from "react"
+
 import { MESSAGE } from "~lib/messages"
 
 import { useCaptureCtx } from "./CaptureCtx"
 import CaptureMeta from "./CaptureMeta"
 import CapturePreview from "./CapturePreview"
 import Channels from "./Channels/Channels"
-import ConnectButton from "./ConnectButton"
-
-async function closeWindow() {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
-  if (tab?.id) {
-    await chrome.tabs.sendMessage(tab.id, { type: MESSAGE.CLOSE_PANEL })
-  }
-}
+import Spinner from "./Spinner"
 
 export default function Capture() {
   const { postedTo, originTitle, hostName } = useCaptureCtx()
@@ -38,24 +33,68 @@ export default function Capture() {
           </>
         )}
 
-        <div className="sticky bottom-0 flex gap-3 bg-white py-3">
-          <button className="btn" onClick={closeWindow}>
-            Close
-          </button>
-
+        <ButtonBar>
           {!postedTo ? (
             <ConnectButton />
           ) : (
-            <a
-              href={`https://are.na/channel/${postedTo.id}`}
-              className="btn-primary w-full"
-              target="_blank"
-              rel="noreferrer">
-              View channel &rarr;
-            </a>
+            <ViewChannel chennelId={postedTo.id} />
           )}
-        </div>
+          <CloseButton />
+        </ButtonBar>
       </div>
     </div>
+  )
+}
+
+function ViewChannel({ chennelId }: { chennelId: number }) {
+  return (
+    <a
+      href={`https://are.na/channel/${chennelId}`}
+      className="btn-primary w-full"
+      target="_blank"
+      rel="noreferrer">
+      View channel &rarr;
+    </a>
+  )
+}
+
+function ButtonBar({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="sticky bottom-0 flex gap-3 bg-white py-3">{children}</div>
+  )
+}
+
+function CloseButton() {
+  async function closeWindow() {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+    if (tab?.id) {
+      await chrome.tabs.sendMessage(tab.id, { type: MESSAGE.CLOSE_PANEL })
+    }
+  }
+
+  return (
+    <button className="btn" onClick={closeWindow}>
+      Close
+    </button>
+  )
+}
+
+function ConnectButton() {
+  const { postToArena } = useCaptureCtx()
+  const [loading, setLoading] = useState(false)
+
+  async function onClick() {
+    setLoading(true)
+    try {
+      await postToArena()
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <button className="btn-primary w-full" onClick={onClick} disabled={loading}>
+      {!loading ? <>Connect &rarr;</> : <Spinner />}
+    </button>
   )
 }

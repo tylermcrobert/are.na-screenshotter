@@ -16,9 +16,9 @@ type CaptureContextValue = {
   error: string | null
   setError: (error: string | null) => void
   postedTo: Channel | null
-  setPostedTo: (postedTo: Channel | null) => void
   currentChannel: Channel | null
   setCurrentChannel: (currentChannel: Channel | null) => void
+  postToArena: () => Promise<void>
 }
 
 const CaptureContext = createContext<CaptureContextValue | null>(null)
@@ -67,6 +67,31 @@ export function CaptureProvider() {
     return null
   }
 
+  async function postToArena() {
+    if (!currentChannel?.id) {
+      setError("Please select a channel.")
+      return
+    }
+
+    if (!originUrl || !originTitle) {
+      setError("Missing screenshot, originUrl, or originTitle.")
+      return
+    }
+
+    setError(null)
+
+    try {
+      await arena.postScreenshot(currentChannel.id, {
+        screenshot,
+        originUrl,
+        originTitle
+      })
+      setPostedTo(currentChannel)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not post screenshot.")
+    }
+  }
+
   return (
     <CaptureContext.Provider
       value={{
@@ -78,9 +103,9 @@ export function CaptureProvider() {
         error,
         setError,
         postedTo,
-        setPostedTo,
         currentChannel,
-        setCurrentChannel
+        setCurrentChannel,
+        postToArena
       }}>
       {error ? <Toast error={error} onClose={() => setError(null)} /> : null}
       <Capture />

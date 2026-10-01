@@ -16,9 +16,3 @@ chrome.action.onClicked.addListener(async (tab) => {
     })
   }
 })
-
-chrome.runtime.onMessage.addListener((message, sender) => {
-  if (message.type === MESSAGE.CLOSE_PANEL && sender.tab?.id != null) {
-    void chrome.tabs.sendMessage(sender.tab.id, { type: MESSAGE.CLOSE_PANEL })
-  }
-})

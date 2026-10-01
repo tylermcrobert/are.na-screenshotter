@@ -6,12 +6,15 @@ import CapturePreview from "./CapturePreview"
 import Channels from "./Channels/Channels"
 import ConnectButton from "./ConnectButton"
 
+async function closeWindow() {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+  if (tab?.id) {
+    await chrome.tabs.sendMessage(tab.id, { type: MESSAGE.CLOSE_PANEL })
+  }
+}
+
 export default function Capture() {
   const { postedTo, originTitle, hostName } = useCaptureCtx()
-
-  function closeWindow() {
-    void chrome.runtime.sendMessage({ type: MESSAGE.CLOSE_PANEL })
-  }
 
   return (
     <div className="flex h-window-height flex-col">

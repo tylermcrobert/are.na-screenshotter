@@ -14,7 +14,7 @@ export default function Content() {
       _sender: chrome.runtime.MessageSender,
       sendResponse: () => void
     ) {
-      if (message.type === "screenshot") {
+      if (message.type === MESSAGE.SCREENSHOT) {
         setOpen((open) => !open)
         sendResponse()
       } else if (message.type === MESSAGE.CLOSE_PANEL) {

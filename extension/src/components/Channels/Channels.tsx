@@ -5,18 +5,10 @@ import { useRecentChannels } from "./hooks/useRecentChannels"
 
 export default function Channels() {
   const { recentChannels, initialLoading, loadMore } = useRecentChannels()
-  const {
-    fetchAllChannels,
-    search,
-    searchResults,
-    searchLoading,
-    showSpinner,
-    searchQuery,
-    debouncedSearchQuery
-  } = useChannelSearch()
+  const { search, searchResults, searchLoading, showSpinner, searchQuery } =
+    useChannelSearch(recentChannels.items[0] ?? null)
 
-  const isSearchActive = debouncedSearchQuery.length > 0
-  const showingSearchResults = isSearchActive && !searchLoading
+  const isSearchActive = searchQuery.length > 0
   const listEmptyLoading = isSearchActive ? searchLoading : initialLoading
 
   return (
@@ -26,7 +18,6 @@ export default function Channels() {
           {showSpinner ? <Spinner /> : null}
         </div>
         <input
-          onFocus={fetchAllChannels}
           value={searchQuery}
           onChange={(e) => search(e.target.value)}
           type="text"
@@ -37,8 +28,8 @@ export default function Channels() {
 
       <ChannelList
         onLoadMore={loadMore}
-        hasMore={showingSearchResults ? false : recentChannels.hasMore}
-        channels={showingSearchResults ? searchResults : recentChannels.items}
+        hasMore={isSearchActive ? false : recentChannels.hasMore}
+        channels={isSearchActive ? searchResults : recentChannels.items}
         loading={listEmptyLoading}
       />
     </div>

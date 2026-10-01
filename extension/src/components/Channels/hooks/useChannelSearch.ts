@@ -1,26 +1,27 @@
 import type { Channel } from "@aredotna/sdk"
-import { useCallback, useState } from "react"
+import { useEffect, useState } from "react"
 
 import { useCaptureCtx } from "~components/CaptureCtx"
 
-import { useDebounce } from "./useDebounce"
+function filterChannels(channels: Channel[], query: string) {
+  return channels.filter((channel) =>
+    channel.title.toLowerCase().includes(query.toLowerCase())
+  )
+}
 
 /**
  * useChannelSearch
  * @description Handles the search functionality for channels
+ * @param fallback - The channel to select when the query is cleared
  */
-export function useChannelSearch() {
+export function useChannelSearch(fallback: Channel | null) {
   const { arena, setError, setCurrentChannel } = useCaptureCtx()
 
   const [searchQuery, setSearchQuery] = useState("")
-  const [searchLoading, setSearchLoading] = useState(false)
+  const [searchLoading, setSearchLoading] = useState(true)
   const [allChannels, setAllChannels] = useState<Channel[]>([])
 
-  const debouncedSearchQuery = useDebounce(searchQuery, 300)
-
-  const fetchAllChannels = useCallback(async () => {
-    setSearchLoading(true)
-
+  useEffect(() => {
     arena
       .getAllChannels()
       .then((res) => {
@@ -36,33 +37,25 @@ export function useChannelSearch() {
       })
   }, [arena, setError])
 
-  /**
-   * Derived filtered channels from the search query
-   * @param query - The query to filter the channels by
-   * @returns The filtered channels
-   */
-  function getFilteredChannels(query: string) {
-    return allChannels.filter((channel) =>
-      channel.title.toLowerCase().includes(query.toLowerCase())
-    )
-  }
+  useEffect(() => {
+    if (searchQuery) {
+      setCurrentChannel(filterChannels(allChannels, searchQuery)[0] ?? null)
+    }
+  }, [allChannels, searchQuery, setCurrentChannel])
 
   /**
-   * Updates the query and selects the top match
+   * Updates the query and selects the fallback when cleared
    */
   function search(query: string) {
     setSearchQuery(query)
-    const [topMatch] = getFilteredChannels(query)
-    if (query && topMatch) setCurrentChannel(topMatch)
+    if (!query) setCurrentChannel(fallback)
   }
 
   return {
-    searchResults: getFilteredChannels(debouncedSearchQuery),
+    searchResults: filterChannels(allChannels, searchQuery),
     searchLoading,
     showSpinner: searchLoading && searchQuery.length > 0,
     searchQuery,
-    debouncedSearchQuery,
-    search,
-    fetchAllChannels
+    search
   }
 }

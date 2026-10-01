@@ -18,6 +18,7 @@ export default function Channels() {
           {showSpinner ? <Spinner /> : null}
         </div>
         <input
+          autoFocus
           value={searchQuery}
           onChange={(e) => search(e.target.value)}
           type="text"

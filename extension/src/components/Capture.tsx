@@ -7,7 +7,7 @@ import CapturePreview from "./CapturePreview"
 import Channels from "./Channels/Channels"
 import Spinner from "./Spinner"
 
-export default function Capture() {
+export default function Window() {
   const { postedTo } = useCaptureCtx()
 
   return (
@@ -15,37 +15,27 @@ export default function Capture() {
       <CapturePreview />
 
       <div className="flex h-bottom flex-col px-3">
-        {postedTo ? (
-          <>
-            <PostedConfirmation />
-            <ButtonBar>
-              <CloseButton />
-              <ViewChannel channelId={postedTo.id} />
-            </ButtonBar>
-          </>
-        ) : (
-          <>
-            <CaptureMeta />
-            <Channels />
-            <ButtonBar>
-              <ConnectButton />
-            </ButtonBar>
-          </>
-        )}
+        {postedTo ? <PostedConfirmation /> : <Capture />}
       </div>
     </div>
   )
 }
 
-function ViewChannel({ channelId }: { channelId: number }) {
+function Capture() {
+  const { originTitle, hostName } = useCaptureCtx()
+
   return (
-    <a
-      href={`https://are.na/channel/${channelId}`}
-      className="btn-primary w-full"
-      target="_blank"
-      rel="noreferrer">
-      View channel &rarr;
-    </a>
+    <>
+      <div className="flex min-h-16 flex-1 flex-col justify-center text-center">
+        <div className="font-bold">{originTitle}</div>
+        <div className="text-gray-4">{hostName}</div>
+      </div>
+      <Channels />
+      <ButtonBar>
+        <CloseButton />
+        <ConnectButton />
+      </ButtonBar>
+    </>
   )
 }
 
@@ -94,25 +84,27 @@ function PostedConfirmation() {
   const { postedTo, originTitle, hostName } = useCaptureCtx()
 
   return (
-    <div className="mt-3 flex flex-1 flex-col justify-center text-center">
-      <div className="mb-1 text-[15px] font-bold">
-        Posted to {postedTo.title}.
+    <>
+      <div className="mt-3 flex flex-1 flex-col justify-center text-center">
+        <div className="mb-1 text-[15px] font-bold">
+          Posted to {postedTo.title}.
+        </div>
+        <div className="text-gray-4">
+          <div>{originTitle}</div>
+          <div>{hostName}</div>
+        </div>
       </div>
-      <div className="text-gray-4">
-        <div>{originTitle}</div>
-        <div>{hostName}</div>
-      </div>
-    </div>
-  )
-}
 
-function CaptureMeta() {
-  const { originTitle, hostName } = useCaptureCtx()
-
-  return (
-    <div className="flex min-h-16 flex-1 flex-col justify-center text-center">
-      <div className="font-bold">{originTitle}</div>
-      <div className="text-gray-4">{hostName}</div>
-    </div>
+      <ButtonBar>
+        <CloseButton />
+        <a
+          href={`https://are.na/channel/${postedTo.id}`}
+          className="btn-primary w-full"
+          target="_blank"
+          rel="noreferrer">
+          View channel &rarr;
+        </a>
+      </ButtonBar>
+    </>
   )
 }

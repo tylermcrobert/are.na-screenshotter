@@ -8,9 +8,9 @@ export type AuthResponse =
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   const manifest = chrome.runtime.getManifest()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const clientId: string = (manifest.oauth2 as any).client_id
+  const clientId: string = manifest.oauth2.client_id
   const redirectUri = chrome.identity.getRedirectURL()
+  const authUrl = `https://www.are.na/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=write`
 
   if (!SCREENSHOTTER_API_BASE) {
     res.send({
@@ -21,17 +21,18 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   }
 
   try {
-    const redirectUrl = await new Promise<string>((resolve) => {
+    const redirectUrl = await new Promise<string | undefined>((resolve) => {
       chrome.identity.launchWebAuthFlow(
-        {
-          url: `https://www.are.na/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=write`,
-          interactive: true
-        },
+        { url: authUrl, interactive: true },
         resolve
       )
     })
 
-    const url = new URL(redirectUrl as string)
+    if (!redirectUrl) {
+      throw new Error("Login was cancelled.")
+    }
+
+    const url = new URL(redirectUrl)
     const code = url.searchParams.get("code")
 
     if (!code) {

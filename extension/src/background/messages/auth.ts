@@ -21,6 +21,10 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   }
 
   try {
+    /**
+     * Launch web auth flow and grab code from redirect URL
+     */
+
     const redirectUrl = await new Promise<string | undefined>((resolve) => {
       chrome.identity.launchWebAuthFlow(
         { url: authUrl, interactive: true },
@@ -32,21 +36,22 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       throw new Error("Login was cancelled.")
     }
 
-    const url = new URL(redirectUrl)
-    const code = url.searchParams.get("code")
+    const code = new URL(redirectUrl).searchParams.get("code")
 
     if (!code) {
       throw new Error("No code found in redirect URL")
     }
 
-    const tokenUrl = `${SCREENSHOTTER_API_BASE}/are.na/oauth/token/?client_id=${clientId}&code=${code}&redirect_uri=${redirectUri}`
+    /**
+     * Fetch access token from the API
+     */
 
+    const tokenUrl = `${SCREENSHOTTER_API_BASE}/are.na/oauth/token/?client_id=${clientId}&code=${code}&redirect_uri=${redirectUri}`
     const tokenResponse = await fetch(tokenUrl, { method: "POST" })
     const tokenJson = await tokenResponse.json()
 
     if (!tokenResponse.ok) {
-      const errorMessage = `Error fetching access token: "${tokenJson.error_description}"`
-      throw new Error(errorMessage)
+      throw new Error(`Error fetching access token: "${tokenJson.message}"`)
     }
 
     const payload = {
@@ -62,7 +67,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
     res.send(payload)
   } catch (error) {
-    console.log(error)
+    console.error(error)
     res.send({
       ok: false,
       message: error instanceof Error ? error.message : "Authentication failed."

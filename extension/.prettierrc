@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json.schemastore.org/prettierrc",
+  "printWidth": 80,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": false,
+  "singleQuote": false,
+  "trailingComma": "none",
+  "bracketSpacing": true,
+  "bracketSameLine": true,
+  "plugins": ["@ianvs/prettier-plugin-sort-imports", "prettier-plugin-tailwindcss"],
+  "tailwindStylesheet": "./src/style.css",
+  "tailwindFunctions": ["clsx", "cn", "twMerge"],
+  "importOrder": [
+    "<BUILTIN_MODULES>",
+    "<THIRD_PARTY_MODULES>",
+    "",
+    "^@plasmo/(.*)$",
+    "",
+    "^@plasmohq/(.*)$",
+    "",
+    "^~(.*)$",
+    "",
+    "^[./]"
+  ]
+}

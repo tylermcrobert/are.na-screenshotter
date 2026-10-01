@@ -17,7 +17,12 @@ type ChannelListProps = {
   hasMore: boolean
 }
 
-export default function ChannelList({ channels, loading, onLoadMore, hasMore }: ChannelListProps) {
+export default function ChannelList({
+  channels,
+  loading,
+  onLoadMore,
+  hasMore
+}: ChannelListProps) {
   const { currentChannel, setCurrentChannel } = useCaptureCtx()
   const scrollRef = useRef<HTMLDivElement>(null)
 
@@ -36,13 +41,13 @@ export default function ChannelList({ channels, loading, onLoadMore, hasMore }: 
           <label
             className={[
               VISIBILITY_STATUS_CLASS[channel.visibility],
-              `flex h-channel-row-height shrink-0 cursor-pointer items-center gap-2 rounded-sm bg-status-1 px-2 text-nowrap text-status-3`
+              `flex h-channel-row-height shrink-0 cursor-pointer items-center gap-2 rounded-sm bg-status-1 px-2 text-nowrap text-status-3 ring-ring ring-inset has-focus-visible:ring-1`
             ].join(" ")}
             key={channel.id}>
             <input
-              hidden
               type="radio"
-              className="peer"
+              name="channel"
+              className="peer sr-only"
               onChange={() => setCurrentChannel(channel)}
               checked={currentChannel?.id === channel.id}
             />

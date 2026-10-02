@@ -7,10 +7,6 @@ import {
 
 const DATA_URL_MIME = /^data:([^;,]+)/
 
-type UserContentsResponse = Awaited<ReturnType<ArenaType["users"]["contents"]>>
-type UserChannelsListResponse = Omit<UserContentsResponse, "data"> & { data: Channel[] }
-type UserContentsOptions = NonNullable<Parameters<ArenaType["users"]["contents"]>[1]>
-
 function isChannel(row: { type: string }): row is Channel {
   return row.type === "Channel"
 }
@@ -35,15 +31,7 @@ export class ArenaScreenshotterClient {
   async getAllChannels(): Promise<Channel[]> {
     if (this.allChannels.length) return this.allChannels
 
-    const getPage = (page: number) => {
-      const PAGE_SIZE = 100
-      return this.client.users.contents(this.userSlug, {
-        type: "Channel",
-        per: PAGE_SIZE,
-        sort: "updated_at_desc",
-        page
-      })
-    }
+    const getPage = (page: number) => this.getChannelsPage(page, 100)
 
     const initialResponse = await getPage(1)
     const totalPages = initialResponse.meta.total_pages
@@ -57,19 +45,20 @@ export class ArenaScreenshotterClient {
   }
 
   /**
-   * Gets the user's recent channels
+   * Gets the user's most recently updated channels
    */
-  async getRecentChannels(
-    options: UserContentsOptions & { per: number }
-  ): Promise<UserChannelsListResponse> {
-    const res = await this.client.users.contents(this.userSlug, {
-      type: "Channel",
-      sort: "updated_at_desc",
-      page: options.page,
-      ...options
-    })
+  async getRecentChannels(per = 20): Promise<Channel[]> {
+    const res = await this.getChannelsPage(1, per)
+    return res.data.filter(isChannel)
+  }
 
-    return { ...res, data: [...res.data.filter(isChannel)].reverse() }
+  private getChannelsPage(page: number, per: number) {
+    return this.client.users.contents(this.userSlug, {
+      type: "Channel",
+      per,
+      sort: "updated_at_desc",
+      page
+    })
   }
 
   async postScreenshot(

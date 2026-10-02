@@ -1,15 +1,11 @@
-import ChannelList from "../ChannelList"
-import Spinner from "../Spinner"
-import { useChannelSearch } from "./hooks/useChannelSearch"
-import { useRecentChannels } from "./hooks/useRecentChannels"
+import Spinner from "~components/Spinner"
+
+import ChannelList from "./ChannelList"
+import { useChannelSearch } from "./useChannelSearch"
 
 export default function Channels() {
-  const { recentChannels, initialLoading, loadMore } = useRecentChannels()
   const { search, searchResults, searchLoading, showSpinner, searchQuery } =
-    useChannelSearch(recentChannels.items[0] ?? null)
-
-  const isSearchActive = searchQuery.length > 0
-  const listEmptyLoading = isSearchActive ? searchLoading : initialLoading
+    useChannelSearch()
 
   return (
     <div>
@@ -28,10 +24,9 @@ export default function Channels() {
       </div>
 
       <ChannelList
-        onLoadMore={loadMore}
-        hasMore={isSearchActive ? false : recentChannels.hasMore}
-        channels={isSearchActive ? searchResults : recentChannels.items}
-        loading={listEmptyLoading}
+        key={searchQuery}
+        channels={searchResults}
+        loading={searchLoading}
       />
     </div>
   )

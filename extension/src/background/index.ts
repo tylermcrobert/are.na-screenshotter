@@ -1,5 +1,5 @@
 import { showCapture } from "./capture"
-import { toggleRecording } from "./recording"
+import { isRecording, stopRecording, toggleRecording } from "./recording"
 
 chrome.commands.onCommand.addListener((command, tab) => {
   if (command === "toggle-recording" && tab) {
@@ -8,7 +8,9 @@ chrome.commands.onCommand.addListener((command, tab) => {
 })
 
 chrome.action.onClicked.addListener(async (tab) => {
-  if (tab.id) {
+  if (await isRecording()) {
+    stopRecording()
+  } else if (tab.id) {
     showCapture(tab, await chrome.tabs.captureVisibleTab())
   }
 })

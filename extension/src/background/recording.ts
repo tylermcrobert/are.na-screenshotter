@@ -11,14 +11,15 @@ const RECORDING_TAB_KEY = "recordingTabId"
 
 let stopping = false
 
-export async function toggleRecording(tab: chrome.tabs.Tab) {
-  if (stopping) return
-
-  const [offscreenCtx] = await chrome.runtime.getContexts({
+export async function isRecording() {
+  const contexts = await chrome.runtime.getContexts({
     contextTypes: [chrome.runtime.ContextType.OFFSCREEN_DOCUMENT]
   })
+  return contexts.length > 0
+}
 
-  if (offscreenCtx) {
+export async function toggleRecording(tab: chrome.tabs.Tab) {
+  if (await isRecording()) {
     await stopRecording()
   } else if (tab.id) {
     await startRecording(tab.id)
@@ -45,7 +46,8 @@ async function startRecording(tabId: number) {
   await chrome.action.setBadgeBackgroundColor({ color: "#d93025" })
 }
 
-async function stopRecording() {
+export async function stopRecording() {
+  if (stopping) return
   stopping = true
   await chrome.action.setBadgeText({ text: "…" })
 

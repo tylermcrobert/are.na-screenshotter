@@ -25,10 +25,7 @@ export class ArenaScreenshotterClient {
     this.userSlug = userSlug
   }
 
-  /**
-   * Gets all of the user's channels
-   */
-  async getAllChannels(): Promise<Channel[]> {
+  public async getAllChannels(): Promise<Channel[]> {
     if (this.allChannels.length) return this.allChannels
 
     const first = await this.getChannelsPage(1, 100)
@@ -38,34 +35,15 @@ export class ArenaScreenshotterClient {
       )
     )
 
-    this.allChannels = [first, ...rest].flatMap((res) => res.data)
+    this.allChannels = [first, ...rest].flatMap((res) => res.channels)
     return this.allChannels
   }
 
-  /**
-   * Gets the user's most recently updated channels
-   */
-  async getRecentChannels(per = 20): Promise<Channel[]> {
-    const res = await this.getChannelsPage(1, per)
-    return res.data
+  public async getRecentChannels(per = 20): Promise<Channel[]> {
+    return (await this.getChannelsPage(1, per)).channels
   }
 
-  /**
-   * @note The API selects the right page for `updated_at_desc` but returns its items
-   * oldest first, so each page is re-sorted here.
-   */
-  private async getChannelsPage(page: number, per: number) {
-    const res = await this.client.users.contents(this.userSlug, {
-      type: "Channel",
-      per,
-      sort: "updated_at_desc",
-      page
-    })
-
-    return { ...res, data: res.data.filter(isChannel).sort(byUpdatedAtDesc) }
-  }
-
-  async postScreenshot(
+  public async postScreenshot(
     channelId: number,
     data: {
       screenshot: string
@@ -93,5 +71,19 @@ export class ArenaScreenshotterClient {
         original_source_title: data.originTitle
       }
     })
+  }
+
+  private async getChannelsPage(page: number, per: number) {
+    const res = await this.client.users.contents(this.userSlug, {
+      type: "Channel",
+      per,
+      sort: "updated_at_desc",
+      page
+    })
+
+    /** @note Need to sort the channels by updated_at in descending order because the API returns them oldest first */
+    const channelsDesc = res.data.filter(isChannel).sort(byUpdatedAtDesc)
+
+    return { meta: res.meta, channels: channelsDesc }
   }
 }

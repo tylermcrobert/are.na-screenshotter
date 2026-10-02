@@ -1,15 +1,14 @@
-import { MESSAGE } from "~lib/messages"
+import { showCapture } from "./capture"
+import { toggleRecording } from "./recording"
+
+chrome.commands.onCommand.addListener((command, tab) => {
+  if (command === "toggle-recording" && tab) {
+    toggleRecording(tab)
+  }
+})
 
 chrome.action.onClicked.addListener(async (tab) => {
   if (tab.id) {
-    const screenshot = await chrome.tabs.captureVisibleTab()
-
-    chrome.storage.local.set({
-      screenshot,
-      tabUrl: tab.url ?? "",
-      tabTitle: tab.title ?? ""
-    })
-
-    chrome.tabs.sendMessage(tab.id, { type: MESSAGE.SCREENSHOT })
+    showCapture(tab, await chrome.tabs.captureVisibleTab())
   }
 })

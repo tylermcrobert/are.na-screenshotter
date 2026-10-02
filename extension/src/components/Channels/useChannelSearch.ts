@@ -11,15 +11,25 @@ function filterChannels(channels: Channel[], query: string) {
 
 /**
  * useChannelSearch
- * @description Handles the search functionality for channels
- * @param fallback - The channel to select when the query is cleared
+ * @description Loads the user's channels and filters them by the search query.
+ * Shows the most recent channels first, then swaps in the full list once it loads.
  */
-export function useChannelSearch(fallback: Channel | null) {
+export function useChannelSearch() {
   const { arena, setError, setCurrentChannel } = useCaptureCtx()
 
   const [searchQuery, setSearchQuery] = useState("")
   const [searchLoading, setSearchLoading] = useState(true)
   const [allChannels, setAllChannels] = useState<Channel[]>([])
+
+  useEffect(() => {
+    arena
+      .getRecentChannels()
+      .then((res) => {
+        setAllChannels((prev) => (prev.length ? prev : res))
+        setCurrentChannel((current) => current ?? res[0] ?? null)
+      })
+      .catch((e) => console.error(e))
+  }, [arena, setCurrentChannel])
 
   useEffect(() => {
     arena
@@ -30,7 +40,7 @@ export function useChannelSearch(fallback: Channel | null) {
       })
       .catch((e) => {
         console.error(e)
-        setError("There was an error fetching channels for search.")
+        setError("There was an error fetching channels.")
       })
       .finally(() => {
         setSearchLoading(false)
@@ -44,11 +54,11 @@ export function useChannelSearch(fallback: Channel | null) {
   }, [allChannels, searchQuery, setCurrentChannel])
 
   /**
-   * Updates the query and selects the fallback when cleared
+   * Updates the query and selects the most recent channel when cleared
    */
   function search(query: string) {
     setSearchQuery(query)
-    if (!query) setCurrentChannel(fallback)
+    if (!query) setCurrentChannel(allChannels[0] ?? null)
   }
 
   return {

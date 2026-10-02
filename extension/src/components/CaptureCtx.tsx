@@ -1,5 +1,12 @@
 import type { Channel } from "@aredotna/sdk"
-import { createContext, useContext, useEffect, useState } from "react"
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type Dispatch,
+  type SetStateAction
+} from "react"
 
 import { ArenaScreenshotterClient } from "~lib/Arena"
 
@@ -17,7 +24,7 @@ type CaptureContextValue = {
   setError: (error: string | null) => void
   postedTo: Channel | null
   currentChannel: Channel | null
-  setCurrentChannel: (currentChannel: Channel | null) => void
+  setCurrentChannel: Dispatch<SetStateAction<Channel | null>>
   postToArena: () => Promise<void>
 }
 

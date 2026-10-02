@@ -10,9 +10,6 @@ chrome.action.onClicked.addListener(async (tab) => {
       tabTitle: tab.title ?? ""
     })
 
-    chrome.tabs.sendMessage(tab.id, {
-      type: MESSAGE.SCREENSHOT,
-      base64Image: screenshot
-    })
+    chrome.tabs.sendMessage(tab.id, { type: MESSAGE.SCREENSHOT })
   }
 })

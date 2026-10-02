@@ -23,15 +23,11 @@ export class ArenaScreenshotterClient {
   constructor(token: string, userSlug: string) {
     this.client = createArena({ token: token })
     this.userSlug = userSlug
-    this.allChannels = []
   }
 
   /**
    * Gets all of the user's channels
-   * @param options - The options for the request
-   * @returns The channels
    */
-
   async getAllChannels(): Promise<Channel[]> {
     if (this.allChannels.length) return this.allChannels
 

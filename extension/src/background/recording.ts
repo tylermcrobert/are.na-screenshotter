@@ -12,11 +12,12 @@ export const RECORDING_MENU_ID = "toggle-recording"
 
 let stopping = false
 
-export function createRecordingMenu() {
+export async function createRecordingMenu() {
+  await chrome.contextMenus.removeAll()
   chrome.contextMenus.create({
     id: RECORDING_MENU_ID,
     title: "Record this tab",
-    contexts: ["action"]
+    contexts: ["action", "page"]
   })
 }
 

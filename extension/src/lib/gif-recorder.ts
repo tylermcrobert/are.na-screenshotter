@@ -1,6 +1,6 @@
 import { applyPalette, GIFEncoder, quantize, type Palette } from "gifenc"
 
-const FPS = 10
+const FPS = 20
 const MAX_WIDTH = 800
 const FRAME_INTERVAL_MS = 1000 / FPS
 

@@ -60,6 +60,7 @@
     }
   },
   "manifest": {
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyQ++WLFU4W+1go+7hDlW/GFZ9nGjDk6oGNZV5f3/VJttiB4X0dVhNVcgcDt8P8OAJzoJJHG2RN3onvemOMMGXq6X73zD4IvktWjz1ULRE/S2uo1Md1w+teoqZ0bLikd9du3QzLzVLOOlN8oQAF6XuFE3IteqBWHDuis3QBfUxkhH3cwkEZrihvB2VdG4IZXw5nlPxTD7jCYfPCECsaFUYO0pjM7l5kv80zAw/EeNlrhmGXfHaCgdWTsKOi5NqLTxjU0+vd43TH7l6IMXhkYcFDTgXbnNQWJo384VHnyAlqfapl5zyin8hFneWd2++ggJSSfUZToqzyJl57EaWiunywIDAQAB",
     "name": "Are.na screenshotter",
     "version": "0.4.0",
     "host_permissions": [
@@ -67,6 +68,7 @@
     ],
     "permissions": [
       "activeTab",
+      "contextMenus",
       "identity",
       "storage",
       "tabCapture",

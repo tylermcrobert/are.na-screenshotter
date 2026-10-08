@@ -8,8 +8,21 @@ import { showCapture } from "./capture"
 
 /** Session storage survives the service worker being suspended mid-recording */
 const RECORDING_TAB_KEY = "recordingTabId"
+export const RECORDING_MENU_ID = "toggle-recording"
 
 let stopping = false
+
+export function createRecordingMenu() {
+  chrome.contextMenus.create({
+    id: RECORDING_MENU_ID,
+    title: "Record this tab",
+    contexts: ["action"]
+  })
+}
+
+function setRecordingMenuTitle(title: string) {
+  return chrome.contextMenus.update(RECORDING_MENU_ID, { title })
+}
 
 export async function isRecording() {
   const contexts = await chrome.runtime.getContexts({
@@ -44,6 +57,7 @@ async function startRecording(tabId: number) {
 
   await chrome.action.setBadgeText({ text: "REC" })
   await chrome.action.setBadgeBackgroundColor({ color: "#d93025" })
+  await setRecordingMenuTitle("Stop recording")
 }
 
 export async function stopRecording() {
@@ -74,6 +88,7 @@ export async function stopRecording() {
   } finally {
     stopping = false
     await chrome.action.setBadgeText({ text: "" })
+    await setRecordingMenuTitle("Record this tab")
   }
 }
 

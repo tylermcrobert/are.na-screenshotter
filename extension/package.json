@@ -92,15 +92,15 @@
     "commands": {
       "_execute_action": {
         "suggested_key": {
-          "default": "Ctrl+Shift+E",
-          "mac": "Command+Shift+E"
+          "default": "Alt+S",
+          "mac": "MacCtrl+S"
         },
         "description": "Toggle Are.na screenshotter"
       },
       "toggle-recording": {
         "suggested_key": {
-          "default": "Alt+Shift+E",
-          "mac": "Alt+Shift+E"
+          "default": "Alt+R",
+          "mac": "MacCtrl+R"
         },
         "description": "Start or stop recording the current tab"
       }
